@@ -1,53 +1,80 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Dentify — Clinical Clarity Design System
+ * Based on DESIGN.md tokens
  */
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    /** Clinical Blue — primary action color */
+    clinicalBlue: '#0077B6',
+    /** Sky Light — main page background */
+    skyLight: '#F7F9FB',
+    /** Deep Slate — headings, primary text */
+    deepSlate: '#191C1E',
+    /** Success Teal — progress nodes, checkmarks */
+    successTeal: '#006B5F',
+    /** Neutral — inactive icons, secondary text */
+    neutral: '#70787D',
+    /** Surface — card backgrounds */
+    surface: '#FFFFFF',
+    /** Border Light — thin separators */
+    borderLight: '#F2F4F6',
+
+    // Legacy / compatibility aliases
+    text: '#191C1E',
+    background: '#F7F9FB',
+    tint: '#0077B6',
+    icon: '#70787D',
+    tabIconDefault: '#70787D',
+    tabIconSelected: '#0077B6',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    clinicalBlue: '#4CC9F0',
+    skyLight: '#121416',
+    deepSlate: '#F2F4F6',
+    successTeal: '#2DD4BF',
+    neutral: '#9CA3AF',
+    surface: '#1A1D21',
+    borderLight: '#2A2D31',
+
+    text: '#F2F4F6',
+    background: '#121416',
+    tint: '#4CC9F0',
+    icon: '#9CA3AF',
+    tabIconDefault: '#9CA3AF',
+    tabIconSelected: '#4CC9F0',
   },
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+export const Fonts = {
+  families: {
+    sans: 'Inter',
+    heading: 'Manrope',
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  sizes: {
+    h1: 28,
+    h2: 18,
+    bodyLarge: 16,
+    bodySmall: 14,
+    caption: 11,
   },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+  weights: {
+    h1: '700' as const,
+    h2: '700' as const,
+    body: '400' as const,
+    caption: '600' as const,
   },
-});
+};
+
+export const Spacing = {
+  pageMargin: 24,
+  baseGrid: 4,
+};
+
+export const BorderRadius = {
+  large: 32,
+  medium: 24,
+  small: 16,
+};

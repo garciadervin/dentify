@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.5/dist/tf-tflite.min.js"></script>
+  <title>YOLO Inference</title>
+</head>
+<body>
+<script>
+// ── Model State ──────────────────────────────────────────────────────────
+let _model = null;
+let _modelLoaded = false;
+const CLASS_NAMES = ['Abrasion', 'Filling', 'Crown', 'Caries 1', 'Caries 2', 'Caries 3', 'Caries 4', 'Caries 5', 'Caries 6'];
+const MODEL_INPUT_SIZE = 640;
+const CONFIDENCE_THRESHOLD = 0.25;
+const IOU_THRESHOLD = 0.45;
+const MAX_DETECTIONS = 100;
+
+// ── Helpers ──────────────────────────────────────────────────────────────
+function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+
+function computeIoU(a, b) {
+  const [ax, ay, aw, ah] = a;
+  const [bx, by, bw, bh] = b;
+  const ax1 = ax - aw / 2, ay1 = ay - ah / 2, ax2 = ax + aw / 2, ay2 = ay + ah / 2;
+  const bx1 = bx - bw / 2, by1 = by - bh / 2, bx2 = bx + bw / 2, by2 = by + bh / 2;
+  const ix1 = Math.max(ax1, bx1), iy1 = Math.max(ay1, by1);
+  const ix2 = Math.min(ax2, bx2), iy2 = Math.min(ay2, by2);
+  const iw = Math.max(0, ix2 - ix1), ih = Math.max(0, iy2 - iy1);
+  const inter = iw * ih, union = aw * ah + bw * bh - inter;
+  return union > 0 ? inter / union : 0;
+}
+
+function nms(boxes, scores, threshold) {
+  const indices = scores.map((s, i) => ({ s, i })).filter(x => x.s > 0).sort((a, b) => b.s - a.s).map(x => x.i);
+  const keep = [];
+  for (const idx of indices) {
+    let shouldKeep = true;
+    for (const keptIdx of keep) {
+      if (computeIoU(boxes[idx], boxes[keptIdx]) > threshold) { shouldKeep = false; break; }
+    }
+    if (shouldKeep) keep.push(idx);
+  }
+  return keep;
+}
+
+// ── Model Load ───────────────────────────────────────────────────────────
+async function loadModel(modelData) {
+  try {
+    await tf.ready();
+    _model = await tflite.loadTFLiteModel(modelData);
+    _modelLoaded = true;
+    postMessage({ type: 'model-loaded' });
+  } catch (err) {
+    postMessage({ type: 'model-error', error: err.message });
+  }
+}
+
+// ── Inference ────────────────────────────────────────────────────────────
+async function runInference(imageData) {
+  if (!_model) { postMessage({ type: 'inference-error', error: 'Model not loaded' }); return; }
+
+  try {
+    // Decode image
+    const img = new Image();
+    img.src = imageData;
+    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
+
+    // Convert to tensor and preprocess
+    const tensor = tf.browser.fromPixels(img);
+    const resized = tf.image.resizeBilinear(tensor, [MODEL_INPUT_SIZE, MODEL_INPUT_SIZE]);
+    const normalized = tf.div(resized, 255.0);
+    const batched = normalized.expandDims(0);
+    tensor.dispose(); resized.dispose(); normalized.dispose();
+
+    // Run model
+    const output = await _model.predict(batched);
+    batched.dispose();
+
+    const data = await output.data();
+    const shape = output.shape;
+    output.dispose();
+
+    const numClasses = CLASS_NAMES.length;
+    const numDetections = shape[1] || 0;
+    const numValues = shape[2] || 0;
+    const rawDets = [];
+
+    if (numValues === 6) {
+      for (let i = 0; i < numDetections; i++) {
+        const off = i * 6;
+        const conf = data[off + 4], cls = Math.round(data[off + 5]);
+        if (conf > CONFIDENCE_THRESHOLD && cls >= 0 && cls < numClasses) {
+          rawDets.push({ bbox: [data[off]/MODEL_INPUT_SIZE, data[off+1]/MODEL_INPUT_SIZE, data[off+2]/MODEL_INPUT_SIZE, data[off+3]/MODEL_INPUT_SIZE], confidence: conf, classId: cls });
+        }
+      }
+    } else if (numValues === 4 + numClasses) {
+      for (let i = 0; i < numDetections; i++) {
+        const off = i * (4 + numClasses);
+        let maxConf = 0, cls = -1;
+        for (let c = 0; c < numClasses; c++) { const conf = sigmoid(data[off + 4 + c]); if (conf > maxConf) { maxConf = conf; cls = c; } }
+        if (maxConf > CONFIDENCE_THRESHOLD && cls >= 0) {
+          rawDets.push({ bbox: [data[off]/MODEL_INPUT_SIZE, data[off+1]/MODEL_INPUT_SIZE, data[off+2]/MODEL_INPUT_SIZE, data[off+3]/MODEL_INPUT_SIZE], confidence: maxConf, classId: cls });
+        }
+      }
+    } else {
+      const flatSize = data.length;
+      const possible = Math.floor(flatSize / 6);
+      for (let i = 0; i < Math.min(possible, MAX_DETECTIONS); i++) {
+        const off = i * 6;
+        if (off + 5 >= flatSize) break;
+        const conf = sigmoid(data[off + 4]), cls = Math.round(data[off + 5]);
+        if (conf > CONFIDENCE_THRESHOLD && cls >= 0 && cls < numClasses) {
+          rawDets.push({ bbox: [data[off]/MODEL_INPUT_SIZE, data[off+1]/MODEL_INPUT_SIZE, data[off+2]/MODEL_INPUT_SIZE, data[off+3]/MODEL_INPUT_SIZE], confidence: conf, classId: cls });
+        }
+      }
+    }
+
+    // NMS
+    const boxes = rawDets.map(d => d.bbox);
+    const scores = rawDets.map(d => d.confidence);
+    const keep = nms(boxes, scores, IOU_THRESHOLD);
+
+    const detections = keep.map(idx => ({
+      classId: rawDets[idx].classId,
+      className: CLASS_NAMES[rawDets[idx].classId] || 'Unknown',
+      confidence: rawDets[idx].confidence,
+      bbox: rawDets[idx].bbox,
+    }));
+    detections.sort((a, b) => b.confidence - a.confidence);
+
+    postMessage({ type: 'inference-result', detections });
+  } catch (err) {
+    postMessage({ type: 'inference-error', error: err.message });
+  }
+}
+
+// ── Message Handler ──────────────────────────────────────────────────────
+self.addEventListener('message', (event) => {
+  const msg = event.data;
+  switch (msg.type) {
+    case 'load-model':
+      loadModel(msg.modelData);
+      break;
+    case 'run-inference':
+      runInference(msg.imageData);
+      break;
+  }
+});
+
+// Signal ready
+postMessage({ type: 'ready' });
+</script>
+</body>
+</html>

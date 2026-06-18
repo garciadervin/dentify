@@ -1,0 +1,31 @@
+description: Ultralytics YOLO26n-seg model trained on /content/drive/MyDrive/dataset/AlphaDent/yolo_seg_train.yaml
+author: Ultralytics
+date: '2026-06-12T04:57:43.503400'
+version: 8.4.66
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: segment
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: Abrasion
+  1: Filling
+  2: Crown
+  3: Caries 1 class
+  4: Caries 2 class
+  5: Caries 3 class
+  6: Caries 4 class
+  7: Caries 5 class
+  8: Caries 6 class
+args:
+  data: /content/drive/MyDrive/dataset/AlphaDent/yolo_seg_train.yaml
+  batch: 1
+  fraction: 1.0
+  half: false
+  int8: true
+  nms: false
+channels: 3
+end2end: true
