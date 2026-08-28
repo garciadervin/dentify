@@ -27,7 +27,9 @@ describe('SimulatorScreen', () => {
 
   it('should display tooth names in the model selector', () => {
     render(<SimulatorScreen />);
-    expect(screen.getByText(/incisivo central superior izquierdo/i)).toBeTruthy();
+    // The tooth name appears in both header and chips — use getAllByText
+    const elements = screen.getAllByText(/incisivo central superior izquierdo/i);
+    expect(elements.length).toBeGreaterThan(0);
   });
 
   it('should load the corresponding 3D model when a tooth is selected from the selector', () => {

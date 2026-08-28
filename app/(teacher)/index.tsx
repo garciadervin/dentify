@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Colors } from '@/constants/theme';
+import { Colors, createShadow } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/src/hooks/useAuth';
 import { getSupabase } from '@/src/lib/supabase';
@@ -204,10 +204,7 @@ const styles = StyleSheet.create({
   studentCard: {
     borderRadius: 16,
     padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
+    ...createShadow(2, 8, '#000000', 0.05),
     elevation: 2,
   },
   studentInfo: {

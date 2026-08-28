@@ -8,10 +8,18 @@ process.env.GROQ_API_KEY = 'test-groq-api-key';
 process.env.EXPO_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 
-// Mock global fetch for Groq API tests
+// Mock global fetch for the AI proxy: route by the JSON body's `endpoint`
+// field, because the app sends all traffic to the single groq-proxy URL.
 global.fetch = jest.fn() as any;
-(global.fetch as any).mockImplementation(async (url: string) => {
-  if (url.includes('chat/completions')) {
+(global.fetch as any).mockImplementation(async (_url: string, init?: any) => {
+  let body: any = {};
+  try {
+    body = JSON.parse(init?.body ?? '{}');
+  } catch {
+    /* body not JSON */
+  }
+
+  if (body?.endpoint === 'chat/completions') {
     return {
       ok: true,
       json: async () => ({
@@ -19,10 +27,16 @@ global.fetch = jest.fn() as any;
       }),
     };
   }
-  if (url.includes('audio/transcriptions')) {
+  if (body?.endpoint === 'audio/transcriptions') {
     return {
       ok: true,
       json: async () => ({ text: 'Transcripción simulada.' }),
+    };
+  }
+  if (body?.endpoint === 'embeddings') {
+    return {
+      ok: true,
+      json: async () => ({ data: [{ embedding: new Array(1536).fill(0.01) }] }),
     };
   }
   return { ok: true, json: async () => ({}) };
@@ -86,24 +100,26 @@ jest.mock('react-native-gesture-handler', () => ({
   FlatList: 'FlatList',
 }));
 
-// Mock expo-av for voice recording
-jest.mock('expo-av', () => ({
-  Audio: {
-    requestPermissionsAsync: jest.fn(() => ({ granted: true })),
-    setAudioModeAsync: jest.fn(),
-    Recording: {
-      createAsync: jest.fn(() => ({
-        recording: {
-          stopAndUnloadAsync: jest.fn(),
-          getURI: jest.fn(() => 'file:///mock/recording.m4a'),
-        },
-      })),
-      RecordingOptionsPresets: {
-        HIGH_QUALITY: {},
-      },
-    },
-  },
-}));
+// Mock expo-audio for voice recording (ChatInput uses useAudioRecorder)
+jest.mock('expo-audio', () => {
+  const audioRecorder = {
+    uri: null,
+    isRecording: false,
+    currentTime: 0,
+    prepareToRecordAsync: jest.fn(async () => {}),
+    record: jest.fn(),
+    stop: jest.fn(async () => {}),
+    pause: jest.fn(),
+    getStatus: jest.fn(() => ({ isRecording: false, uri: null })),
+  };
+  return {
+    useAudioRecorder: jest.fn(() => audioRecorder),
+    useAudioRecorderState: jest.fn(() => ({ isRecording: false, uri: null })),
+    RecordingPresets: { HIGH_QUALITY: {} },
+    requestRecordingPermissionsAsync: jest.fn(async () => ({ granted: true })),
+    setAudioModeAsync: jest.fn(async () => {}),
+  };
+});
 
 // Mock expo-speech for TTS
 jest.mock('expo-speech', () => ({
@@ -236,8 +252,6 @@ jest.mock('@react-three/drei', () => {
   const { View } = require('react-native');
 
   const useGLTF = jest.fn(() => ({ scene: {} }));
-  // useProgress: module-level counter so first 2 calls show loading, rest show loaded
-  // This matches the old instanceCount behavior that tests expect
   let _progressCalls = 0;
   const useProgress = jest.fn(() => {
     _progressCalls++;
@@ -246,6 +260,32 @@ jest.mock('@react-three/drei', () => {
     }
     return { progress: 100, active: false, errors: [], item: '', loaded: 100, total: 100 };
   });
+
+  return {
+    useGLTF,
+    useProgress,
+    OrbitControls: React.forwardRef((props: any, ref: any) =>
+      React.createElement(View, { ref }),
+    ),
+    Center: ({ children, ...props }: any) =>
+      React.createElement(View, props, children),
+  };
+});
+
+// Mock @react-three/drei/native (same surface as drei for test purposes)
+jest.mock('@react-three/drei/native', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  const useGLTF = jest.fn(() => ({ scene: {} }));
+  const useProgress = jest.fn(() => ({
+    progress: 100,
+    active: false,
+    errors: [],
+    item: '',
+    loaded: 100,
+    total: 100,
+  }));
 
   return {
     useGLTF,

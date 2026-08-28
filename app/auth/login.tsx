@@ -25,6 +25,9 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
   const handleLogin = async () => {
     setError(null);
 
@@ -98,11 +101,11 @@ export default function LoginScreen() {
           )}
 
           {/* Email input */}
-          <View style={{ marginBottom: 16 }}>
+          <View style={{ marginBottom: 18 }}>
             <Text
               style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
+                fontFamily: 'Inter-SemiBold',
+                fontSize: 13,
                 color: colors.deepSlate,
                 marginBottom: 6,
               }}
@@ -118,25 +121,28 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              onFocus={() => setEmailFocused(true)}
+              onBlur={() => setEmailFocused(false)}
               style={{
                 backgroundColor: colors.surface,
-                borderRadius: 12,
-                padding: 16,
-                fontSize: 16,
+                borderRadius: 14,
+                padding: 14,
+                fontSize: 15,
                 fontFamily: 'Inter',
                 color: colors.deepSlate,
-                borderWidth: 1,
-                borderColor: colors.borderLight,
+                borderWidth: 2,
+                borderColor: emailFocused ? colors.clinicalBlue : colors.borderLight,
+                borderBottomWidth: 4.5,
               }}
             />
           </View>
 
           {/* Password input */}
-          <View style={{ marginBottom: 24 }}>
+          <View style={{ marginBottom: 26 }}>
             <Text
               style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
+                fontFamily: 'Inter-SemiBold',
+                fontSize: 13,
                 color: colors.deepSlate,
                 marginBottom: 6,
               }}
@@ -151,15 +157,18 @@ export default function LoginScreen() {
               placeholderTextColor={colors.neutral}
               secureTextEntry
               autoCapitalize="none"
+              onFocus={() => setPasswordFocused(true)}
+              onBlur={() => setPasswordFocused(false)}
               style={{
                 backgroundColor: colors.surface,
-                borderRadius: 12,
-                padding: 16,
-                fontSize: 16,
+                borderRadius: 14,
+                padding: 14,
+                fontSize: 15,
                 fontFamily: 'Inter',
                 color: colors.deepSlate,
-                borderWidth: 1,
-                borderColor: colors.borderLight,
+                borderWidth: 2,
+                borderColor: passwordFocused ? colors.clinicalBlue : colors.borderLight,
+                borderBottomWidth: 4.5,
               }}
             />
           </View>
@@ -172,15 +181,18 @@ export default function LoginScreen() {
             activeOpacity={0.8}
             style={{
               backgroundColor: submitting ? colors.neutral : colors.clinicalBlue,
-              borderRadius: 12,
+              borderColor: submitting ? colors.neutral : '#005C8A',
+              borderWidth: 1,
+              borderBottomWidth: submitting ? 1 : 5,
+              borderRadius: 16,
               padding: 16,
               alignItems: 'center',
-              marginBottom: 16,
+              marginBottom: 20,
             }}
           >
             <Text
               style={{
-                fontFamily: 'Inter-SemiBold',
+                fontFamily: 'Inter-Bold',
                 fontSize: 16,
                 color: '#FFFFFF',
               }}
@@ -203,7 +215,7 @@ export default function LoginScreen() {
                 <TouchableOpacity>
                   <Text
                     style={{
-                      fontFamily: 'Inter-SemiBold',
+                      fontFamily: 'Inter-Bold',
                       fontSize: 14,
                       color: colors.clinicalBlue,
                     }}

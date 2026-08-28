@@ -28,6 +28,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       clinical_manuals: {
         Row: {
@@ -54,6 +55,7 @@ export interface Database {
           page_number?: number | null;
           embedding?: number[] | null;
         };
+        Relationships: [];
       };
       pedagogical_progress: {
         Row: {
@@ -83,6 +85,7 @@ export interface Database {
           score?: number;
           completed_at?: string | null;
         };
+        Relationships: [];
       };
       diagnosis_sessions: {
         Row: {
@@ -109,6 +112,7 @@ export interface Database {
           clinical_notes?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       ai_conversations: {
         Row: {
@@ -132,6 +136,7 @@ export interface Database {
           started_at?: string;
           last_updated?: string;
         };
+        Relationships: [];
       };
       badges: {
         Row: {
@@ -161,6 +166,7 @@ export interface Database {
           requirement_value?: number;
           created_at?: string;
         };
+        Relationships: [];
       };
       user_badges: {
         Row: {
@@ -181,10 +187,40 @@ export interface Database {
           badge_id?: string;
           earned_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      match_manuals: {
+        Args: {
+          query_embedding: string;
+          match_count?: number;
+        };
+        Returns: {
+          id: string;
+          title: string;
+          content: string;
+          source_document: string | null;
+          page_number: number | null;
+          similarity: number;
+        }[];
+      };
+      match_manuals_by_text: {
+        Args: {
+          search_query: string;
+          match_count?: number;
+        };
+        Returns: {
+          id: string;
+          title: string;
+          content: string;
+          source_document: string | null;
+          page_number: number | null;
+          similarity: number;
+        }[];
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

@@ -28,7 +28,9 @@ const CLASS_COLORS: Record<string, string> = {
 };
 
 function getColor(className: string): string {
-  return CLASS_COLORS[className] ?? '#EF4444';
+  // yolo.ts class names end in " class" (e.g. "Caries 1 class"); map the
+  // base name to its color.
+  return CLASS_COLORS[className.replace(/\s+class$/, '')] ?? '#EF4444';
 }
 
 // ── Props ──────────────────────────────────────────────────────────────────
@@ -115,8 +117,8 @@ export default function DetectionOverlay({
         left: 0,
         right: 0,
         bottom: 0,
+        pointerEvents: 'none',
       }}
-      pointerEvents="none"
     >
       {detections.map((detection, index) => {
         const [nx, ny, nw, nh] = detection.bbox;

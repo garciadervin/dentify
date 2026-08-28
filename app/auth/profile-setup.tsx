@@ -48,13 +48,17 @@ export default function ProfileSetupScreen() {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: dbError } = await (supabase.from('profiles') as any).insert({
-      id: user?.id ?? '',
-      full_name: fullName.trim(),
-      student_id: studentId.trim() || null,
-      role: 'student',
-    });
+    // Upsert so revisiting this screen after a partial setup does not fail
+    // on a duplicate primary key (profiles.id references auth.users.id).
+    const { error: dbError } = await (supabase.from('profiles') as any).upsert(
+      {
+        id: user.id,
+        full_name: fullName.trim(),
+        student_id: studentId.trim() || null,
+        role: 'student',
+      },
+      { onConflict: 'id' }
+    );
 
     setSubmitting(false);
 

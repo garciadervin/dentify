@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { createShadow } from '@/constants/theme';
 
 interface ModelControlsProps {
   onZoomIn?: () => void;
@@ -73,38 +74,36 @@ export default function ModelControls({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 24,
-    right: 16,
-    gap: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    borderRadius: 16,
-    padding: 8,
-    // subtle shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    bottom: 12,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.80)',
+    borderRadius: 24,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    ...createShadow(2, 8, '#000000', 0.08),
+    elevation: 5,
   },
   button: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    // border
     borderWidth: 1,
-    borderColor: '#F2F4F6',
+    borderColor: '#E5E5E5',
+    ...createShadow(1, 3, '#000000', 0.05),
   },
   buttonActive: {
     backgroundColor: '#0077B6',
     borderColor: '#0077B6',
   },
   icon: {
-    fontSize: 22,
+    fontSize: 18,
     color: '#191C1E',
-    lineHeight: 24,
+    fontWeight: 'bold',
   },
   iconActive: {
     color: '#FFFFFF',

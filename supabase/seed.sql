@@ -1,0 +1,9 @@
+-- Dentify seed data — runs after migrations on `supabase db reset`.
+--
+-- RAG manual content is intentionally NOT seeded here:
+-- run `npm run ingest:rag` to chunk, embed, and load the clinical manuals
+-- from ./docs into clinical_manuals (supports a dry-run export while the
+-- Supabase project is stopped).
+--
+-- Badge definitions are created by the badges migration, so nothing else is
+-- required for a clean local start.

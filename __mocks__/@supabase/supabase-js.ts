@@ -16,6 +16,9 @@ function createQueryBuilder(result: any) {
   builder.insert = jest.fn(() => createQueryBuilder(result));
   builder.update = jest.fn(() => createQueryBuilder(result));
   builder.delete = jest.fn(() => createQueryBuilder(result));
+  builder.upsert = jest.fn(() => createQueryBuilder(result));
+  builder.or = jest.fn(() => createQueryBuilder(result));
+  builder.limit = jest.fn(() => createQueryBuilder(result));
   builder.then = (onfulfilled: any, onrejected: any) =>
     Promise.resolve(result).then(onfulfilled, onrejected);
   return builder;
@@ -37,11 +40,13 @@ const mockSupabaseClient = {
   },
 };
 
-// Default mock RPC implementation that returns test chunks
+// Default mock RPC implementation that returns test chunks for the two
+// search functions the RAG service actually calls.
 mockRpc.mockImplementation((functionName: string, params: any) => {
-  if (functionName === 'match_clinical_manuals') {
-    // Return empty for queries that don't match clinical content
-    if (params?.query_text === 'What is caries?') {
+  if (functionName === 'match_manuals' || functionName === 'match_manuals_by_text') {
+    // A deliberately low-similarity query returns nothing so callers exercise
+    // the fallback path.
+    if (params?.query_embedding === '[]' || params?.search_query === 'caries sin match') {
       return Promise.resolve({ data: [], error: null });
     }
     return Promise.resolve({
@@ -51,6 +56,7 @@ mockRpc.mockImplementation((functionName: string, params: any) => {
           content: 'Dental anatomy involves the study of tooth structure.',
           title: 'Dental Anatomy Basics',
           source_document: 'Clinical Manual Vol 1',
+          page_number: 12,
           similarity: 0.95,
         },
         {
@@ -58,6 +64,7 @@ mockRpc.mockImplementation((functionName: string, params: any) => {
           content: 'The periodontium consists of the gingiva and supporting structures.',
           title: 'Periodontology',
           source_document: 'Clinical Manual Vol 2',
+          page_number: 97,
           similarity: 0.89,
         },
       ],

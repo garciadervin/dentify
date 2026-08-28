@@ -6,6 +6,7 @@ node_modules/
 # Expo
 .expo/
 dist/
+dist-web/
 web-build/
 expo-env.d.ts
 
@@ -42,3 +43,16 @@ app-example
 # generated native folders
 /ios
 /android
+
+# RAG generated export (regenerate with: npm run ingest:rag -- --dry-run)
+docs/rag-export.json
+
+# Playwright captures and console logs
+.playwright-cli/
+dentify-*.png
+
+# CodeGraph local index
+.codegraph/
+
+# Clinical textbook PDFs (copyrighted — do not publish; re-ingest from a local copy)
+docs/*.pdf

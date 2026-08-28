@@ -117,11 +117,6 @@ export function useBadges(): UseBadgesReturn {
     if (!supabase) return;
 
     try {
-      // Find badges matching this requirement type and value threshold
-      const matchingBadges = badges.filter(
-        (b) => !b.earned && b.name !== '' // We'll check requirement_type/value from DB
-      );
-
       // Fetch the actual badge definitions to check requirement_type/value
       const { data: defs, error: defsError } = await (supabase
         .from('badges') as unknown as SupabaseFrom)
@@ -131,6 +126,10 @@ export function useBadges(): UseBadgesReturn {
 
       if (defsError || !defs) return;
 
+      const { data: userData } = await supabase.auth.getUser();
+      const profileId = userData.user?.id;
+      if (!profileId) return;
+
       // For each qualifying badge, insert a user_badge row
       for (const badgeDef of defs as Array<{ id: string; requirement_type: string; requirement_value: number }>) {
         const alreadyEarned = badges.find((b) => b.id === badgeDef.id)?.earned;
@@ -138,7 +137,7 @@ export function useBadges(): UseBadgesReturn {
 
         const { error: insertError } = await (supabase
           .from('user_badges') as unknown as SupabaseFrom)
-          .insert({ profile_id: (await supabase.auth.getUser()).data.user?.id ?? '', badge_id: badgeDef.id });
+          .insert({ profile_id: profileId, badge_id: badgeDef.id });
 
         if (insertError) {
           // Ignore duplicate key errors (already earned)

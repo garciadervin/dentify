@@ -33,6 +33,7 @@ jest.mock('@/src/lib/supabase', () => ({
     },
     from: jest.fn(() => ({
       insert: jest.fn(async () => ({ error: null })),
+      upsert: jest.fn(async () => ({ error: null })),
       select: jest.fn(() => ({
         eq: jest.fn(() => ({ single: jest.fn(async () => ({ data: null, error: null })) })),
       })),

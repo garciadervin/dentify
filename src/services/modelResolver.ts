@@ -1,51 +1,66 @@
 /**
- * GLB model resolver — converts module references to local URIs
- * for use with @react-three/drei's useGLTF.
+ * GLB model resolver — converts Metro module references to local file URIs
+ * that useGLTF can load on physical devices.
  *
- * In Expo Go, bundled assets referenced via require() are resolved
- * using resolveAssetSource from react-native, which returns the
- * correct local file URI without needing expo-asset downloadAsync.
+ * Strategy:
+ * 1. Try expo-asset Asset.fromModule().downloadAsync() → asset.localUri
+ *    This works on both Expo Go and standalone builds (dev + prod).
+ * 2. Fall back to Image.resolveAssetSource() for environments where
+ *    expo-asset is not available.
+ *
+ * The resolved URI is cached to avoid redundant downloads.
  */
 
+import { Asset } from 'expo-asset';
 import { Image } from 'react-native';
 
-/**
- * Cache of resolved asset URIs keyed by module id.
- */
-const uriCache = new Map<string, string>();
+const uriCache = new Map<number, string>();
 
 /**
- * Resolves a GLB model to its local URI.
+ * Resolves a bundled GLB asset module reference to a local file URI.
+ * Safe to call multiple times — subsequent calls return cached result instantly.
  *
- * @param moduleRef — result of `require('@/assets/models/...')`
- * @returns The local file URI
+ * @param moduleRef — numeric asset ID from `require('./model.glb')`
+ * @returns Absolute local URI string (file:// or http://localhost for Expo Go)
  */
 export async function resolveModelUri(moduleRef: number): Promise<string> {
-  const key = String(moduleRef);
-
-  if (uriCache.has(key)) {
-    return uriCache.get(key)!;
+  if (uriCache.has(moduleRef)) {
+    return uriCache.get(moduleRef)!;
   }
 
-  // resolveAssetSource returns { uri, width, height } for bundled assets
-  const source = Image.resolveAssetSource(moduleRef);
+  try {
+    // Primary: expo-asset guarantees a localUri on the device filesystem
+    const asset = Asset.fromModule(moduleRef);
+    await asset.downloadAsync();
 
-  if (!source?.uri) {
-    throw new Error(`Could not resolve URI for asset ${moduleRef}`);
+    const uri = asset.localUri ?? asset.uri;
+    if (!uri) throw new Error(`expo-asset returned no URI for module ${moduleRef}`);
+
+    uriCache.set(moduleRef, uri);
+    return uri;
+  } catch {
+    // Fallback: resolveAssetSource works in Expo Go dev mode
+    const source = Image.resolveAssetSource(moduleRef);
+    if (!source?.uri) {
+      throw new Error(`Could not resolve URI for asset module ${moduleRef}`);
+    }
+    uriCache.set(moduleRef, source.uri);
+    return source.uri;
   }
-
-  uriCache.set(key, source.uri);
-  return source.uri;
 }
 
 /**
- * Synchronous version — returns the URI if already cached.
+ * Returns the cached URI synchronously. Throws if resolveModelUri has not
+ * been called yet for this module reference.
  */
-export function getCachedModelUri(moduleRef: number): string {
-  const key = String(moduleRef);
-  const uri = uriCache.get(key);
-  if (!uri) {
-    throw new Error(`Model ${moduleRef} not yet resolved. Call resolveModelUri() first.`);
-  }
-  return uri;
+export function getCachedModelUri(moduleRef: number): string | null {
+  return uriCache.get(moduleRef) ?? null;
+}
+
+/**
+ * Pre-warms the cache for a list of module references in parallel.
+ * Call this on app startup to avoid loading delays in the simulator.
+ */
+export async function preloadModels(moduleRefs: number[]): Promise<void> {
+  await Promise.allSettled(moduleRefs.map(resolveModelUri));
 }

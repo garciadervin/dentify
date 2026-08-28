@@ -42,13 +42,10 @@ export async function isModelCached(modelFile: string): Promise<boolean> {
  */
 export async function cacheModel(modelFile: string): Promise<void> {
   try {
-    // Ensure cache directory exists
+    // Ensure the cache directory exists before copying into it.
     const cacheDir = getCacheDir();
-    if (!Paths.info(cacheDir.uri).exists) {
-      // Directory creation happens implicitly via File operations
-    }
+    cacheDir.create({ intermediates: true });
 
-    const source = `${MODEL_BASE}${modelFile}`;
     const destination = getCacheFile(modelFile);
 
     // Check if already cached

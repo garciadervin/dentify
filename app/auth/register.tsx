@@ -26,6 +26,10 @@ export default function RegisterScreen() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmFocused, setConfirmFocused] = useState(false);
+
   const handleRegister = async () => {
     setError(null);
 
@@ -40,11 +44,14 @@ export default function RegisterScreen() {
     }
 
     setSubmitting(true);
-    const { error: signUpError } = await signUp(email.trim(), password);
+    const { error: signUpError, needsConfirmation } = await signUp(email.trim(), password);
     setSubmitting(false);
 
     if (signUpError) {
       setError(signUpError);
+    } else if (needsConfirmation) {
+      // Email confirmation enabled: no session yet — guide the user.
+      setError('Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.');
     } else {
       router.push('/auth/profile-setup');
     }
@@ -104,11 +111,11 @@ export default function RegisterScreen() {
           )}
 
           {/* Email input */}
-          <View style={{ marginBottom: 16 }}>
+          <View style={{ marginBottom: 18 }}>
             <Text
               style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
+                fontFamily: 'Inter-SemiBold',
+                fontSize: 13,
                 color: colors.deepSlate,
                 marginBottom: 6,
               }}
@@ -124,25 +131,28 @@ export default function RegisterScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              onFocus={() => setEmailFocused(true)}
+              onBlur={() => setEmailFocused(false)}
               style={{
                 backgroundColor: colors.surface,
-                borderRadius: 12,
-                padding: 16,
-                fontSize: 16,
+                borderRadius: 14,
+                padding: 14,
+                fontSize: 15,
                 fontFamily: 'Inter',
                 color: colors.deepSlate,
-                borderWidth: 1,
-                borderColor: colors.borderLight,
+                borderWidth: 2,
+                borderColor: emailFocused ? colors.clinicalBlue : colors.borderLight,
+                borderBottomWidth: 4.5,
               }}
             />
           </View>
 
           {/* Password input */}
-          <View style={{ marginBottom: 16 }}>
+          <View style={{ marginBottom: 18 }}>
             <Text
               style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
+                fontFamily: 'Inter-SemiBold',
+                fontSize: 13,
                 color: colors.deepSlate,
                 marginBottom: 6,
               }}
@@ -157,25 +167,28 @@ export default function RegisterScreen() {
               placeholderTextColor={colors.neutral}
               secureTextEntry
               autoCapitalize="none"
+              onFocus={() => setPasswordFocused(true)}
+              onBlur={() => setPasswordFocused(false)}
               style={{
                 backgroundColor: colors.surface,
-                borderRadius: 12,
-                padding: 16,
-                fontSize: 16,
+                borderRadius: 14,
+                padding: 14,
+                fontSize: 15,
                 fontFamily: 'Inter',
                 color: colors.deepSlate,
-                borderWidth: 1,
-                borderColor: colors.borderLight,
+                borderWidth: 2,
+                borderColor: passwordFocused ? colors.clinicalBlue : colors.borderLight,
+                borderBottomWidth: 4.5,
               }}
             />
           </View>
 
           {/* Confirm password input */}
-          <View style={{ marginBottom: 24 }}>
+          <View style={{ marginBottom: 26 }}>
             <Text
               style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
+                fontFamily: 'Inter-SemiBold',
+                fontSize: 13,
                 color: colors.deepSlate,
                 marginBottom: 6,
               }}
@@ -190,15 +203,18 @@ export default function RegisterScreen() {
               placeholderTextColor={colors.neutral}
               secureTextEntry
               autoCapitalize="none"
+              onFocus={() => setConfirmFocused(true)}
+              onBlur={() => setConfirmFocused(false)}
               style={{
                 backgroundColor: colors.surface,
-                borderRadius: 12,
-                padding: 16,
-                fontSize: 16,
+                borderRadius: 14,
+                padding: 14,
+                fontSize: 15,
                 fontFamily: 'Inter',
                 color: colors.deepSlate,
-                borderWidth: 1,
-                borderColor: colors.borderLight,
+                borderWidth: 2,
+                borderColor: confirmFocused ? colors.clinicalBlue : colors.borderLight,
+                borderBottomWidth: 4.5,
               }}
             />
           </View>
@@ -211,15 +227,18 @@ export default function RegisterScreen() {
             activeOpacity={0.8}
             style={{
               backgroundColor: submitting ? colors.neutral : colors.clinicalBlue,
-              borderRadius: 12,
+              borderColor: submitting ? colors.neutral : '#005C8A',
+              borderWidth: 1,
+              borderBottomWidth: submitting ? 1 : 5,
+              borderRadius: 16,
               padding: 16,
               alignItems: 'center',
-              marginBottom: 16,
+              marginBottom: 20,
             }}
           >
             <Text
               style={{
-                fontFamily: 'Inter-SemiBold',
+                fontFamily: 'Inter-Bold',
                 fontSize: 16,
                 color: '#FFFFFF',
               }}

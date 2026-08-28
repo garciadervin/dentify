@@ -15,16 +15,18 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@/constants/theme';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors, createShadow } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import AppHeader from '@/components/AppHeader';
 import MessageBubble from '@/components/MessageBubble';
 import ChatInput from '@/components/ChatInput';
 import { chatWithContext } from '@/src/services/rag';
 import type { GroqMessage } from '@/src/services/groq';
+import { getOfflineMessage } from '@/src/services/groq';
 import {
   initLocalDB,
   saveConversationLocal,
@@ -89,37 +91,44 @@ export default function ChatScreen() {
   }, []);
 
   /**
-   * Save current messages as a conversation to local DB.
+   * Save messages as a conversation to local DB.
+   * Accepts an explicit message list so callers can save the exact array they
+   * just rendered (avoids the stale-closure bug where a deferred save missed
+   * the latest exchange). Preserves started_at across updates.
    */
-  const saveCurrentConversation = useCallback(async () => {
-    const userMessages = messages.filter((m) => m.id !== 'welcome');
-    if (userMessages.length === 0) return;
+  const saveCurrentConversation = useCallback(
+    async (messageList?: ChatMessage[]) => {
+      const source = messageList ?? messages;
+      const userMessages = source.filter((m) => m.id !== 'welcome' && !m.isLoading);
+      if (userMessages.length === 0) return;
 
-    const storedMessages: StoredMessage[] = userMessages.map((m) => ({
-      role: m.role,
-      content: m.text,
-      timestamp: m.timestamp,
-    }));
+      const storedMessages: StoredMessage[] = userMessages.map((m) => ({
+        role: m.role,
+        content: m.text,
+        timestamp: m.timestamp,
+      }));
 
-    const firstUserMsg = userMessages.find((m) => m.role === 'user');
-    const title = firstUserMsg
-      ? firstUserMsg.text.slice(0, 60)
-      : 'Conversación';
+      const firstUserMsg = userMessages.find((m) => m.role === 'user');
+      const title = firstUserMsg ? firstUserMsg.text.slice(0, 60) : 'Conversación';
 
-    const convId = currentConvId ?? generateConversationId();
-    setCurrentConvId(convId);
+      const convId = currentConvId ?? generateConversationId();
+      const existing = conversations.find((c) => c.id === convId);
+      const started_at = existing?.started_at ?? new Date().toISOString();
+      setCurrentConvId(convId);
 
-    const conv: Conversation = {
-      id: convId,
-      title,
-      messages: storedMessages,
-      started_at: new Date().toISOString(),
-      last_updated: new Date().toISOString(),
-    };
+      const conv: Conversation = {
+        id: convId,
+        title,
+        messages: storedMessages,
+        started_at,
+        last_updated: new Date().toISOString(),
+      };
 
-    await saveConversationLocal(conv);
-    await loadConversations();
-  }, [messages, currentConvId, loadConversations]);
+      await saveConversationLocal(conv);
+      await loadConversations();
+    },
+    [messages, currentConvId, conversations, loadConversations]
+  );
 
   const handleSend = useCallback(
     async (text: string) => {
@@ -140,51 +149,56 @@ export default function ChatScreen() {
         isLoading: true,
       };
 
-      setMessages((prev) => [...prev, userMessage, loadingMessage]);
+      const nextMessages = [...messages, userMessage, loadingMessage];
+      setMessages(nextMessages);
       setIsLoading(true);
 
-      try {
-        const groqMessages: GroqMessage[] = [
-          { role: 'user', content: text },
-        ];
-
-        const response = await chatWithContext(groqMessages);
-
-        setMessages((prev) => {
-          const updated = [...prev];
-          const loadingIndex = updated.findIndex((m) => m.isLoading);
-          if (loadingIndex !== -1) {
-            updated[loadingIndex] = {
-              id: generateId(),
-              text: response.content,
-              role: 'assistant',
-              timestamp: formatTimestamp(),
-            };
-          }
-          return updated;
-        });
-
-        // Auto-save conversation after receiving response
-        setTimeout(() => saveCurrentConversation(), 100);
-      } catch {
-        setMessages((prev) => {
-          const updated = [...prev];
-          const loadingIndex = updated.findIndex((m) => m.isLoading);
-          if (loadingIndex !== -1) {
-            updated[loadingIndex] = {
-              id: generateId(),
-              text: 'Lo siento, ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.',
-              role: 'assistant',
-              timestamp: formatTimestamp(),
-            };
-          }
-          return updated;
-        });
-      } finally {
+      const applyReply = (reply: ChatMessage) => {
+        const finalMessages = [...nextMessages];
+        finalMessages[finalMessages.length - 1] = reply;
+        setMessages(finalMessages);
         setIsLoading(false);
+        // Save with the actual final messages.
+        void saveCurrentConversation(finalMessages);
+      };
+
+      try {
+        // Full conversation history (minus welcome + loading placeholder) so
+        // the assistant has context from previous turns.
+        const history: GroqMessage[] = nextMessages
+          .filter((m) => m.id !== 'welcome' && !m.isLoading)
+          .map((m) => ({ role: m.role, content: m.text }));
+
+        const response = await chatWithContext(history);
+
+        applyReply({
+          id: generateId(),
+          text: response.content,
+          role: 'assistant',
+          timestamp: formatTimestamp(),
+        });
+      } catch (err: any) {
+        const errorText = err?.message ?? '';
+        const isBackendError =
+          errorText.includes('Groq proxy error') ||
+          errorText.includes('Groq API error') ||
+          errorText.includes('no configurada') ||
+          errorText.includes('fetch failed') ||
+          errorText.includes('Network request failed');
+
+        const fallbackText = isBackendError
+          ? getOfflineMessage()
+          : 'Lo siento, ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.';
+
+        applyReply({
+          id: generateId(),
+          text: fallbackText,
+          role: 'assistant',
+          timestamp: formatTimestamp(),
+        });
       }
     },
-    [isLoading, saveCurrentConversation]
+    [isLoading, messages, saveCurrentConversation]
   );
 
   /**
@@ -246,6 +260,13 @@ export default function ChatScreen() {
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   };
 
+  const SUGGESTIONS = [
+    '¿Qué es la periodontitis?',
+    '¿Cómo identificar caries?',
+    'Explícame la anatomía pulpar',
+    'Protocolo de endodoncia',
+  ];
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.skyLight }} edges={['bottom']}>
       <AppHeader subtitle="Denty-AI" />
@@ -275,6 +296,42 @@ export default function ChatScreen() {
             flatListRef.current?.scrollToEnd({ animated: true });
           }}
         />
+
+        {/* Suggestion Chips */}
+        {messages.length === 1 && (
+          <View style={{ marginBottom: 12 }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
+            >
+              {SUGGESTIONS.map((suggestion, index) => (
+                <TouchableOpacity
+                  key={`suggest-${index}`}
+                  onPress={() => handleSend(suggestion)}
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.borderLight,
+                    borderWidth: 1.5,
+                    borderBottomWidth: 3.5,
+                    borderRadius: 16,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <MaterialCommunityIcons name="lightbulb-on-outline" size={14} color={colors.clinicalBlue} />
+                  <Text style={{ fontFamily: 'Inter-SemiBold', fontSize: 12, color: colors.deepSlate }}>
+                    {suggestion}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
         <ChatInput onSend={handleSend} disabled={isLoading} />
       </KeyboardAvoidingView>
 
@@ -295,10 +352,7 @@ export default function ChatScreen() {
           backgroundColor: colors.surface,
           alignItems: 'center',
           justifyContent: 'center',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
+          ...createShadow(2, 4, '#000000', 0.1),
           elevation: 3,
         }}
       >

@@ -78,3 +78,103 @@ export const BorderRadius = {
   medium: 24,
   small: 16,
 };
+
+/**
+ * Cross-platform shadow helper.
+ * Uses boxShadow (web) or native shadow props based on platform.
+ *
+ * @param offsetY — vertical offset in px
+ * @param blur — blur radius in px
+ * @param color — hex color (e.g. '#000000')
+ * @param opacity — shadow opacity 0–1
+ */
+export function createShadow(
+  offsetY: number = 2,
+  blur: number = 8,
+  color: string = '#000000',
+  opacity: number = 0.1,
+): Record<string, any> {
+  const hexToRgb = (hex: string) => {
+    const h = hex.replace('#', '');
+    return {
+      r: parseInt(h.substring(0, 2), 16),
+      g: parseInt(h.substring(2, 4), 16),
+      b: parseInt(h.substring(4, 6), 16),
+    };
+  };
+  const { r, g, b } = hexToRgb(color);
+  return Platform.select({
+    web: { boxShadow: `0 ${offsetY}px ${blur}px rgba(${r},${g},${b},${opacity})` as any },
+    default: {
+      shadowColor: color,
+      shadowOffset: { width: 0, height: offsetY },
+      shadowOpacity: opacity,
+      shadowRadius: blur,
+    } as any,
+  });
+}
+
+/**
+ * 3D Button Style Generator.
+ * Returns styles for normal and pressed states of 3D buttons.
+ */
+export function getButton3DStyles(
+  type: 'primary' | 'success' | 'secondary' | 'error',
+  colorScheme: 'light' | 'dark' = 'light'
+) {
+  const colors = Colors[colorScheme];
+  
+  const config = {
+    primary: {
+      bg: colors.clinicalBlue,
+      border: colorScheme === 'dark' ? '#0077B6' : '#005C8A',
+      text: '#FFFFFF',
+    },
+    success: {
+      bg: colors.successTeal,
+      border: colorScheme === 'dark' ? '#004D44' : '#004037',
+      text: '#FFFFFF',
+    },
+    secondary: {
+      bg: colors.surface,
+      border: colors.borderLight,
+      text: colors.deepSlate,
+    },
+    error: {
+      bg: '#E74C3C',
+      border: '#C0392B',
+      text: '#FFFFFF',
+    },
+  }[type];
+
+  return {
+    normal: {
+      backgroundColor: config.bg,
+      borderWidth: 1,
+      borderColor: config.border,
+      borderBottomWidth: 5,
+      borderRadius: 16,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    pressed: {
+      backgroundColor: config.bg,
+      borderWidth: 1,
+      borderColor: config.border,
+      borderBottomWidth: 1,
+      marginTop: 4,
+      marginBottom: -4, // Keep height consistent in layouts
+      borderRadius: 16,
+    },
+    text: {
+      color: config.text,
+      fontFamily: 'Inter-Bold',
+      fontSize: 15,
+      textAlign: 'center' as const,
+    }
+  };
+}
+

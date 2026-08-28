@@ -7,7 +7,8 @@ export interface UseAuthReturn {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string) => Promise<{ error: string | null; needsConfirmation?: boolean }>;
+  signOut: () => Promise<void>;
 }
 
 export function useAuth(): UseAuthReturn {
@@ -25,8 +26,11 @@ export function useAuth(): UseAuthReturn {
       return () => clearTimeout(id);
     }
 
+    let cancelled = false;
+
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      if (cancelled) return;
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setLoading(false);
@@ -36,12 +40,14 @@ export function useAuth(): UseAuthReturn {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      if (cancelled) return;
       setSession(newSession);
       setUser(newSession?.user ?? null);
       setLoading(false);
     });
 
     return () => {
+      cancelled = true;
       subscription?.unsubscribe();
     };
   }, []);
@@ -64,23 +70,39 @@ export function useAuth(): UseAuthReturn {
   );
 
   const signUp = useCallback(
-    async (email: string, password: string): Promise<{ error: string | null }> => {
+    async (email: string, password: string): Promise<{ error: string | null; needsConfirmation?: boolean }> => {
       const supabase = getSupabase();
       if (!supabase) {
         return { error: 'Supabase no está configurado' };
       }
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        // Role lives in auth user_metadata so route guards can read it; the
+        // profiles table row is created separately on profile setup.
+        options: { data: { role: 'student' } },
       });
 
-      return { error: error?.message ?? null };
+      // When email confirmation is enabled, signUp returns a user but no
+      // session — the caller should ask the user to confirm before continuing.
+      const needsConfirmation = Boolean(data?.user) && !data?.session;
+
+      return { error: error?.message ?? null, needsConfirmation };
     },
     []
   );
 
-  return { user, session, loading, signIn, signUp };
+  const signOut = useCallback(async (): Promise<void> => {
+    const supabase = getSupabase();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    setUser(null);
+    setSession(null);
+  }, []);
+
+  return { user, session, loading, signIn, signUp, signOut };
 }
 
 export default useAuth;

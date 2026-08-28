@@ -5,7 +5,9 @@ import DashboardScreen from '@/app/(tabs)/index';
 describe('DashboardScreen', () => {
   it('should render a welcome title', () => {
     render(<DashboardScreen />);
-    expect(screen.getByText(/welcome|hello|dashboard/i)).toBeTruthy();
+    // Welcome text appears in the greeting; use getAllByText to avoid multiple element error
+    const elements = screen.getAllByText(/bienvenido|welcome|hello|dashboard/i);
+    expect(elements.length).toBeGreaterThan(0);
   });
 
   it('should render a Streak metric card', () => {

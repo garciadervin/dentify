@@ -12,7 +12,8 @@
 // ── Model State ──────────────────────────────────────────────────────────
 let _model = null;
 let _modelLoaded = false;
-const CLASS_NAMES = ['Abrasion', 'Filling', 'Crown', 'Caries 1', 'Caries 2', 'Caries 3', 'Caries 4', 'Caries 5', 'Caries 6'];
+// Must match assets/ml/metadata.yaml `names` exactly (classId ↔ label).
+const CLASS_NAMES = ['Abrasion', 'Filling', 'Crown', 'Caries 1 class', 'Caries 2 class', 'Caries 3 class', 'Caries 4 class', 'Caries 5 class', 'Caries 6 class'];
 const MODEL_INPUT_SIZE = 640;
 const CONFIDENCE_THRESHOLD = 0.25;
 const IOU_THRESHOLD = 0.45;
@@ -84,33 +85,54 @@ async function runInference(imageData) {
     output.dispose();
 
     const numClasses = CLASS_NAMES.length;
-    const numDetections = shape[1] || 0;
-    const numValues = shape[2] || 0;
     const rawDets = [];
 
-    if (numValues === 6) {
-      for (let i = 0; i < numDetections; i++) {
+    // Reads class scores for detection at offset `off` (row stride `stride`).
+    const bestClass = (off) => {
+      let maxConf = 0, cls = -1;
+      for (let c = 0; c < numClasses; c++) {
+        const conf = sigmoid(data[off + 4 + c]);
+        if (conf > maxConf) { maxConf = conf; cls = c; }
+      }
+      return { maxConf, cls };
+    };
+    const pushDet = (off) => {
+      const { maxConf, cls } = bestClass(off);
+      if (maxConf > CONFIDENCE_THRESHOLD && cls >= 0) {
+        rawDets.push({
+          bbox: [data[off]/MODEL_INPUT_SIZE, data[off+1]/MODEL_INPUT_SIZE, data[off+2]/MODEL_INPUT_SIZE, data[off+3]/MODEL_INPUT_SIZE],
+          confidence: maxConf,
+          classId: cls,
+        });
+      }
+    };
+
+    const dim = shape.length >= 3 ? shape[1] || 0 : 0;
+    const stride = shape.length >= 3 ? shape[2] || 0 : 0;
+
+    if (dim > 0 && stride === 6) {
+      // end2end single-class: [x, y, w, h, conf, cls]
+      for (let i = 0; i < dim; i++) {
         const off = i * 6;
         const conf = data[off + 4], cls = Math.round(data[off + 5]);
         if (conf > CONFIDENCE_THRESHOLD && cls >= 0 && cls < numClasses) {
           rawDets.push({ bbox: [data[off]/MODEL_INPUT_SIZE, data[off+1]/MODEL_INPUT_SIZE, data[off+2]/MODEL_INPUT_SIZE, data[off+3]/MODEL_INPUT_SIZE], confidence: conf, classId: cls });
         }
       }
-    } else if (numValues === 4 + numClasses) {
-      for (let i = 0; i < numDetections; i++) {
-        const off = i * (4 + numClasses);
-        let maxConf = 0, cls = -1;
-        for (let c = 0; c < numClasses; c++) { const conf = sigmoid(data[off + 4 + c]); if (conf > maxConf) { maxConf = conf; cls = c; } }
-        if (maxConf > CONFIDENCE_THRESHOLD && cls >= 0) {
-          rawDets.push({ bbox: [data[off]/MODEL_INPUT_SIZE, data[off+1]/MODEL_INPUT_SIZE, data[off+2]/MODEL_INPUT_SIZE, data[off+3]/MODEL_INPUT_SIZE], confidence: maxConf, classId: cls });
-        }
+    } else if (stride >= 4 + numClasses) {
+      if (dim > stride) {
+        // candidate list (end2end, NMS baked in): [1, N, 4+nc(+mask coeffs)]
+        for (let i = 0; i < dim; i++) pushDet(i * stride);
+      } else {
+        // dense grid (non-end2end): [1, 4+nc(+mask coeffs), N] — transposed
+        for (let c = 0; c < stride; c++) pushDet(c * dim);
       }
     } else {
+      // flattened fallback: [x, y, w, h, conf, cls] per 6 values
       const flatSize = data.length;
-      const possible = Math.floor(flatSize / 6);
-      for (let i = 0; i < Math.min(possible, MAX_DETECTIONS); i++) {
+      const possible = Math.min(Math.floor(flatSize / 6), MAX_DETECTIONS);
+      for (let i = 0; i < possible; i++) {
         const off = i * 6;
-        if (off + 5 >= flatSize) break;
         const conf = sigmoid(data[off + 4]), cls = Math.round(data[off + 5]);
         if (conf > CONFIDENCE_THRESHOLD && cls >= 0 && cls < numClasses) {
           rawDets.push({ bbox: [data[off]/MODEL_INPUT_SIZE, data[off+1]/MODEL_INPUT_SIZE, data[off+2]/MODEL_INPUT_SIZE, data[off+3]/MODEL_INPUT_SIZE], confidence: conf, classId: cls });

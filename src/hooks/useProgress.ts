@@ -44,11 +44,14 @@ export function useProgress(): UseProgressReturn {
       return () => clearTimeout(id);
     }
 
+    let cancelled = false;
+
     // Fetch progress from Supabase
     supabase
       .from('pedagogical_progress')
       .select('*')
       .then(({ data, error }) => {
+        if (cancelled) return;
         if (error) {
           console.warn('Failed to fetch pedagogical progress:', error.message);
           setLoading(false);
@@ -92,6 +95,10 @@ export function useProgress(): UseProgressReturn {
 
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   /**

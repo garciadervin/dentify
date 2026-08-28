@@ -5,20 +5,9 @@
  * Renders with @react-three/fiber/native + drei's useGLTF.
  * Supports touch-based orbit (pan/rotate/zoom) via OrbitControls.
  * Raycasting detects tapped mesh and surfaces anatomical names.
- *
- * Works on both native (iOS/Android) and web via Expo.
- * On web, the Canvas overlay uses native R3F components only (no DOM inside Canvas).
  */
 
-import React, {
-  Suspense,
-  useRef,
-  useState,
-  useCallback,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from 'react';
+import React, { Suspense, useRef, useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -30,12 +19,6 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
 import { useGLTF, useProgress, OrbitControls } from '@react-three/drei/native';
 import * as THREE from 'three';
 
-export interface ModelViewerHandle {
-  zoomIn: () => void;
-  zoomOut: () => void;
-  reset: () => void;
-}
-
 interface ModelViewerProps {
   modelUri: string;
   autoRotate?: boolean;
@@ -45,33 +28,6 @@ interface ModelViewerProps {
   dentinaOpacity?: number;
   pulpaOpacity?: number;
   exploded?: boolean;
-}
-
-/**
- * Imperative camera controller rendered inside the Canvas. Talks to the
- * OrbitControls instance via useThree().controls so zoom/reset stay consistent
- * with the controls' internal state.
- */
-function CameraController({ ref }: { ref: React.Ref<ModelViewerHandle> }) {
-  const controls = useThree((s) => (s as any).controls) as {
-    dollyIn?: (scale: number) => void;
-    dollyOut?: (scale: number) => void;
-    reset?: () => void;
-  } | null;
-
-  useImperativeHandle(ref, () => ({
-    zoomIn: () => {
-      if (controls?.dollyIn) controls.dollyIn(0.8);
-    },
-    zoomOut: () => {
-      if (controls?.dollyOut) controls.dollyOut(0.8);
-    },
-    reset: () => {
-      if (controls?.reset) controls.reset();
-    },
-  }), [controls]);
-
-  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -204,36 +160,39 @@ function ModelScene({
 }
 
 // ---------------------------------------------------------------------------
+// Loading overlay — must live inside <Canvas> to access R3F context
+// ---------------------------------------------------------------------------
+
+function LoadingOverlay() {
+  const { progress } = useProgress();
+  if (progress >= 100) {
+    return <View testID="model-loaded" style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]} />;
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------
 // Public component
 // ---------------------------------------------------------------------------
 
-const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function ModelViewer(
-  {
-    modelUri,
-    autoRotate = false,
-    onStructureSelect,
-    selectedStructure,
-    esmalteOpacity = 1,
-    dentinaOpacity = 1,
-    pulpaOpacity = 1,
-    exploded = false,
-  },
-  ref
-) {
+export default function ModelViewer({
+  modelUri,
+  autoRotate = false,
+  onStructureSelect,
+  selectedStructure,
+  esmalteOpacity = 1,
+  dentinaOpacity = 1,
+  pulpaOpacity = 1,
+  exploded = false,
+}: ModelViewerProps) {
   const [canvasReady, setCanvasReady] = useState(false);
   const { progress } = useProgress();
   const isLoading = !canvasReady || progress < 100;
-  const cameraHandleRef = useRef<ModelViewerHandle>(null);
-
-  useImperativeHandle(ref, () => ({
-    zoomIn: () => cameraHandleRef.current?.zoomIn(),
-    zoomOut: () => cameraHandleRef.current?.zoomOut(),
-    reset: () => cameraHandleRef.current?.reset(),
-  }), []);
 
   return (
     <View style={styles.container} testID="model-viewer">
       <Canvas
+        testID="model-canvas"
         style={styles.canvas}
         onCreated={() => setCanvasReady(true)}
         camera={{ position: [0, 0, 5], fov: 45 }}
@@ -249,7 +208,6 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
           dampingFactor={0.1}
           enableDamping
         />
-        <CameraController ref={cameraHandleRef} />
 
         <Suspense fallback={null}>
           <ModelScene
@@ -262,7 +220,8 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
             exploded={exploded}
           />
         </Suspense>
-        {/* NOTE: No RN View inside Canvas — causes "Div is not part of THREE" on web */}
+
+        <LoadingOverlay />
       </Canvas>
 
       {/* Loading indicator outside Canvas */}
@@ -274,11 +233,6 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
             color="#0077B6"
           />
         </View>
-      )}
-
-      {/* Model loaded marker for tests */}
-      {!isLoading && (
-        <View testID="model-loaded" style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]} />
       )}
 
       {/* Anatomical label for selected structure */}
@@ -299,9 +253,7 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
       )}
     </View>
   );
-});
-
-export default ModelViewer;
+}
 
 const styles = StyleSheet.create({
   container: {

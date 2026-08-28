@@ -36,21 +36,33 @@ function normalize(text: string): string {
 
 /**
  * Parse a spoken text and return a matching route path, or null if no match.
+ * Keys and input are normalized the same way so accents/uppercase do not
+ * prevent a match.
  */
 export function parseNavigationCommand(text: string): string | null {
   const normalized = normalize(text);
 
-  // Try exact match first
-  if (NAVIGATION_COMMANDS[normalized]) {
-    return NAVIGATION_COMMANDS[normalized];
+  // Exact match against normalized keys
+  for (const [command, route] of Object.entries(NAVIGATION_COMMANDS)) {
+    if (normalized === normalize(command)) {
+      return route;
+    }
   }
 
-  // Try partial match — check if any command key is contained in the text
+  // Partial match — check if any normalized command key appears as whole words
+  // (word boundaries) so short commands like "inicio" do not match inside
+  // unrelated words such as "definición".
   for (const [command, route] of Object.entries(NAVIGATION_COMMANDS)) {
-    if (normalized.includes(command)) {
+    const normalizedCommand = normalize(command);
+    if (normalizedCommand && new RegExp(`\\b${escapeRegExp(normalizedCommand)}\\b`).test(normalized)) {
       return route;
     }
   }
 
   return null;
+}
+
+/** Escapes regex special characters in a literal string. */
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

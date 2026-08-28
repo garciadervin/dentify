@@ -1,0 +1,1743 @@
+/**
+ * Dentify — Banco de preguntas clínicas odontológicas
+ *
+ * 120 preguntas reales distribuidas en 5 especialidades × 3 niveles × 8 preguntas.
+ * Basadas en el Manual Clínico Odontológico de la UNERG.
+ *
+ * specialty keys coinciden exactamente con los nombres en useProgress/Supabase.
+ */
+
+export interface Question {
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+  specialty: string;
+  level: number;
+}
+
+// ---------------------------------------------------------------------------
+// OPERATORIA DENTAL — 24 preguntas (8 por nivel)
+// ---------------------------------------------------------------------------
+
+const operatoriaDental: Question[] = [
+  // Nivel 1 — Conceptos fundamentales
+  {
+    specialty: 'Operatoria Dental',
+    level: 1,
+    question: '¿Cuál es la definición de caries dental según la OMS?',
+    options: [
+      'Una enfermedad autoinmune que destruye el esmalte',
+      'Un proceso patológico localizado de origen externo que produce reblandecimiento del tejido duro del diente',
+      'Una fractura del tejido dentario causada por trauma',
+      'Una pigmentación intrínseca del esmalte',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La OMS define la caries como un proceso patológico localizado, de origen externo, que comienza tras la erupción y produce reblandecimiento del tejido duro del diente, evolucionando hasta la formación de una cavidad.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 1,
+    question: '¿Qué estructura del diente es la más dura del cuerpo humano?',
+    options: ['Dentina', 'Cemento', 'Esmalte', 'Pulpa'],
+    correctIndex: 2,
+    explanation:
+      'El esmalte dental es el tejido más duro del cuerpo humano, compuesto en un 96% por cristales de hidroxiapatita cálcica, lo que le confiere su extrema dureza y resistencia al desgaste.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 1,
+    question: '¿Cuál es el principal agente etiológico de la caries dental?',
+    options: [
+      'Porphyromonas gingivalis',
+      'Streptococcus mutans',
+      'Treponema denticola',
+      'Lactobacillus acidophilus',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Streptococcus mutans es el principal agente etiológico de la caries dental. Produce ácido láctico a partir de la fermentación de azúcares, lo que desmineraliza el esmalte. Lactobacillus también participa, pero en menor medida.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 1,
+    question: '¿Qué es la dentina reparativa o terciaria?',
+    options: [
+      'La dentina que se forma durante el desarrollo del diente',
+      'La dentina que continúa formándose lentamente durante toda la vida',
+      'La dentina producida por el complejo pulpodentinal como respuesta a un estímulo nocivo',
+      'La dentina primaria que rodea el cuerno pulpar',
+    ],
+    correctIndex: 2,
+    explanation:
+      'La dentina terciaria (reparativa o reaccional) es producida por el complejo pulpodentinal en respuesta a estímulos nocivos como caries, abrasión o preparaciones cavitarias. Su función es proteger la pulpa dental.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 1,
+    question: '¿Cuál es el pH crítico por debajo del cual comienza la desmineralización del esmalte?',
+    options: ['pH 7.0', 'pH 6.5', 'pH 5.5', 'pH 4.0'],
+    correctIndex: 2,
+    explanation:
+      'El pH crítico del esmalte es 5.5. Por debajo de este valor, la concentración de iones de hidrógeno es suficiente para superar la capacidad amortiguadora de la saliva y comenzar la disolución de los cristales de hidroxiapatita.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 1,
+    question: '¿Qué clasificación describe cavidades según la zona del diente afectada?',
+    options: [
+      'Clasificación de Mount y Hume',
+      'Clasificación de Black',
+      'Clasificación de Mjör',
+      'Clasificación de Newbrun',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La Clasificación de Black (1908) es la más utilizada y describe las cavidades según su localización: Clase I (fosas y fisuras), Clase II (superficies proximales de premolares y molares), Clase III (proximales de anteriores), Clase IV (proximales de anteriores con ángulo incisal), y Clase V (cervical).',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 1,
+    question: '¿Cuál es la función principal del ácido grabador en la técnica adhesiva?',
+    options: [
+      'Blanquear el esmalte antes de aplicar el composite',
+      'Crear microporosidades en el esmalte para la adhesión micromecánica',
+      'Eliminar las bacterias de la cavidad',
+      'Aumentar la resistencia compresiva del esmalte',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El ácido fosfórico al 35-37% crea microporosidades en la superficie del esmalte al disolver los cristales de hidroxiapatita superficiales. Esto permite la penetración de la resina adhesiva y la formación de tags de resina que proporcionan la adhesión micromecánica.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 1,
+    question: '¿Qué es el tríada etiológica de Keyes para la caries dental?',
+    options: [
+      'Diente susceptible, dieta cariogénica y tiempo',
+      'Huésped susceptible, microorganismos y sustrato',
+      'Placa dental, saliva y pH',
+      'Flúor, calcio y fósforo',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La tríada de Keyes establece que la caries es el resultado de la interacción simultánea de tres factores: un huésped susceptible (diente y saliva), microorganismos cariogénicos (especialmente S. mutans), y un sustrato adecuado (carbohidratos fermentables). Newbrun añadió el tiempo como cuarto factor.',
+  },
+
+  // Nivel 2 — Técnicas y materiales
+  {
+    specialty: 'Operatoria Dental',
+    level: 2,
+    question: '¿Cuál es la diferencia entre composite híbrido y microhíbrido?',
+    options: [
+      'El híbrido contiene partículas grandes (2-5 μm) mientras que el microhíbrido combina partículas de 0.4-1 μm con nanopartículas',
+      'El híbrido es más estético y el microhíbrido más resistente',
+      'No hay diferencia clínica entre ambos',
+      'El microhíbrido solo se usa en dientes anteriores',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Los composites híbridos tienen partículas de relleno de 2-5 μm. Los microhíbridos combinan partículas de 0.4-1 μm con micropartículas, ofreciendo mejor pulibilidad y estética superior, siendo indicados tanto en dientes anteriores como posteriores.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 2,
+    question: '¿Qué es la técnica incremental en la restauración con resina compuesta?',
+    options: [
+      'Aplicar toda la resina en una sola capa para reducir el tiempo operatorio',
+      'Aplicar la resina en capas de 2 mm máximo, polimerizando cada una antes de la siguiente',
+      'Mezclar diferentes colores de resina para obtener el color deseado',
+      'Utilizar fresas de diferente tamaño progresivamente',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La técnica incremental consiste en aplicar la resina en capas de máximo 2 mm de espesor, polimerizando cada capa antes de colocar la siguiente. Esto reduce la contracción de polimerización, mejora la conversión de monómeros y disminuye el estrés en la interfaz adhesiva.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 2,
+    question: '¿Cuál es el propósito de la base cavitaria en operatoria dental?',
+    options: [
+      'Mejorar la estética de la restauración',
+      'Proporcionar protección pulpar, alivio de tensiones y base para la restauración',
+      'Eliminar la humedad de la cavidad',
+      'Aumentar la retención de la restauración',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Las bases cavitarias cumplen múltiples funciones: protección pulpar contra estímulos térmicos, químicos y mecánicos; distribución uniforme de cargas masticatorias; sustitución de dentina perdida; y en algunos casos, actividad anticariogénica (ionómero de vidrio).',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 2,
+    question: '¿Qué material es ideal para restaurar cavidades Clase V en zona cervical con exposición a fluidos gingivales?',
+    options: [
+      'Resina compuesta microhíbrida',
+      'Amalgama de plata',
+      'Ionómero de vidrio convencional o modificado con resina',
+      'Porcelana feldespática',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El ionómero de vidrio es ideal en zona cervical por su adhesión química a la estructura dental (sin necesidad de grabado ácido), liberación de flúor con efecto anticariogénico, y mejor tolerancia a la humedad. Es la mejor opción cuando el margen se extiende subgingivalmente.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 2,
+    question: '¿Cuál es la concentración estándar de ácido fosfórico para el grabado total del esmalte?',
+    options: ['15-20%', '25-30%', '35-37%', '45-50%'],
+    correctIndex: 2,
+    explanation:
+      'El ácido fosfórico al 35-37% se usa en la técnica de grabado total. Concentraciones menores son menos efectivas; concentraciones mayores pueden dañar la pulpa. El tiempo de grabado en esmalte es 15-30 segundos y en dentina 15 segundos máximo.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 2,
+    question: '¿Qué es la contracción de polimerización y cómo afecta las restauraciones de composite?',
+    options: [
+      'Es el aumento de volumen del composite al polimerizar, causando fractura del esmalte',
+      'Es la reducción volumétrica del composite (1-3%) al polimerizar, que puede generar microfiltración marginal y sensibilidad postoperatoria',
+      'Es el cambio de color del composite con el tiempo',
+      'Es la absorción de agua del composite en el medio oral',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La contracción de polimerización (1-3% del volumen) es la principal desventaja del composite. Genera estrés en la interfaz adhesiva, puede producir microfiltración marginal, sensibilidad postoperatoria y fractura de cúspides debilitadas. Se minimiza con la técnica incremental y composites de baja contracción.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 2,
+    question: '¿Cuál es el efecto biológico del flúor sobre el esmalte dental?',
+    options: [
+      'Aumenta la solubilidad del esmalte en medio ácido',
+      'Sustituye los grupos hidroxilo en la hidroxiapatita, formando fluorapatita más resistente al ácido',
+      'Elimina las bacterias de la placa dental',
+      'Aumenta la producción de saliva',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El flúor actúa reemplazando los grupos hidroxilo (OH⁻) de la hidroxiapatita por fluoruro, formando fluorapatita. Esta molécula es más estable y resistente a la disolución ácida, ya que requiere un pH más bajo (4.5) para desmineralizarse, comparado con la hidroxiapatita (pH 5.5).',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 2,
+    question: '¿Cuál es la indicación principal de la amalgama dental en la práctica actual?',
+    options: [
+      'Restauraciones anteriores visibles por su alta estética',
+      'Restauraciones de alto estrés en molares posteriores, especialmente en pacientes con alta actividad cariogénica y limitaciones de aislamiento',
+      'Todos los casos donde no haya composite disponible',
+      'Solo como base cavitaria bajo otras restauraciones',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Aunque en declive, la amalgama sigue siendo indicada en cavidades de alto estrés en molares (Clase I y II grandes), pacientes con alto riesgo cariogénico donde el control de humedad es difícil, y cuando la longevidad es prioritaria sobre la estética. Su alta resistencia al desgaste y facilidad de colocación la mantienen vigente.',
+  },
+
+  // Nivel 3 — Diagnóstico y casos clínicos
+  {
+    specialty: 'Operatoria Dental',
+    level: 3,
+    question: 'Un paciente de 25 años presenta una mancha blanca opaca en la cara vestibular del diente 13. Al aplicar aire, la lesión se vuelve más blanca. ¿Cuál es el diagnóstico más probable y el manejo correcto?',
+    options: [
+      'Fluorosis dental; no requiere tratamiento',
+      'Caries inicial de esmalte (mancha blanca activa); remineralización con flúor y control de dieta',
+      'Hipoplasia del esmalte; restauración con composite',
+      'Fractura del esmalte; reconstrucción con resina',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Una mancha blanca opaca que se intensifica con el secado indica caries inicial activa (zona de cuerpo de la lesión desmineralizada). El tratamiento no requiere cavidad: control de placa, aplicación de barniz de flúor 2.26%, sellado de fisuras si aplica, y control de la dieta cariogénica. La reversibilidad es posible en esta etapa.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 3,
+    question: '¿Cuál es la profundidad mínima de preparación cavitaria para composite en una cavidad Clase II?',
+    options: [
+      '0.5 mm en dentina',
+      '1.5 mm en esmalte',
+      '1.5-2.0 mm con paredes de esmalte soportadas',
+      '3.0 mm para garantizar resistencia',
+    ],
+    correctIndex: 2,
+    explanation:
+      'Las preparaciones para composite en Clase II deben tener una profundidad de 1.5-2.0 mm para asegurar suficiente volumen de material resistente. Las paredes de esmalte deben estar soportadas por dentina; el esmalte sin soporte es frágil y propenso a la fractura bajo carga oclusal.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 3,
+    question: '¿Cómo se diferencia clínicamente una caries de esmalte detenida de una activa?',
+    options: [
+      'Por el tamaño de la lesión',
+      'La detenida es de color marrón/negro y dura al sondeo; la activa es blanca/amarillenta y blanda',
+      'Por la presencia de dolor',
+      'Solo se puede diferenciar con radiografías',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La caries detenida tiene coloración marrón oscura o negra por incorporación de pigmentos exógenos, consistencia dura al sondaje y ausencia de progresión activa. La caries activa es blanca o amarillenta, de consistencia blanda, con placa bacteriana adherida y progresión continua.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 3,
+    question: '¿Cuál es la prueba diagnóstica más sensible para detectar caries interproximal incipiente?',
+    options: [
+      'Exploración táctil con sonda',
+      'Inspección visual directa',
+      'Radiografía bitewing (aleta de mordida)',
+      'Transiluminación con fibra óptica (FOTI)',
+    ],
+    correctIndex: 3,
+    explanation:
+      'La FOTI (Fiber Optic Trans-Illumination) y su versión digital (DIAGNOdent) son muy sensibles para caries interproximal incipiente. Sin embargo, la radiografía bitewing sigue siendo el estándar clínico en la práctica diaria por su disponibilidad. La FOTI detecta lesiones antes de que sean visibles radiográficamente.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 3,
+    question: 'Un paciente presenta fractura de un tercio incisal del diente 21 con exposición pulpar puntiforme. ¿Cuál es el manejo de primera elección?',
+    options: [
+      'Exodoncia inmediata del diente',
+      'Recubrimiento pulpar directo con MTA o hidróxido de calcio y restauración definitiva',
+      'Endodoncia inmediata sin importar el tamaño de la exposición',
+      'Sellado temporal con cemento de eugenol y seguimiento',
+    ],
+    correctIndex: 1,
+    explanation:
+      'En exposición pulpar traumática puntiforme en diente con pulpa vital y sin signos de inflamación irreversible, el recubrimiento pulpar directo con MTA (Mineral Trioxide Aggregate) o hidróxido de calcio está indicado. El MTA tiene mejor tasa de éxito (>80%) que el hidróxido de calcio en estudios a largo plazo.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 3,
+    question: '¿Qué significa el factor C (factor de configuración cavitaria) en composite?',
+    options: [
+      'El color del composite seleccionado',
+      'La relación entre superficies unidas y superficies libres de la preparación cavitaria',
+      'La concentración del ácido grabador',
+      'La compatibilidad del composite con el adhesivo',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El factor C es la proporción entre paredes pegadas (unidas al diente) y paredes libres. Un factor C alto (muchas paredes unidas, pocas libres, como en Clase I con 5 paredes) aumenta el estrés por contracción de polimerización. Se contrarresta con técnica incremental oblicua y resinas de baja contracción.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 3,
+    question: '¿Cuál es el criterio principal para decidir entre un recubrimiento pulpar indirecto y un tratamiento pulpar más invasivo?',
+    options: [
+      'El tamaño de la cavidad cariosa',
+      'La edad del paciente',
+      'Los signos y síntomas clínicos que indiquen el estado de la pulpa (vital y asintomática vs. pulpitis irreversible)',
+      'El material de restauración a utilizar',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El estado vital de la pulpa es el criterio determinante. Si hay pulpa vital asintomática o con pulpitis reversible, el recubrimiento pulpar indirecto o directo está indicado. La presencia de dolor espontáneo prolongado, sensibilidad al calor persistente o necrosis pulpar indica la necesidad de tratamiento endodóntico.',
+  },
+  {
+    specialty: 'Operatoria Dental',
+    level: 3,
+    question: '¿Qué es la técnica de "total etch" (grabado total) vs "self-etch" (automordentado)?',
+    options: [
+      'Total etch graba solo esmalte; self-etch graba solo dentina',
+      'Total etch usa ácido por separado antes del adhesivo; self-etch incorpora el ácido en el primer/adhesivo en un solo paso',
+      'No hay diferencia clínica entre ambas técnicas',
+      'Self-etch es solo para ionómero de vidrio',
+    ],
+    correctIndex: 1,
+    explanation:
+      'En total etch, el ácido fosfórico se aplica por separado (esmalte 15-30 s, dentina 15 s), luego se lava y aplica primer + adhesivo. En self-etch, el primer acidificante (pH ≤2) graba y acondiciona simultáneamente sin lavado. Total etch da mayor adhesión en esmalte; self-etch es más sensible a la técnica en dentina.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// ENDODONCIA — 24 preguntas (8 por nivel)
+// ---------------------------------------------------------------------------
+
+const endodoncia: Question[] = [
+  // Nivel 1
+  {
+    specialty: 'Endodoncia',
+    level: 1,
+    question: '¿Cuántos conductos tiene típicamente un primer molar inferior?',
+    options: ['1 conducto', '2 conductos', '3 conductos', '4 conductos'],
+    correctIndex: 2,
+    explanation:
+      'El primer molar inferior tiene generalmente 3 conductos: dos en la raíz mesial (mesiovestibular y mesiolingual) y uno en la raíz distal. Sin embargo, puede presentar un cuarto conducto distal (distolingual) hasta en un 30% de los casos, lo que debe verificarse con radiografías anguladas.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 1,
+    question: '¿Cuál es la función principal de la pulpa dental?',
+    options: [
+      'Solo dar soporte mecánico a la dentina',
+      'Producir dentina, nutrir el diente, dar sensibilidad y responder ante agresiones',
+      'Anclar el diente al hueso alveolar',
+      'Producir cemento para sellar el ápice',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La pulpa dental cumple 4 funciones principales: formativa (produce dentina primaria, secundaria y terciaria), nutritiva (aporta nutrientes a la dentina a través de los túbulos dentinarios), sensitiva (transmite estímulos a través de las fibras nerviosas A-delta y C), y defensiva (produce dentina reparativa ante agresiones).',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 1,
+    question: '¿Qué es la longitud de trabajo en endodoncia?',
+    options: [
+      'La longitud total del diente desde la corona hasta el ápice radiográfico',
+      'La distancia desde el punto de referencia coronal hasta 0.5-1 mm antes del foramen apical fisiológico',
+      'La longitud del instrumento utilizado para la preparación',
+      'La distancia entre dos puntos de referencia en la corona',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La longitud de trabajo es la distancia desde un punto de referencia coronal hasta el límite de la preparación, que se establece 0.5-1 mm coronal al foramen apical fisiológico (constricción apical o CDC). Esto evita sobreinstrumentar y sobreobturar, preservando los tejidos periapicales.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 1,
+    question: '¿Cuál es el irrigante de elección en el tratamiento endodóntico?',
+    options: [
+      'Agua oxigenada al 3%',
+      'Solución salina estéril',
+      'Hipoclorito de sodio (NaOCl) al 1-5.25%',
+      'Clorhexidina al 0.12%',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El hipoclorito de sodio (NaOCl) es el irrigante de elección por su efecto antimicrobiano de amplio espectro, capacidad de disolver tejido orgánico (pulpa necrótica, biofilm) y su bajo costo. La concentración varía del 0.5 al 5.25%; concentraciones mayores son más efectivas pero más citotóxicas. Se puede complementar con EDTA.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 1,
+    question: '¿Qué es la periodontitis apical aguda?',
+    options: [
+      'Una inflamación de la pulpa sin afección periapical',
+      'Una inflamación del tejido periapical sin necrosis pulpar',
+      'Una inflamación aguda del periodonto apical, con pulpa necrótica, dolor a la presión y percusión',
+      'Una enfermedad crónica asintomática del ápice dental',
+    ],
+    correctIndex: 2,
+    explanation:
+      'La periodontitis apical aguda (PAA) es la inflamación aguda del tejido periapical en respuesta a toxinas bacterianas procedentes de la pulpa necrótica. Clínicamente se presenta con dolor intenso y espontáneo, sensibilidad exquisita a la percusión y presión, y puede haber movilidad dentaria. Sin signos radiográficos evidentes en fase inicial.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 1,
+    question: '¿Cuál es la diferencia clínica entre pulpitis reversible e irreversible?',
+    options: [
+      'En la reversible hay necrosis pulpar; en la irreversible la pulpa está vital',
+      'En la reversible el dolor cede al retirar el estímulo; en la irreversible persiste después del estímulo',
+      'La reversible solo afecta a dientes temporales; la irreversible a permanentes',
+      'No hay diferencia clínica, solo radiográfica',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La distinción clave es la respuesta al estímulo doloroso. En pulpitis reversible, el dolor es breve, intenso, desaparece en segundos al retirar el estímulo (frío), y la pulpa puede recuperarse. En pulpitis irreversible, el dolor persiste minutos u horas tras el estímulo, puede ser espontáneo y nocturno, indicando inflamación no reversible que requiere tratamiento de conductos.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 1,
+    question: '¿Qué material de obturación endodóntica es el estándar de oro?',
+    options: [
+      'Pasta de óxido de zinc y eugenol',
+      'Gutapercha con sellador endodóntico',
+      'MTA (Mineral Trioxide Aggregate)',
+      'Hidróxido de calcio',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La gutapercha con sellador endodóntico es el estándar de oro para la obturación de conductos radiculares. La gutapercha es biocompatible, dimensionalmente estable, radiopaca y removible. Se utiliza junto a un sellador (cemento) para obturar los espacios entre los conos de gutapercha y las paredes del conducto.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 1,
+    question: '¿Cuál es el propósito del EDTA en endodoncia?',
+    options: [
+      'Disolver tejido orgánico como el hipoclorito',
+      'Eliminar el barro dentinario (smear layer) y quelar los iones de calcio de la dentina',
+      'Anestesiar la pulpa antes de la instrumentación',
+      'Sellar temporalmente el conducto entre sesiones',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El EDTA (ácido etilendiaminotetraacético) al 17% es un agente quelante que elimina la parte inorgánica del barro dentinario (smear layer) formado durante la instrumentación. Al quelar los iones de calcio, desmineraliza la dentina superficial, mejora la permeabilidad de los túbulos dentinarios y potencia la acción del NaOCl en la desinfección.',
+  },
+
+  // Nivel 2
+  {
+    specialty: 'Endodoncia',
+    level: 2,
+    question: '¿Cuál es la técnica de obturación "cold lateral condensation" (condensación lateral en frío)?',
+    options: [
+      'Aplicar calor al cono de gutapercha para plastificarlo e introducirlo en el conducto',
+      'Introducir un cono maestro hasta la longitud de trabajo y condensar conos accesorios lateralmente con un espaciador',
+      'Inyectar gutapercha termoplástificada directamente en el conducto',
+      'Utilizar un sistema de carrier de gutapercha precalentado',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La condensación lateral en frío es la técnica más utilizada y enseñada. Consiste en: seleccionar un cono maestro de gutapercha que ajuste a la longitud de trabajo, introducir un espaciador para crear espacio lateral, colocar conos accesorios con sellador hasta llenar el conducto completamente. Ofrece buen control de la longitud de obturación.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 2,
+    question: '¿Qué es el transporte del conducto (ledge) y cómo se previene?',
+    options: [
+      'Una sobre-extensión de la obturación más allá del ápice; se previene con el cono maestro apropiado',
+      'Una perforación del conducto por instrumentación excesiva; se previene con limas pequeñas prequrvadas',
+      'Una alteración del trayecto original del conducto creando un escalón; se previene con limas precurvadas y movimietos de limado',
+      'La filtración del sellador hacia los tejidos periapicales',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El transporte o ledge es una complicación endodóntica donde se crea un escalón en la pared del conducto, desviando el acceso al foramen apical. Se previene usando limas K de tamaño pequeño (#10-15) precurvadas, con movimiento de limado suave, abundante irrigación y técnica rotatoria. En conductos curvos es más frecuente.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 2,
+    question: '¿Cuál es la clasificación de Schilder para la obturación endodóntica exitosa?',
+    options: [
+      'Debe ser radiolúcida para verificar la ausencia de material',
+      'Debe extenderse exactamente al ápice radiográfico',
+      'Obturación tridimensional densa hasta 0.5-1 mm del ápice radiográfico, respetando la constricción apical',
+      'Solo importa sellar la cámara pulpar con el material correcto',
+    ],
+    correctIndex: 2,
+    explanation:
+      'Según Schilder, la obturación ideal debe: (1) ser tridimensional, llenando todos los conductos principales y accesorios, (2) ser densa y sin espacios, (3) extenderse hasta 0.5-1 mm antes del ápice radiográfico (respetando la constricción de CDC), y (4) reproducir la anatomía del conducto. La sobreobturación y subobturación reducen el pronóstico.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 2,
+    question: '¿Qué indica la prueba de vitalidad pulpar con frío negativa (no respuesta)?',
+    options: [
+      'La pulpa está normal e inervada correctamente',
+      'La pulpa puede estar necrótica, aunque también puede ocurrir en calcificaciones pulpares o dientes con ápice inmaduro',
+      'El diente requiere extracción inmediata',
+      'El paciente tiene anestesia local vigente',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Una prueba de frío negativa (sin respuesta al estímulo frío) sugiere necrosis pulpar, pero NO es diagnóstica por sí sola. Puede dar falso negativo en: dientes con calcificación pulpar avanzada, dientes con ápice inmaduro (aún en formación), y tras traumatismos recientes (pulpa en shock). Siempre debe correlacionarse con hallazgos clínicos y radiográficos.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 2,
+    question: '¿Cuál es el tratamiento de elección para un absceso dentoalveolar agudo con fluctuación?',
+    options: [
+      'Antibioticoterapia exclusiva por 7 días',
+      'Inicio del tratamiento de conductos en la misma sesión sin drenaje',
+      'Drenaje quirúrgico (incisión y drenaje) + antibioticoterapia + inicio del tratamiento endodóntico',
+      'Extracción inmediata del diente causante',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El absceso con fluctuación (colección de pus formada) requiere drenaje como prioridad absoluta. Se realiza incisión y drenaje de la colección fluctuante, se establece acceso endodóntico para decompresión adicional, y se prescribe antibiótico (amoxicilina 500 mg c/8h o clindamicina en alérgicos) solo si hay compromiso sistémico (fiebre, trismus, celulitis).',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 2,
+    question: '¿Qué es la patencia apical y por qué es controvertida?',
+    options: [
+      'Mantener el conducto libre de detritos pasando una lima pequeña (#10) ligeramente más allá del foramen para evitar el tapón apical; es controvertida porque puede irrigar tejidos periapicales',
+      'La ausencia de sinusitis de origen dental',
+      'La técnica de obturación que alcanza exactamente el foramen apical',
+      'La eliminación total de la gutapercha en un retratamiento',
+    ],
+    correctIndex: 0,
+    explanation:
+      'La patencia apical consiste en pasar una lima #10 suavemente 1 mm más allá del foramen apical para evitar la formación de un tapón de detritos que impida la instrumentación a longitud de trabajo. Es controvertida porque algunos autores consideran que puede extrudir microorganismos y detritos hacia el periápice, aumentando el dolor postoperatorio.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 2,
+    question: '¿Cuándo está indicada la apexificación con hidróxido de calcio o MTA?',
+    options: [
+      'En dientes con ápice completamente formado y necrosis pulpar',
+      'En dientes con desarrollo radicular incompleto (ápice abierto) con necrosis pulpar',
+      'En todos los casos de pulpitis irreversible',
+      'Como alternativa a la obturación convencional en adultos',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La apexificación está indicada cuando el diente tiene el ápice incompleto (abierto) por necrosis pulpar antes de terminar el desarrollo radicular. El hidróxido de calcio estimula el cierre apical en 6-24 meses (apexificación clásica). El MTA permite el sellado apical inmediato (apexificación con barrera apical), reduciendo el tiempo de tratamiento.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 2,
+    question: '¿Qué es la perforación radicular y cuál es su manejo con MTA?',
+    options: [
+      'Una comunicación no intencional entre el sistema de conductos y los tejidos de soporte; el MTA sella la perforación con alta biocompatibilidad',
+      'La sobreinstrumentación más allá del ápice, que se sella con gutapercha',
+      'Una fractura radicular longitudinal que requiere extracción',
+      'La reabsorción radicular interna que se trata con hidróxido de calcio',
+    ],
+    correctIndex: 0,
+    explanation:
+      'La perforación es una comunicación patológica o iatrogénica entre el conducto radicular y los tejidos periodontales. El MTA es el material de elección para su reparación por su biocompatibilidad, capacidad de fraguado en presencia de humedad, y capacidad de inducir regeneración del cemento. El pronóstico depende del tamaño, localización y tiempo de contaminación.',
+  },
+
+  // Nivel 3
+  {
+    specialty: 'Endodoncia',
+    level: 3,
+    question: 'Un paciente presenta dolor nocturno espontáneo e intenso en el cuadrante posteroinferior derecho, el diente 46 presenta una gran restauración de amalgama. Las pruebas térmicas son positivas y prolongadas. ¿Cuál es el diagnóstico y plan de tratamiento?',
+    options: [
+      'Periodontitis apical crónica; observación y control radiográfico',
+      'Pulpitis reversible; base cavitaria y control',
+      'Pulpitis irreversible sintomática del 46; tratamiento de conductos radiculares',
+      'Periodontitis apical aguda; antibioterapia',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El dolor nocturno espontáneo, la respuesta prolongada al calor/frío y la historia de restauración extensa son signos patognomónicos de pulpitis irreversible sintomática. El tratamiento de elección es el tratamiento de conductos radiculares (biopulpectomía). Los antibióticos no tienen indicación en pulpitis sin colección purulenta.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 3,
+    question: '¿Cómo se diagnostica y trata una reabsorción radicular interna?',
+    options: [
+      'Se diagnostica por dolor intenso; se trata con extracción',
+      'Se diagnóstica radiográficamente (radiolucidez oval simétrica dentro del conducto que no se desplaza en radiografías anguladas); se trata con endodoncia convencional',
+      'Solo se detecta con CBCT; requiere cirugía periapical siempre',
+      'Se confunde con caries radicular y se trata de igual manera',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La reabsorción interna es una osteoclasia de la pared dentinaria desde el interior del conducto, causada por pulpa inflamada con transformación metaplásica. Radiográficamente aparece como una radiolucidez oval, simétrica, dentro del conducto, que no se desplaza al cambiar la angulación (a diferencia de la reabsorción externa). El tratamiento es endodontico: eliminar la pulpa inflamada y obturar.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 3,
+    question: '¿Cuál es el protocolo de irrigación final (PIFI) recomendado en endodoncia moderna?',
+    options: [
+      'NaOCl → agua destilada → sellador',
+      'NaOCl → EDTA 17% (1 min) → NaOCl final → secado',
+      'Solo NaOCl en abundante cantidad',
+      'EDTA → clorhexidina → agua destilada',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El protocolo de irrigación final (PIFI) estándar es: (1) NaOCl al 2.5-5.25% durante toda la instrumentación, (2) EDTA al 17% durante 1 minuto para eliminar el smear layer inorgánico, (3) NaOCl final para eliminar residuos orgánicos que el EDTA expuso, y (4) secado con puntas de papel. No se combina clorhexidina con NaOCl (precipitado oscuro tóxico).',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 3,
+    question: '¿Cuándo está indicada la cirugía periapical (apicectomía)?',
+    options: [
+      'En todos los casos de lesión periapical visible radiográficamente',
+      'Cuando el tratamiento de conductos ortógrado ha fallado o es imposible de realizar, y persiste la patología periapical',
+      'Como primera opción en periodontitis apical crónica',
+      'Solo en dientes anteriores con lesiones grandes',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La cirugía periapical es de segunda elección, indicada cuando: el tratamiento endodóntico ortógrado ha fracasado o no es factible (clavos, coronas protésicas), hay instrumento fracturado no recuperable, perforaciones no accesibles, quistes periapicales verdaderos que no responden al tratamiento convencional, o biopsia diagnóstica necesaria.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 3,
+    question: '¿Qué es la "flare-up" postendodóntica y cuáles son sus factores predisponentes?',
+    options: [
+      'El cambio de color del diente después de la endodoncia; es estético',
+      'Una exacerbación aguda del dolor y/o inflamación dentro de las 24-48 h después de una visita endodóntica, en un diente previamente asintomático o con síntomas controlados',
+      'La fractura vertical del diente tratado endodónticamente',
+      'La reabsorción radicular que ocurre años después del tratamiento',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El flare-up es una complicación postoperatoria (5-20% según la literatura) caracterizada por dolor moderado-severo e inflamación dentro de las 24-48 horas. Factores predisponentes: sobreinstrumentación, sobreirrigación, extrusión de detritos, diente con patología previa, estrés inmunológico. Manejo: analgésicos, antibióticos si hay infección, drenaje a través del conducto.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 3,
+    question: '¿Cuál es la clasificación de Pitt Ford para las lesiones endoperiodontales?',
+    options: [
+      'Clase I: solo endodóntica; Clase II: solo periodontal; Clase III: endoperiodontal combinada verdadera',
+      'Clase A: aguda; Clase B: crónica; Clase C: mixta',
+      'Tipo 1: corona; Tipo 2: raíz; Tipo 3: ápice',
+      'Grado I: leve; Grado II: moderada; Grado III: severa',
+    ],
+    correctIndex: 0,
+    explanation:
+      'La clasificación de Pitt Ford distingue: Clase I (primariamente endodóntica con involucración periodontal secundaria - trayecto sinuoso), Clase II (primariamente periodontal con involucración endodóntica secundaria), Clase III (lesión combinada verdadera - ambas enfermedades coexisten de forma independiente). El pronóstico y tratamiento varían según la clase.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 3,
+    question: '¿Cuál es el manejo del instrumento fracturado dentro del conducto radicular?',
+    options: [
+      'Siempre extraer el fragmento quirúrgicamente',
+      'Siempre extraer el diente si hay un instrumento fracturado',
+      'Intentar la remoción con ultrasonido si es posible; si no, dejarlo in situ si el conducto está correctamente desinfectado y la lesión periapical se resuelve',
+      'Prescribir antibióticos y controlar sin tratamiento activo',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El manejo del instrumento fracturado depende de: localización (tercio coronal/medio vs. apical), si el conducto estaba infectado o no, y posibilidad de remoción. Si es técnicamente posible, se intenta la remoción con ultrasonido. Si no es posible y el conducto está bien desinfectado distalmente al fragmento, se puede dejar in situ y controlar radiográficamente. El éxito es similar en ambos casos si hay buena desinfección.',
+  },
+  {
+    specialty: 'Endodoncia',
+    level: 3,
+    question: '¿Qué es la revascularización pulpar (Regeneración Endodóntica) y cuándo está indicada?',
+    options: [
+      'La resiembra de células madre en conductos de dientes adultos',
+      'Un procedimiento para dientes permanentes jóvenes con ápice abierto y necrosis pulpar, que busca reinducir el desarrollo radicular mediante la estimulación del coágulo sanguíneo del periápice',
+      'La técnica de obturación con materiales biológicos',
+      'El retratamiento endodóntico en dientes con fracaso del tratamiento original',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La Regeneración Endodóntica (Revascularización) es un procedimiento biológico indicado en dientes permanentes inmaduros (ápice abierto) con necrosis pulpar. Protocolo: desinfección con NaOCl + clorhexidina, medicación intracanal con antibióticos (pasta triantibiótica) o Ca(OH)₂, luego estimulación del sangrado periapical, formación de coágulo y sellado con MTA. Permite el desarrollo radicular continuado.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// PERIODONCIA — 24 preguntas (8 por nivel)
+// ---------------------------------------------------------------------------
+
+const periodoncia: Question[] = [
+  // Nivel 1
+  {
+    specialty: 'Periodoncia',
+    level: 1,
+    question: '¿Cuáles son los componentes del aparato de inserción periodontal?',
+    options: [
+      'Esmalte, dentina, pulpa y cemento',
+      'Cemento, ligamento periodontal, hueso alveolar y encía',
+      'Encía, mucosa alveolar y frenillos',
+      'Hueso alveolar, tabique interdental y cortical vestibular',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El periodonto de inserción (o de protección y de sustentación) está compuesto por: cemento radicular (une el ligamento a la raíz), ligamento periodontal (fibras que conectan el diente al hueso), hueso alveolar (soporte óseo), y encía (tejido blando que protege). Juntos forman el sistema de soporte dental.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 1,
+    question: '¿Cuál es la diferencia entre gingivitis y periodontitis?',
+    options: [
+      'Son la misma enfermedad en estadios diferentes, sin diferencia en el tratamiento',
+      'La gingivitis es inflamación reversible limitada a la encía; la periodontitis implica destrucción irreversible del periodonto con pérdida ósea y de inserción',
+      'La gingivitis solo ocurre en niños; la periodontitis en adultos',
+      'La periodontitis es causada por virus; la gingivitis por bacterias',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La gingivitis es una inflamación reversible de la encía sin pérdida de inserción ni de hueso alveolar, causada principalmente por placa bacteriana. La periodontitis es una enfermedad inflamatoria crónica destructiva que involucra pérdida irreversible del hueso alveolar, ligamento periodontal y cemento. La gingivitis puede evolucionar a periodontitis si no se trata.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 1,
+    question: '¿Qué es la profundidad de sondaje periodontal normal en un adulto sano?',
+    options: [
+      '0-1 mm (surco prácticamente inexistente)',
+      '1-3 mm (surco gingival fisiológico)',
+      '4-5 mm (ya indica enfermedad periodontal)',
+      '6-8 mm (periodontitis moderada)',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El surco gingival fisiológico (sano) tiene una profundidad de 1-3 mm. Una profundidad de sondaje ≥4 mm indica formación de bolsa periodontal patológica. La profundidad de sondaje se mide con una sonda periodontal desde el margen gingival hasta el epitelio de unión (fondo del surco).',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 1,
+    question: '¿Cuál es el primer signo clínico de gingivitis?',
+    options: [
+      'Movilidad dentaria',
+      'Pérdida ósea visible radiográficamente',
+      'Sangrado al sondaje gingival sin pérdida de inserción',
+      'Bolsas periodontales de 5 mm',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El primer signo clínico de gingivitis es el sangrado al sondaje (BOP - Bleeding on Probing). Esto indica inflamación del tejido gingival sin que haya ocurrido pérdida de inserción clínica (CAL = 0). La encía inflamada también muestra enrojecimiento, edema y pérdida del puntillado normal (aspecto en cáscara de naranja).',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 1,
+    question: '¿Qué bacteria se considera el patógeno clave en la periodontitis crónica?',
+    options: [
+      'Streptococcus mutans',
+      'Porphyromonas gingivalis',
+      'Staphylococcus aureus',
+      'Candida albicans',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Porphyromonas gingivalis es el principal patógeno periodontal. Junto con Tannerella forsythia y Treponema denticola forma el "complejo rojo" de Socransky, el grupo más frecuentemente asociado a periodontitis agresiva y crónica severa. Produce proteasas, colagenasas y lipopolisacáridos que destruyen los tejidos periodontales.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 1,
+    question: '¿Qué es el índice de placa de O\'Leary y para qué se usa?',
+    options: [
+      'Mide la profundidad del sondaje en los 6 sitios del diente',
+      'Registra el porcentaje de superficies dentales con placa visible, usado para motivar al paciente y evaluar higiene oral',
+      'Clasifica la severidad de la periodontitis en estadios',
+      'Determina la necesidad de tratamiento quirúrgico',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El índice de placa de O\'Leary registra la presencia o ausencia de placa bacteriana en 4 superficies de cada diente (mesial, distal, vestibular, lingual/palatino) después de revelar con solución. El resultado es un porcentaje: <20% = buena higiene; 20-30% = regular; >30% = deficiente. Se usa para educación y seguimiento del paciente.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 1,
+    question: '¿Cuál es el tratamiento básico de la gingivitis inducida por placa?',
+    options: [
+      'Cirugía periodontal y antibióticos sistémicos',
+      'Instrucción de higiene oral y eliminación profesional de placa y cálculo',
+      'Extracción de todos los dientes con sangrado al sondaje',
+      'Aplicación de antisépticos tópicos sin necesidad de instrucción de higiene',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El tratamiento de la gingivitis inducida por placa es: instrucción de higiene oral (técnica de cepillado de Bass, hilo dental), tartrectomía supragingival (eliminación de cálculo supragingival) y pulido coronal. La gingivitis es completamente reversible con el control de placa. Las reevaluaciones regulares son esenciales para prevenir la recurrencia.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 1,
+    question: '¿Cuál es la clasificación actual de las enfermedades periodontales (2017)?',
+    options: [
+      'Gingivitis / Periodontitis leve / Periodontitis moderada / Periodontitis severa',
+      'Salud periodontal / Gingivitis / Periodontitis (Estadios I-IV con Grados A-C)',
+      'Tipo I: inflamación / Tipo II: destrucción / Tipo III: reabsorción',
+      'Enfermedad periodontal aguda / Crónica / Agresiva',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La clasificación del Workshop Mundial 2017 (AAP/EFP) establece: Salud periodontal, Gingivitis (inducida por placa o no), y Periodontitis clasificada en Estadios (I-IV según severidad: profundidad sondaje, pérdida ósea, pérdida de dientes) y Grados (A-C según velocidad de progresión y factores de riesgo como tabaco y diabetes). Esta clasificación reemplaza la de 1999.',
+  },
+
+  // Nivel 2
+  {
+    specialty: 'Periodoncia',
+    level: 2,
+    question: '¿Qué es el raspado y alisado radicular (RAR) y cuál es su objetivo?',
+    options: [
+      'Un procedimiento quirúrgico para eliminar encía inflamada',
+      'La eliminación mecánica subgingival de placa, cálculo y cemento contaminado de la superficie radicular para promover la reinserción del tejido periodontal',
+      'La aplicación de antibióticos locales en las bolsas periodontales',
+      'El pulido de la superficie radicular con pasta abrasiva',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El RAR (debridement subgingival) consiste en la eliminación manual o ultrasónica de placa y cálculo subgingival, y del cemento radicular infectado/impregnado con toxinas bacterianas. El objetivo es crear una superficie radicular biocompatible que permita la reinserción del tejido conjuntivo y el control de la infección. Es la base del Tratamiento Periodontal No Quirúrgico (TPNQ).',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 2,
+    question: '¿Cuándo está indicada la cirugía periodontal resectiva (osteoplastia/osteoectomía)?',
+    options: [
+      'En todos los pacientes con periodontitis independientemente de la respuesta al TPNQ',
+      'Cuando persisten bolsas ≥5 mm con sangrado al sondaje tras el TPNQ, especialmente en defectos óseos horizontales con acceso difícil',
+      'Como primer paso antes del raspado y alisado radicular',
+      'Solo en pacientes fumadores sin importar la profundidad de sondaje',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La cirugía resectiva está indicada cuando el TPNQ no logra reducir las bolsas a ≤4 mm, persiste inflamación (BOP) y el acceso subgingival es imposible sin cirugía. Los defectos óseos horizontales responden mejor a resección (osteoectomía/osteoplastia) que los verticales/angulares, que pueden ser candidatos para regeneración.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 2,
+    question: '¿Qué es la Regeneración Tisular Guiada (RTG) en periodoncia?',
+    options: [
+      'El trasplante de tejido gingival de una zona donante a una zona receptora',
+      'El uso de membranas biológicas o sintéticas para excluir células epiteliales y permitir la repoblación del defecto por células del ligamento periodontal',
+      'La aplicación de plasma rico en plaquetas en las bolsas periodontales',
+      'El uso de injertos óseos para rellenar defectos óseos',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La RTG utiliza membranas (reabsorbibles: colágeno, PLGA; o no reabsorbibles: PTFE-e) para excluir las células epiteliales y del tejido conjuntivo, que son de migración rápida, y crear un espacio donde las células del ligamento periodontal (más lentas pero con potencial regenerativo) puedan repoblar el defecto y regenerar nuevo cemento, ligamento y hueso.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 2,
+    question: '¿Cuál es el impacto de la diabetes mellitus en la enfermedad periodontal?',
+    options: [
+      'La diabetes no tiene relación con la enfermedad periodontal',
+      'La diabetes aumenta el riesgo y la severidad de periodontitis (relación bidireccional); la periodontitis no controlada dificulta el control glucémico',
+      'La diabetes protege contra la periodontitis por la hiperglucemia',
+      'Solo la diabetes tipo 1 afecta el periodonto',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La relación diabetes-periodontitis es bidireccional: la diabetes (especialmente no controlada, HbA1c >7%) aumenta el riesgo de periodontitis al deteriorar la función inmune (neutrófilos), alterar la vasculatura y promover la glicosilación de proteínas del tejido conectivo. A su vez, la periodontitis severa aumenta la resistencia a la insulina y dificulta el control glucémico. El tratamiento periodontal puede reducir la HbA1c en ~0.4%.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 2,
+    question: '¿Qué son los instrumentos de Gracey y cuál es su principal ventaja?',
+    options: [
+      'Curetas universales con dos bordes cortantes activos para cualquier superficie',
+      'Curetas área-específicas con un solo borde cortante activo, diseñadas para superficies específicas del diente con angulación ideal',
+      'Raspadores para eliminar cálculo supragingival exclusivamente',
+      'Instrumentos ultrasónicos para el desbridamiento subgingival',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Los instrumentos de Gracey son curetas área-específicas: cada número (1/2, 7/8, 11/12, 13/14) está diseñado para una zona específica del diente. A diferencia de las curetas universales (dos bordes cortantes activos), tienen un solo borde cortante activo (el inferior cuando se sostiene correctamente). Su angulación de 70° facilita el acceso subgingival y reduce el trauma tisular.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 2,
+    question: '¿Cuáles son los factores locales que modifican la respuesta a la placa bacteriana en periodoncia?',
+    options: [
+      'Solo la genética y el estrés sistémico',
+      'Cálculo subgingival, restauraciones desbordantes, anatomía radicular desfavorable, respiración bucal y oclusión traumatogénica',
+      'La dieta y el consumo de calcio',
+      'La composición de la saliva y el fluido crevicular',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Los factores locales modificadores incluyen: cálculo (retención de placa), restauraciones desbordantes (traumatismo gingival, retención), anatomía radicular (concavidades, furcas, proyecciones adamantinas), respiración bucal (gingivitis anterior por resecamiento), malposición dentaria y fuerzas oclusales traumáticas. Estos factores no causan la enfermedad per se, pero modifican su presentación y severidad.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 2,
+    question: '¿Qué es el sondaje de furca y cómo se clasifica según Hamp?',
+    options: [
+      'El sondaje de la profundidad del surco gingival en la zona del cuello del diente',
+      'La exploración con sonda de Nabers del área de bifurcación/trifurcación radicular; Clase I (≤3mm), Clase II (>3mm sin pasar), Clase III (atraviesa completamente)',
+      'La medición de la movilidad dentaria con el mango de dos instrumentos',
+      'El sondaje de los defectos óseos intraóseos',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El sondaje de furca (con sonda curva de Nabers) evalúa la afección del área interradicular en molares y premolares superiores. Clasificación de Hamp: Clase I (sondaje horizontal <3 mm; furca incipiente), Clase II (sondaje horizontal >3 mm pero sin atravesar; furca parcialmente destruida), Clase III (sonda atraviesa completamente la furca; furca destruida "through-and-through").',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 2,
+    question: '¿Cuál es el antibiótico de primera línea en periodontitis agresiva generalizada?',
+    options: [
+      'Amoxicilina 500 mg solo',
+      'Metronidazol 500 mg solo',
+      'Amoxicilina 500 mg + Metronidazol 500 mg, tres veces al día por 7-8 días, combinado con el RAR',
+      'Clindamicina 300 mg',
+    ],
+    correctIndex: 2,
+    explanation:
+      'En periodontitis agresiva (asociada a Aggregatibacter actinomycetemcomitans), la combinación amoxicilina + metronidazol c/8h por 7-8 días junto al RAR muestra mayor eficacia que la monoterapia. Amoxicilina actúa contra A.a. intracelular y metronidazol elimina anaerobios. Se inicia idealmente el mismo día del RAR. En alérgicos a penicilina: azitromicina 500 mg/día por 3 días.',
+  },
+
+  // Nivel 3
+  {
+    specialty: 'Periodoncia',
+    level: 3,
+    question: 'Un paciente de 35 años presenta pérdida ósea generalizada de >2/3 de la longitud radicular, bolsas de 7-9 mm, múltiples dientes con afección de furca Clase III. ¿Cuál es el estadio y grado de periodontitis según la clasificación 2017?',
+    options: [
+      'Estadio I, Grado A (leve, progresión lenta)',
+      'Estadio II, Grado B (moderada, progresión moderada)',
+      'Estadio IV, Grado C (severa con complejidad alta y factores de riesgo)',
+      'Estadio III, Grado A',
+    ],
+    correctIndex: 2,
+    explanation:
+      'Estadio IV implica pérdida ósea severa (>2/3 longitud radicular), pérdida de dientes por periodontitis, y complejidad masticatoria o estética. Grado C indica progresión rápida (>2 mm de pérdida por año), posiblemente factores de riesgo como tabaco >10 cigarrillos/día o diabetes descontrolada (HbA1c ≥7%). Requiere plan de tratamiento comprensivo con manejo interdisciplinario.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 3,
+    question: '¿Cuál es el protocolo de implantes en pacientes con historia de periodontitis severa?',
+    options: [
+      'Los implantes están absolutamente contraindicados en pacientes con historia de periodontitis',
+      'Se pueden colocar implantes sin restricciones en pacientes con periodontitis activa',
+      'El paciente debe completar el tratamiento periodontal, alcanzar estabilidad periodontal (BOP <25%, bolsas ≤4 mm), y mantener mantenimiento periodontal estricto; tienen mayor riesgo de periimplantitis',
+      'Los implantes son la única opción para reemplazar dientes perdidos por periodontitis',
+    ],
+    correctIndex: 2,
+    explanation:
+      'Los pacientes con historia de periodontitis tienen 3 veces más riesgo de periimplantitis. Protocolo: (1) tratamiento periodontal completo y estabilización, (2) reevaluación con BOP <25% y bolsas ≤4 mm, (3) colocación de implantes solo en fase de mantenimiento estable, (4) mantenimiento periodontal cada 3 meses de por vida. El riesgo no se elimina, solo se gestiona.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 3,
+    question: '¿Qué es la periimplantitis y cómo se diferencia de la mucositis periimplantaria?',
+    options: [
+      'Son términos equivalentes para la misma condición',
+      'La mucositis es inflamación reversible de la mucosa periimplantaria; la periimplantitis incluye pérdida ósea progresiva e irreversible alrededor del implante',
+      'La periimplantitis solo ocurre en el primer año tras la colocación',
+      'La mucositis requiere cirugía; la periimplantitis solo limpieza',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La mucositis periimplantaria es el equivalente implantológico de la gingivitis: inflamación reversible de la mucosa sin pérdida ósea (análogo a gingivitis). La periimplantitis es el equivalente de la periodontitis: inflamación con pérdida ósea progresiva alrededor del implante, con bolsas de sondaje >5 mm, BOP y/o supuración. La mucositis es el precursor de la periimplantitis si no se trata.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 3,
+    question: '¿Cuáles son los criterios de éxito de un implante dental a largo plazo?',
+    options: [
+      'Solo que el implante esté presente en boca sin importar el estado de los tejidos',
+      'Ausencia de dolor, ausencia de pérdida ósea progresiva (>0.2 mm/año tras el primer año), sin movilidad, sin infección periimplantaria activa y función adecuada',
+      'Que el paciente no tenga dolor y la corona esté esteticamente satisfactoria',
+      'Una oseointegración del 100% en la radiografía',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Los criterios de éxito implantológico (Albrektsson, actualizados) incluyen: (1) ausencia de movilidad, (2) pérdida ósea <0.2 mm/año tras el primer año de carga, (3) ausencia de dolor, infección, parestesia o daño al canal mandibular, (4) tasa de supervivencia ≥85% a los 5 años y ≥80% a los 10 años. Una pérdida ósea ≥2 mm en cualquier momento es signo de alerta.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 3,
+    question: '¿Cómo afecta el tabaquismo a la enfermedad periodontal y qué implicaciones tiene para el tratamiento?',
+    options: [
+      'El tabaco protege el periodonto por sus propiedades antisépticas',
+      'El tabaco causa gingivitis directamente por irritación de la mucosa',
+      'El tabaco es el principal factor de riesgo modificable de periodontitis: vasocontricción gingival enmascara BOP, deteriora la respuesta inmune, reduce la vascularización y aumenta el riesgo de fracaso del tratamiento',
+      'El tabaco solo afecta el periodonto en fumadores de más de 40 cigarrillos/día',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El tabaco es el factor de riesgo modificable más importante en periodontitis. Sus efectos: (1) vasoconstricción que reduce el BOP dando falsa sensación de salud gingival, (2) supresión inmune (reducción de neutrófilos, IgG), (3) hipoxia tisular que dificulta la cicatrización, (4) aumento de patógenos periodontales. Los fumadores responden peor al tratamiento periodontal (~50% menos de mejora que no fumadores). Dejar de fumar mejora significativamente el pronóstico.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 3,
+    question: '¿Qué es el plasma rico en factores de crecimiento (PRGF/PRF) y cuál es su uso en periodoncia?',
+    options: [
+      'Un antibiótico inyectable para tratar infecciones periodontales agudas',
+      'Un concentrado de plaquetas autólogo que libera factores de crecimiento (PDGF, TGF-β, VEGF) para acelerar la cicatrización y potenciar la regeneración en cirugías periodontales',
+      'Un irrigante para el tratamiento de bolsas profundas',
+      'Un material de relleno óseo sintético',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El PRGF (Plasma Rico en Factores de Crecimiento) o PRF (Fibrina Rica en Plaquetas) son preparaciones autólogas de plaquetas concentradas. Las plaquetas liberan factores de crecimiento (PDGF, TGF-β, IGF, VEGF) que estimulan la angiogénesis, proliferación celular y cicatrización. Se usan en combinación con injertos óseos o membranas en RTG para potenciar la regeneración periodontal y acelerar la cicatrización posquirúrgica.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 3,
+    question: '¿Cuál es la indicación y técnica del injerto de tejido conectivo subepitelial (ITCS)?',
+    options: [
+      'Indicado para aumentar la profundidad del vestíbulo y se obtiene de la tuberosidad',
+      'Indicado para cubrir recesiones gingivales Clase I y II de Miller y aumentar el ancho de encía queratinizada; se obtiene del paladar mediante incisión en trampa',
+      'Solo indicado en la zona anterior superior por razones estéticas',
+      'No se usa actualmente, reemplazado por membranas de colágeno',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El ITCS (Langer y Langer, 1985) es el estándar de oro para cubrir recesiones gingivales (Clase I y II de Miller, con pronóstico de cobertura completa esperada). Técnica: se obtiene un injerto de tejido conjuntivo (sin epitelio superficial) del paladar mediante incisión en trampa o en sobre; se sutura bajo el colgajo receptor en la zona de recesión. Ofrece mejor resultado estético y vascularización que el injerto libre de encía.',
+  },
+  {
+    specialty: 'Periodoncia',
+    level: 3,
+    question: '¿Qué es la enfermedad periodontal necrosante y cuál es su manejo de urgencia?',
+    options: [
+      'Una forma crónica de gingivitis que evoluciona en años',
+      'Gingivitis/Periodontitis ulcero-necrosante: necrosis papilar con ulceración, dolor intenso, olor fétido, pseudomembrana y linfadenopatía; manejo: desbridamiento suave + antibióticos + enjuagues con CHX al 0.12%',
+      'Una periodontitis agresiva asociada a Actinomyces',
+      'Una reacción gingival a medicamentos como ciclosporina',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La Gingivitis Ulceronecrosante (GUN) o Periodontitis Ulceronecrosante (PUN) es una urgencia periodontal caracterizada por: necrosis y ulceración de las papilas interdentales (signo patognomónico), dolor agudo intenso, sangrado espontáneo, halitosis fétida, pseudomembrana grisácea y linfadenopatía regional. Asociada a inmunosupresión, tabaco y estrés. Manejo inmediato: desbridamiento suave, metronidazol 500 mg c/8h por 7 días, enjuagues con clorhexidina al 0.12%.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// ORTODONCIA — 24 preguntas (8 por nivel)
+// ---------------------------------------------------------------------------
+
+const ortodoncia: Question[] = [
+  // Nivel 1
+  {
+    specialty: 'Ortodoncia',
+    level: 1,
+    question: '¿Cuál es la clasificación de Angle para las maloclusiones?',
+    options: [
+      'Clase I: relación molar normal; Clase II: molar inferior adelantado; Clase III: molar superior adelantado',
+      'Clase I: relación molar normal; Clase II: molar inferior retrasado (distoclusión); Clase III: molar inferior adelantado (mesioclusión)',
+      'Clase I, II y III según la severidad del apiñamiento',
+      'Clase A, B y C según la inclinación de los incisivos',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La clasificación de Angle (1899) se basa en la relación del primer molar permanente: Clase I: el surco mesiovestibular del primer molar superior ocluye con la cúspide mesiovestibular del primer molar inferior (relación normal). Clase II: el molar inferior está en posición distal (distoclusión). Clase III: el molar inferior está en posición mesial (mesioclusión). Es la clasificación más utilizada mundialmente.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 1,
+    question: '¿Qué es el overjet y el overbite en ortodoncia?',
+    options: [
+      'Overjet: distancia vertical entre incisivos superiores e inferiores; Overbite: distancia horizontal',
+      'Overjet: distancia horizontal entre los bordes incisales de superiores e inferiores; Overbite: distancia vertical de superposición de los incisivos superiores sobre los inferiores',
+      'Son sinónimos que describen la misma medida',
+      'Overjet: relación molar; Overbite: relación canina',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Overjet (resalte): distancia horizontal entre la cara vestibular del incisivo inferior y el borde incisal del incisivo superior (normal: 2-3 mm). Overbite (sobremordida): distancia vertical de superposición de los incisivos superiores sobre los inferiores (normal: 1/3 de la corona clínica del inferior ≈ 2 mm). Valores alterados indican maloclusión.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 1,
+    question: '¿Cuál es la edad ideal para el tratamiento de una mordida cruzada posterior unilateral con desviación mandibular?',
+    options: [
+      'Adultos mayores de 18 años cuando el crecimiento ha terminado',
+      'Dentición decidua o mixta temprana (4-8 años) para prevenir asimetrías esqueléticas y guiar el crecimiento',
+      'Adolescentes de 14-16 años durante el pico de crecimiento',
+      'No tiene edad ideal; se trata igual a cualquier edad',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La mordida cruzada posterior con desviación mandibular funcional es una urgencia ortopédica que debe tratarse tempranamente (4-8 años, dentición decidua o mixta). Si no se corrige, la desviación funcional puede convertirse en asimetría esquelética verdadera. El tratamiento (expansión rápida del paladar o planos de mordida) es más sencillo y efectivo en dientes deciduos.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 1,
+    question: '¿Qué es el análisis cefalométrico en ortodoncia?',
+    options: [
+      'La evaluación del modelo de estudio con calibres',
+      'El análisis de medidas angulares y lineales obtenidas de la radiografía lateral de cráneo para evaluar las relaciones esqueléticas, dentarias y del tejido blando',
+      'La fotografía extraoral del perfil del paciente',
+      'El análisis del espacio disponible en el arco dentario',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La cefalometría es el análisis de puntos de referencia (puntos cefalométricos) en la telerradiografía lateral para medir ángulos (SNA, SNB, ANB, plano mandibular) y distancias. Permite clasificar la discrepancia esquelética (clase I, II, III), evaluar el patrón de crecimiento (braquifacial, mesofacial, dolicofacial) y planificar el tratamiento.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 1,
+    question: '¿Qué significa el ángulo ANB en cefalometría y cuál es su valor normal?',
+    options: [
+      'La inclinación del incisivo superior con respecto a la base del cráneo; normal: 22°',
+      'La diferencia entre los ángulos SNA y SNB que indica la relación sagital entre maxilar y mandíbula; normal: 2° ± 2°',
+      'El ángulo del plano mandibular con el plano de Frankfort; normal: 25°',
+      'La posición del punto mentoniano respecto a la vertical verdadera; normal: 0 mm',
+    ],
+    correctIndex: 1,
+    explanation:
+      'ANB = SNA - SNB. Representa la diferencia sagital entre la posición del maxilar (SNA) y la mandíbula (SNB) respecto a la base de cráneo. Normal: 2° ± 2°. ANB >4° indica clase II esquelética (maxilar adelantado o mandíbula retrasada). ANB <0° indica clase III esquelética (mandíbula adelantada o maxilar retrasado).',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 1,
+    question: '¿Qué son los aparatos funcionales en ortodoncia?',
+    options: [
+      'Los brackets metálicos fijos que se adhieren al diente',
+      'Aparatos removibles que utilizan las fuerzas musculares de la masticación y postura mandibular para corregir discrepancias esqueléticas en crecimiento',
+      'Los retenedores fijos tras el tratamiento de ortodoncia',
+      'Los aparatos de expansión rápida del paladar',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Los aparatos funcionales (Activador de Andresen, Bionator, Twin Block, Fränkel) son removibles y actúan redirigiendo las fuerzas musculares (maseteros, pterigoideos, bucinadores) para modificar el crecimiento esquelético. Indicados en clase II por retrognatismo mandibular durante el crecimiento. Su eficacia depende de la cooperación del paciente y del potencial de crecimiento residual.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 1,
+    question: '¿Qué es el espacio de la dentición mixta (espacio de Lee Way)?',
+    options: [
+      'El espacio creado por la extracción de premolares para el movimiento dentario',
+      'La diferencia de tamaño entre los dientes temporales (canino + 2 molares deciduos) y los permanentes que los reemplazan (canino + 2 premolares), generalmente mayor en deciduos',
+      'El espacio entre el incisivo central y lateral permanente',
+      'La distancia entre el primer y segundo molar permanente',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El espacio de Lee Way (Nance) es la diferencia de tamaño mesiodistal entre los dientes temporales (canino + primer y segundo molar deciduo) y sus sucesores permanentes (canino + primer y segundo premolar). Típicamente 1.8 mm en mandíbula y 0.9 mm en maxilar. Este "espacio libre" es aprovechado por el primer molar permanente para mesializarse y crear espacio para la alineación.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 1,
+    question: '¿Cuál es la diferencia entre ortodoncia y ortopedia dentofacial?',
+    options: [
+      'Son términos sinónimos que describen el mismo tratamiento',
+      'Ortodoncia: movimiento de los dientes dentro de los maxilares; Ortopedia dentofacial: modificación del crecimiento y desarrollo de los huesos maxilares y faciales',
+      'Ortodoncia es solo para niños; ortopedia para adultos',
+      'Ortodoncia usa aparatos fijos; ortopedia solo aparatos removibles',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La ortodoncia se enfoca en el movimiento dentario para corregir la posición de los dientes dentro de los maxilares (nivelación, alineamiento, cierre de espacios). La ortopedia dentofacial modifica el crecimiento óseo maxilofacial usando las fuerzas musculares o mecánicas para cambiar las relaciones esqueléticas (expansión palatina, tracción del maxilar, guía de crecimiento mandibular).',
+  },
+
+  // Nivel 2
+  {
+    specialty: 'Ortodoncia',
+    level: 2,
+    question: '¿Qué es la distalización de molares con arco extraoral (AEO) o Headgear?',
+    options: [
+      'Un aparato fijo que expande el paladar transversalmente',
+      'Un aparato extraoral que aplica fuerzas al maxilar o a los primeros molares superiores para distal izarlos o restringir el crecimiento maxilar, anclado en la cabeza o nuca del paciente',
+      'Un aparato para corregir la clase III esquelética con protracción maxilar',
+      'Un retenedor postratamiento para mantener el resultado',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El arco extraoral (Headgear) aplica fuerzas (150-300 g) a los primeros molares superiores a través de tubos en las bandas molares, anclándose en la cabeza (arco cervical) o nuca (arco de tracción alta). En clase II: distaliza molares y/o restringe el crecimiento maxilar anterior. Requiere 12-14 horas de uso diario para ser efectivo; depende totalmente de la cooperación del paciente.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 2,
+    question: '¿En qué consiste la expansión rápida del paladar (ERP) y cuándo está indicada?',
+    options: [
+      'Un aparato removible que amplía el arco lentamente en adultos',
+      'Un aparato fijo cementado en molares que aplica fuerzas pesadas y rápidas para separar la sutura palatina media, ampliando el maxilar transversalmente; indicado en deficiencia transversal maxilar con sutura abierta (antes de los 18 años aproximadamente)',
+      'La extracción de dientes posteriores para crear espacio',
+      'El uso de elásticos intermaxilares para corregir la discrepancia transversal',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La ERP (Disyuntor de Hyrax, McNamara, Haas) aplica 2-3 activaciones/día (0.25-0.5 mm de expansión cada activación) durante 2-3 semanas. La fuerza pesada (>1 kg) abre la sutura palatina media. Indicada en deficiencia transversal maxilar, mordida cruzada posterior bilateral, y como auxiliar en clase III. Efectiva hasta los 16-18 años (sutura permeable); en adultos requiere SARPE (cirugía asistida).',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 2,
+    question: '¿Cuál es el propósito del torque en ortodoncia con brackets?',
+    options: [
+      'Mover el diente hacia mesial o distal en el arco',
+      'Controlar la inclinación axial del diente (inclinación vestibulolingual de la raíz) mediante la torsión del arco en el slot del bracket',
+      'Aumentar el overjet entre incisivos superiores e inferiores',
+      'Extruir o intruir los dientes en el plano vertical',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El torque es el movimiento que controla la inclinación axial labiolingual/vestibulolingual de la corona y raíz del diente. Se consigue torsionando el arco rectangular en el slot del bracket (que tiene slot cuadrado). Un torque positivo en incisivos superiores mantiene la raíz palatina; negativo la inclina hacia vestibular. Es el movimiento más difícil de conseguir y requiere arcos rígidos de gran calibre (0.019×0.025" en slot 0.022").',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 2,
+    question: '¿Qué es el anclaje en ortodoncia y por qué es crítico?',
+    options: [
+      'La forma en que se adhieren los brackets al diente',
+      'La resistencia al movimiento no deseado; si el anclaje es débil, los dientes "ancla" se moverán hacia los dientes que queremos mover, perdiendo el efecto buscado',
+      'El sistema de ligado de los arcos a los brackets',
+      'La fuerza aplicada por los elásticos intermaxilares',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El anclaje es la base de resistencia al movimiento ortodóntico indeseable. Ley de Newton (acción/reacción): al mover un diente, se genera una fuerza igual en dirección opuesta que puede mover el diente "ancla". Se refuerza con: anclaje en masa (más dientes como ancla), arco extraoral, miniscrews (TADs - Temporary Anchorage Devices), elásticos de clase II. La pérdida de anclaje es la principal complicación del tratamiento.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 2,
+    question: '¿Cuáles son los criterios para la extracción de primeros premolares en ortodoncia?',
+    options: [
+      'Siempre que haya apiñamiento, sin importar la clase esquelética',
+      'Nunca, ya que la extracción siempre empeora el resultado',
+      'En apiñamiento moderado-severo, clase II dentaria con biprotrusión o bimaxilismo, y cuando no hay otra opción de espacio; siempre evaluado con análisis cefalométrico y de discrepancia',
+      'Solo en pacientes adultos',
+    ],
+    correctIndex: 2,
+    explanation:
+      'La extracción de primeros premolares (bicúspides) se indica cuando: discrepancia de espacio >4-5 mm, biprotrusión/bimax que requiere retracción de incisivos, clase II severa con ancla molar máxima, perfil convexo que mejora con retracción. Es una decisión irreversible que requiere análisis completo (modelos, fotos, cefalometría). Las extracciones mal indicadas pueden aplanar excesivamente el perfil o causar colapso de la mordida.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 2,
+    question: '¿Qué son los alineadores (Invisalign, Clear Aligners) y cuáles son sus limitaciones?',
+    options: [
+      'Aparatos fijos de plástico transparente que sustituyen completamente a los brackets en todos los casos',
+      'Aparatos removibles de material termoplástico transparente que mueven los dientes mediante presión diferencial; limitados en torque, movimientos de raíz y extrusión; requieren alta cooperación',
+      'Retenedores transparentes que se usan solo después del tratamiento con brackets',
+      'Son exclusivamente para tratamientos de retención, no de movimiento activo',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Los alineadores son aparatos removibles de policarbonato/PET-G que se fabrican en serie mediante planificación digital (ClinCheck). Ventajas: estética, higiene, comodidad. Limitaciones: menor eficacia en torque de incisivos, extrusión de molares, movimientos de raíz paralelos y casos complejos. Requieren 20-22 horas de uso diario. Son efectivos en maloclusiones leves-moderadas; los casos complejos aún se manejan mejor con aparatos fijos.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 2,
+    question: '¿Cuál es la importancia del contencion post-tratamiento en ortodoncia?',
+    options: [
+      'Es opcional; los dientes se mantienen solos en su nueva posición',
+      'Es esencial e indefinida; los dientes tienden a volver a su posición original (recidiva) por la memoria del ligamento periodontal, la presión muscular y el crecimiento residual',
+      'Solo se necesita durante 6 meses después del tratamiento',
+      'Solo es necesaria si hubo extracciones durante el tratamiento',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La recidiva es la mayor complicación post-tratamiento. Causas: fibras de Sharpey del ligamento periodontal (memoria), presión muscular labial/lingual, crecimiento mandibular tardío (clase III), respiración bucal. Protocolo estándar: retenedor superior removible (placa de Hawley o Essex) de uso nocturno indefinido + retenedor fijo lingual de 3-3 inferior. La retención debe ser indefinida en la mayoría de los casos.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 2,
+    question: '¿Qué son los micro-implantes de anclaje temporal (TADs) y cuál es su ventaja?',
+    options: [
+      'Implantes permanentes de titanio para soporte prostético',
+      'Mini-tornillos de titanio (1.2-2 mm diámetro) que se colocan temporalmente en el hueso alveolar para proporcionar anclaje absoluto sin depender de la cooperación del paciente',
+      'Implantes palatinos que se usan como sustituto del arco extraoral',
+      'Tornillos que se usan para la fijación de hueso en cirugía ortognática',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Los TADs (Temporary Anchorage Devices) o miniscrews son mini-tornillos que se insertan en el hueso alveolar (proceso alveolar o paladar) bajo anestesia local. Su ventaja principal es proporcionar anclaje absoluto sin movimiento recíproco, independiente de la cooperación del paciente (a diferencia del headgear). Permiten intrusión de molares, distalización de arco completo, y movimientos imposibles con anclaje dentario.',
+  },
+
+  // Nivel 3
+  {
+    specialty: 'Ortodoncia',
+    level: 3,
+    question: 'Un paciente de 14 años presenta clase III esquelética (ANB -3°) con prognatismo mandibular moderado y deficiencia maxilar. ¿Cuál es el plan de tratamiento?',
+    options: [
+      'Extracción de primeros molares inferiores y cierre de espacio',
+      'Máscara facial (protracción maxilar) si hay crecimiento residual; si no hay potencial de crecimiento, diferir a cirugía ortognática bimaxilar a los 18-20 años + ortodoncia prequirúrgica',
+      'Solo ortodoncia convencional con elásticos de clase III',
+      'Extracción de los cuatro primeros premolares y retracción del frente anterior inferior',
+    ],
+    correctIndex: 1,
+    explanation:
+      'A los 14 años, el potencial de crecimiento mandibular puede estar casi agotado (especialmente en hombres, que crecen hasta ~18 años). Si hay crecimiento residual (análisis de maduración ósea, vértebras cervicales), se puede intentar máscara facial para protruir el maxilar. Si no, la clase III esquelética severa requiere cirugía ortognática (osteotomía de Le Fort I + osteotomía sagital de la mandíbula) precedida de ortodoncia prequirúrgica.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 3,
+    question: '¿Cómo se diagnostica y trata la impactación del canino superior permanente?',
+    options: [
+      'Solo se diagnostica cuando el canino no erupciona a los 18 años; se extrae',
+      'Diagnóstico: rayos X periapicales + panorámica (desviación de los incisivos laterales, ausencia del canino); CBCT para localización exacta. Tratamiento: exposición quirúrgica + tracción ortodóntica para guiar su erupción al arco',
+      'Se trata solo con aparato funcional',
+      'El canino impactado siempre causa reabsorción del incisivo lateral y requiere extracción inmediata',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El canino superior es el segundo diente más frecuentemente impactado (después del tercer molar). Signos: ausencia clínica después de los 14 años, abultamiento palatino o vestibular, desviación del incisivo lateral. CBCT es esencial para la localización tridimensional (palatino, vestibular o central). Tratamiento: exposición quirúrgica (ventana o tunelización) y bracket con cadena de tracción para guiar el canino a su posición en el arco. Pronóstico bueno si se trata antes de los 15-16 años.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 3,
+    question: '¿Qué es la cirugía ortognática y cuáles son sus indicaciones?',
+    options: [
+      'La extracción de dientes para corregir el apiñamiento severo',
+      'Procedimientos quirúrgicos sobre los maxilares (Le Fort I, BSSO, genioplastia) para corregir discrepancias esqueléticas que superan la capacidad compensadora de la ortodoncia',
+      'La cirugía de los tejidos blandos faciales para mejorar la estética',
+      'El uso de tornillos en el hueso para anclaje temporal durante la ortodoncia',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La cirugía ortognática repositiona quirúrgicamente los maxilares. Indicaciones: discrepancias esqueléticas severas (ANB >5° o <-2°), asimetrías faciales esqueléticas, mordidas abiertas esqueléticas, apnea obstructiva del sueño de origen esquelético. Protocolo: análisis cefalométrico y diagnóstico virtual (VSP), ortodoncia prequirúrgica (6-18 meses), cirugía + contencion, ortodoncia postquirúrgica (6-12 meses). Edad mínima: 17-18 años en mujeres, 18-20 en hombres.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 3,
+    question: '¿Cuál es el protocolo de ortodoncia en pacientes con fisura palatina (paladar hendido)?',
+    options: [
+      'La ortodoncia no está indicada en pacientes con fisura palatina',
+      'Secuencia integrada: ortopedia preoperatoria (moldeado nasoalveolar neonatal) → cirugías primarias → ortodoncia en dentición mixta → injerto óseo alveolar → ortodoncia definitiva → cirugía ortognática si necesario',
+      'Solo extracción de dientes supernumerarios en la zona de la fisura',
+      'Implantes inmediatos en la zona de la fisura para cerrar el defecto óseo',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Los pacientes con fisura labiopalatina requieren un equipo multidisciplinario (cirugía plástica, ortodoncia, fonoaudiología, otorrinolaringología). La secuencia cronológica incluye: moldeado nasoalveolar (0-3 meses), queiloplastia (3-6 meses), palatoplastia (9-18 meses), ortodoncia en dentición mixta para alinear y protruir el maxilar, injerto óseo alveolar secundario (8-11 años, antes del canino), ortodoncia con brackets en dentición permanente, y cirugía ortognática tipo Le Fort I si hay deficiencia maxilar residual.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 3,
+    question: '¿Qué es el índice de necesidad de tratamiento ortodóntico (IOTN) y para qué se usa?',
+    options: [
+      'Para medir la longitud del arco dental en el modelo de estudio',
+      'Para clasificar la necesidad de tratamiento ortodóntico según componentes de salud dental (DHC) y estético (AC), usado en sistemas de salud pública para priorizar pacientes',
+      'Para evaluar el resultado del tratamiento terminado',
+      'Para calcular el tiempo de duración del tratamiento',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El IOTN tiene dos componentes: DHC (Dental Health Component) con 5 grados según rasgos oclusales con impacto en salud (apiñamiento, mordida cruzada, agenesias, etc.) y AC (Aesthetic Component) con escala del 1-10 de fotografías de diferente grado de irregularidad. Se usa para priorizar pacientes en sistemas de salud pública (UK, NHS) y determinar quién recibe tratamiento subsidiado. Grados 4 y 5 del DHC indican gran necesidad de tratamiento.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 3,
+    question: '¿Cuáles son las complicaciones del movimiento ortodóntico y cómo se previenen?',
+    options: [
+      'El movimiento ortodóntico es seguro y sin complicaciones cuando se hace con brackets modernos',
+      'Reabsorción radicular apical externa (EARR), desmineralización/manchas blancas, recidiva, pérdida de anclaje, daño al tejido periodontal; se previenen con fuerzas ligeras, control de placa y selección adecuada de pacientes',
+      'Solo puede ocurrir necrosis pulpar si se aplican fuerzas muy fuertes',
+      'La única complicación es la mala estética durante el tratamiento',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Complicaciones del tratamiento ortodóntico: (1) Reabsorción radicular apical externa (EARR): 1-5 mm en el 5-15% de pacientes; mayor riesgo en raíces cónicas/pipeta, movimientos de torque e intrusión. (2) Desmineralización del esmalte (white spot lesions): 50-70% de pacientes con brackets; se previene con barniz de flúor y control de placa. (3) Pérdida de anclaje. (4) Recidiva. (5) Daño periodontal por movimiento en hueso insuficiente. Prevención: fuerzas óptimas (<50 g en incisivos), colaboración del paciente, revisiones periódicas.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 3,
+    question: '¿Qué es la mordida abierta anterior esquelética y cuál es su tratamiento?',
+    options: [
+      'La ausencia de contacto entre incisivos superiores e inferiores por hábito de succión digital; se trata solo con aparatos de habit-breaking',
+      'Una discrepancia vertical con ausencia de contacto entre incisivos en oclusión, de origen esquelético (hiperdivergencia, exceso vertical maxilar); tratamiento: intrusión de molares con TADs o cirugía ortognática (impactación de maxilar) en casos severos',
+      'Solo se produce en pacientes con síndrome de Down',
+      'Se corrige siempre con extracción de molares y cierre de mordida con elásticos',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La mordida abierta anterior puede ser dental (por hábito, transitoria) o esquelética (patrón hiperdivergente, exceso vertical maxilar, rotación mandibular en sentido horario). La de origen esquelético es la más difícil de tratar. Opciones según severidad: (1) Moderada: intrusión de molares con TADs para autocorregir la rotación mandibular, (2) Severa: cirugía ortognática (impactación maxilar tipo Le Fort I para rotar la mandíbula en sentido antihorario). Alta tendencia a la recidiva.',
+  },
+  {
+    specialty: 'Ortodoncia',
+    level: 3,
+    question: '¿Cuáles son los principios del diagnóstico ortodóntico y los registros necesarios?',
+    options: [
+      'Solo se necesita una radiografía panorámica y los modelos de estudio',
+      'Diagnóstico completo: historia clínica, fotografías extraorales e intraorales, modelos de estudio (digitales o físicos), radiografía panorámica, telerradiografía lateral + análisis cefalométrico, y en casos complejos CBCT',
+      'La opinión visual del ortodoncista sin registros complementarios',
+      'Solo la telerradiografía lateral y el índice de irregularidad de Little',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El diagnóstico ortodóntico completo requiere: (1) Historial médico y dental. (2) Fotografías extraorales (frontal, perfil, 3/4) e intraorales (frontal, laterales, oclusales). (3) Modelos de estudio para análisis de apiñamiento (espacio disponible vs. necesario), simetría y oclusión. (4) Radiografías: panorámica (piezas ausentes, patología, raíces), telerradiografía lateral + cefalometría. (5) CBCT en casos de impactaciones, asimetrías o discrepancias esqueléticas complejas. El plan de tratamiento solo puede elaborarse tras el análisis integrado de todos los registros.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// ANATOMÍA DENTAL — 24 preguntas (8 por nivel)
+// ---------------------------------------------------------------------------
+
+const anatomiaDental: Question[] = [
+  // Nivel 1
+  {
+    specialty: 'Anatomía Dental',
+    level: 1,
+    question: '¿Cuántos dientes tiene la dentición temporal (decidua) completa?',
+    options: ['16 dientes', '20 dientes', '24 dientes', '28 dientes'],
+    correctIndex: 1,
+    explanation:
+      'La dentición temporal (decidua o de leche) consta de 20 dientes: 8 incisivos (4 centrales + 4 laterales), 4 caninos y 8 molares (4 primeros molares + 4 segundos molares). No hay premolares en la dentición temporal. La erupción comienza a los 6 meses con los incisivos centrales inferiores y se completa alrededor de los 2-3 años.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 1,
+    question: '¿Cuál es la nomenclatura FDI para el primer molar superior derecho?',
+    options: ['Diente 16', 'Diente 14', 'Diente 26', 'Diente 46'],
+    correctIndex: 0,
+    explanation:
+      'El sistema FDI (Federación Dental Internacional) o sistema de dos dígitos: el primer dígito indica el cuadrante (1=superior derecho permanente, 2=superior izquierdo, 3=inferior izquierdo, 4=inferior derecho) y el segundo dígito indica la posición desde la línea media (1-8). El primer molar superior derecho es el diente 16 (cuadrante 1, sexta posición desde la línea media).',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 1,
+    question: '¿Cuáles son las estructuras que componen la corona del diente?',
+    options: [
+      'Pulpa, dentina y cemento',
+      'Esmalte (exterior), dentina (soporte) y pulpa coronaria (interior)',
+      'Cemento, esmalte y ligamento periodontal',
+      'Esmalte, cemento y hueso alveolar',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La corona anatómica del diente está formada por tres estructuras: esmalte (tejido más externo y duro, 96% mineral), dentina (tejido de soporte principal, contiene túbulos dentinarios y células de Tomes), y la cámara pulpar coronaria (tejido conectivo vascularizado e inervado). El cemento cubre la superficie radicular, no la coronaria.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 1,
+    question: '¿Qué diente permanente erupciona primero habitualmente?',
+    options: [
+      'Primer premolar inferior',
+      'Incisivo central superior',
+      'Primer molar permanente inferior o incisivo central inferior',
+      'Canino inferior',
+    ],
+    correctIndex: 2,
+    explanation:
+      'El primer diente permanente en erupcionar suele ser el primer molar inferior o el incisivo central inferior, ambos alrededor de los 6 años. Esta es la razón por la cual el primer molar permanente se llama "primera muela de los seis años". La secuencia varía, pero generalmente sigue el patrón: primer molar inferior (6 años) → incisivo central inferior (6-7 años) → incisivo central superior (7-8 años).',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 1,
+    question: '¿Cuál es la función de la cúspide de Carabelli en el primer molar superior?',
+    options: [
+      'Es una cúspide funcional importante para la masticación',
+      'Es un rasgo morfológico accesorio (variación anatómica) ubicado en la cara palatina de la cúspide mesiopalatina del primer molar superior, sin función masticatoria significativa',
+      'Es una patología que requiere tratamiento',
+      'Es la quinta cúspide del primer molar inferior',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La cúspide de Carabelli es una protuberancia accesoria ubicada en la cara palatina de la cúspide mesiopalatina (o cúspide de protocono) del primer molar superior permanente. Es un rasgo hereditario presente en el 50-60% de la población caucásica. No es una cúspide funcional y no tiene implicación clínica patológica; es relevante en antropología dental y odontología forense.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 1,
+    question: '¿Qué es el surco de desarrollo en la morfología dental?',
+    options: [
+      'Una fisura patológica producida por caries',
+      'Una línea de unión entre los lóbulos de desarrollo del diente, formada durante la calcificación',
+      'El espacio entre la encía y el cuello del diente',
+      'Una fractura del esmalte por trauma',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Los surcos de desarrollo son las líneas o depresiones que marcan la unión entre los lóbulos de crecimiento del diente durante la calcificación. Se forman porque los lóbulos de calcificación crecen de manera centrífuga y cuando se unen, dejan una línea de menor espesor de esmalte. Son zonas de predilección para la caries de fosas y fisuras.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 1,
+    question: '¿Cuántos lóbulos de calcificación tiene el incisivo central superior?',
+    options: ['2 lóbulos', '3 lóbulos', '4 lóbulos', '5 lóbulos'],
+    correctIndex: 2,
+    explanation:
+      'El incisivo central superior se desarrolla a partir de 4 lóbulos de calcificación: 3 lóbulos labiales (que forman los mamelones del borde incisal en el diente recién erupcionado: mesial, central y distal) y 1 lóbulo lingual (que forma el cíngulo y los listeles marginales). Los mamelones se desgastan con la oclusión y normalmente no son visibles en adultos.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 1,
+    question: '¿Qué es la unión amelocementaria (UAC) y su importancia clínica?',
+    options: [
+      'La zona de unión entre la pulpa y la dentina',
+      'La línea de unión entre el esmalte (corona) y el cemento (raíz); clínicamente importante como referencia para medir la pérdida de inserción periodontal y como límite de preparaciones cervicales',
+      'La zona donde el ligamento periodontal se inserta en el cemento',
+      'El punto más estrecho del conducto radicular',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La UAC (o línea cervical) es la unión entre el esmalte coronario y el cemento radicular. Clínicamente: (1) Es el punto de referencia para medir la pérdida de inserción (CAL) en periodoncia, (2) Las restauraciones cervicales no deben ubicarse muy subgingivalmente, (3) El margen de la preparación para coronas se ubica en relación a ella, (4) Las recesiones gingivales exponen el cemento radicular (más sensible y susceptible a caries radicular).',
+  },
+
+  // Nivel 2
+  {
+    specialty: 'Anatomía Dental',
+    level: 2,
+    question: '¿Cuál es la morfología interna del primer molar inferior y su variación anatómica más importante?',
+    options: [
+      'Un solo conducto amplio y recto',
+      'Tres conductos: dos mesiales (MV y ML) y uno distal; variación: 4.° conducto distal (distolingual) presente en 20-30% de los casos, detectable con CBCT o magnificación',
+      'Cuatro conductos iguales en cada raíz',
+      'Dos conductos fusionados en uno a nivel del tercio apical',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El primer molar inferior tiene dos raíces: mesial (con dos conductos: mesiovestibular y mesiolingual) y distal (típicamente uno, el distal). La variación más importante: un cuarto conducto distolingual (DL), presente en el 20-30% de los casos (hasta 40% en asiáticos). Esta raíz distal con dos conductos es la causa más frecuente de fracasos endodónticos en el primer molar inferior por no ser detectada.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 2,
+    question: '¿Qué es la bifurcación y trifurcación radicular y cuál diente tiene trifurcación?',
+    options: [
+      'Son patologías que requieren extracción inmediata',
+      'Bifurcación: división de la raíz en dos ramas (premolares superiores, molares inferiores); Trifurcación: división en tres raíces (primer y segundo molar superior)',
+      'Ambas son características de los incisivos',
+      'Solo ocurren en dientes temporales',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La bifurcación es la división de la raíz en dos (raíz mesial y distal en molares inferiores; raíz vestibular y palatina en premolares superiores con dos raíces). La trifurcación es la división en tres raíces (mesiovestibular, distovestibular y palatina) característica de los molares superiores. El punto de bifurcación/trifurcación se llama furca o furcación y es de gran relevancia en periodoncia.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 2,
+    question: '¿Cuáles son las diferencias morfológicas entre el primer y segundo premolar superior?',
+    options: [
+      'Son idénticos morfológicamente',
+      'El primer premolar tiene mayor tamaño, surco bucal de desarrollo y frecuentemente dos raíces (vestibular y palatina); el segundo tiene generalmente una sola raíz y las cúspides más simétricas',
+      'El segundo premolar tiene tres cúspides; el primero solo dos',
+      'El primer premolar es más pequeño y tiene el foramen apical en la mitad de la raíz',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El primer premolar superior: mayor tamaño, cúspide vestibular más larga que palatina (asimetría), surco mesial de desarrollo (surco de Harrison), frecuentemente dos raíces (vestibular y palatina) en el 60-90% de los casos. El segundo premolar superior: raíz única más frecuente (o dos raíces más fusionadas), cúspides más simétricas en altura, surco oclusal simple. Ambos con 2 cúspides.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 2,
+    question: '¿Qué es el foramen apical y cuál es su relación con el ápice radiográfico?',
+    options: [
+      'Son el mismo punto anatómico en todos los dientes',
+      'El foramen apical es la apertura del conducto radicular en el extremo radicular; el ápice radiográfico es el punto más apical visible en la radiografía; no siempre coinciden (el foramen puede estar 0.5-3 mm coronal al ápice radiográfico)',
+      'El foramen apical siempre está en la punta exacta del ápice radiográfico',
+      'El foramen apical es siempre único por cada diente',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Esta distinción es fundamental en endodoncia. El ápice radiográfico es el punto más apical de la raíz en la radiografía. El foramen apical (o foramen apical fisiológico) es la apertura del conducto radicular donde salen los vasos y nervios. El foramen NO siempre está en el ápice radiográfico: puede estar 0.5-3 mm más coronalmente y lateralmente. Por eso, la longitud de trabajo termina 0.5-1 mm antes del ápice radiográfico, no en él.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 2,
+    question: '¿Cuáles son las características anatómicas específicas del canino superior que lo diferencian de los demás dientes anteriores?',
+    options: [
+      'Tiene dos cúspides y es el más pequeño del grupo anterior',
+      'Es unirradicular, con la raíz más larga de la dentición, una sola cúspide bien desarrollada, cíngulo prominente y es el diente más resistente a la exfoliación',
+      'Tiene la raíz más corta de todos los dientes',
+      'Es el único diente anterior con dos raíces en un 50% de los casos',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El canino superior es notable por: (1) raíz más larga de toda la dentición (hasta 27 mm), (2) siempre unirradicular, (3) una sola cúspide prominente con dos vertientes (mesial y distal), (4) cíngulo bien desarrollado, (5) gran resistencia a la exfoliación y larga vida útil. Por su anatomía y posición, es el "pilar de la oclusión" y juega un papel clave en los movimientos excéntricos mandibulares (guía canina).',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 2,
+    question: '¿Qué es la fórmula dental de la dentición permanente del ser humano?',
+    options: [
+      '2-1-2-2 / 2-1-2-2 (por cuadrante)',
+      '2-1-2-3 / 2-1-2-3 (por cuadrante, correspondiente a incisivos-caninos-premolares-molares)',
+      '2-1-3-3 / 2-1-3-3 (por cuadrante)',
+      '2-2-2-3 / 2-2-2-3 (por cuadrante)',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La fórmula dental de la dentición permanente es 2-1-2-3 por cuadrante (Incisivos - Caninos - Premolares - Molares), dando un total de 32 dientes (8 incisivos + 4 caninos + 8 premolares + 12 molares incluyendo terceros molares). Si los terceros molares están ausentes, 28 dientes. La fórmula decimal: 2/2 - 1/1 - 2/2 - 3/3 = 32 dientes.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 2,
+    question: '¿Cómo se identifican histológicamente las líneas de von Ebner y las líneas incrementales de Retzius?',
+    options: [
+      'Las líneas de Retzius son de la dentina; las de von Ebner son del esmalte',
+      'Las líneas de Retzius (perikymatia) son líneas incrementales del esmalte que representan ritmos de aposición; las líneas de von Ebner son líneas incrementales de la dentina',
+      'Ambas son marcadores de trauma durante el desarrollo',
+      'Ninguna de las dos tiene relevancia clínica',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Líneas incrementales del esmalte (Retzius o perikymatia): representan los ritmos de aposición de la ameloblástica durante la amelogénesis; visibles como líneas horizontales en la superficie del esmalte. Líneas de Owen y von Ebner: en dentina, representan los ritmos de aposición de los odontoblastos (4 μm/día aproximadamente). Línea neonatal: marca el cambio de vida intrauterina a extrauterina, visible en incisivos deciduos y primera molar permanente.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 2,
+    question: '¿Cuál es la dirección de los prismas del esmalte en el tercio cervical de la corona?',
+    options: [
+      'Siempre perpendiculares a la superficie del esmalte',
+      'Siempre paralelos al eje mayor del diente',
+      'En el tercio cervical, los prismas se inclinan en dirección oclusal o incisal (hacia la corona), lo que tiene importancia para la preparación cavitaria (bisel en cervical)',
+      'En espiral alrededor del eje del diente',
+    ],
+    correctIndex: 2,
+    explanation:
+      'La dirección de los prismas del esmalte varía según la zona: en la zona media de la corona van perpendicularmente a la dentina, en la zona incisal/oclusal se inclinan ligeramente, y en el tercio cervical se inclinan hacia oclusal/incisal. Esto es de gran importancia clínica: al preparar cavidades, el bisel en la zona cervical debe ir en la dirección de los prismas para evitar dejar prismas sin soporte (susceptibles a fractura y microfiltración).',
+  },
+
+  // Nivel 3
+  {
+    specialty: 'Anatomía Dental',
+    level: 3,
+    question: '¿Cuál es la relevancia del sistema de conductos radiculares de Vertucci para la práctica endodóntica?',
+    options: [
+      'Es solo de interés académico sin aplicación clínica',
+      'Clasifica las configuraciones de conductos en 8 tipos, siendo esencial para predecir la anatomía y evitar conductos no tratados en la endodoncia',
+      'Se usa exclusivamente para clasificar la anatomía de los molares superiores',
+      'Clasifica la dureza de la dentina según la zona del conducto',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La clasificación de Vertucci (1984) describe 8 tipos de configuraciones de conductos: Tipo I (1 conducto, 1 foramen), Tipo II (2→1), Tipo III (1→2→1), Tipo IV (2 conductos independientes), Tipo V (1→2), Tipo VI (2→1→2), Tipo VII (1→2→1→2), Tipo VIII (3 conductos independientes). Es fundamental para el endodoncista porque predice las variaciones anatómicas y permite localizar conductos adicionales que de no tratarse llevarían al fracaso endodóntico.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 3,
+    question: '¿Qué es la amelogénesis imperfecta y cómo se clasifica?',
+    options: [
+      'Un defecto de la mineralización de la dentina por herencia recesiva',
+      'Un grupo heterogéneo de trastornos genéticos del desarrollo del esmalte que afectan su formación (hipoplásica), mineralización (hipomineralizada) o maduración (hipomadura)',
+      'Una deficiencia de vitamina D que afecta el esmalte temporal únicamente',
+      'Un defecto adquirido por fluorosis dental severa',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La amelogénesis imperfecta (AI) es un grupo de trastornos hereditarios que afectan exclusivamente al esmalte. Clasificación: (1) Hipoplásica: el esmalte tiene grosor reducido pero dureza normal (defecto de la fase secretora). (2) Hipomineralizada (hipocalcificada): esmalte de grosor normal pero blando, se fractura fácilmente. (3) Hipomadura: esmalte con cristales inadecuadamente maduros, más opaco y susceptible a las caries. Afecta dentición temporal y permanente.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 3,
+    question: '¿Cuál es la importancia clínica del triángulo de Bonwill y el ángulo de Balkwill?',
+    options: [
+      'Son referencias para el análisis cefalométrico en ortodoncia',
+      'Definen la relación geométrica entre los cóndilos y los incisivos centrales inferiores (triángulo equilátero de 10 cm) y el ángulo del eje de bisagra al plano oclusal; son base para el montaje articulatorio en prostodoncia',
+      'Son métodos de medición de la profundidad de sondaje periodontal',
+      'Clasifican el desgaste oclusal en pacientes con bruxismo',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El triángulo de Bonwill describe una relación equilátera (10 cm de lado) entre los dos cóndilos mandibulares y el punto de contacto de los incisivos centrales inferiores. El ángulo de Balkwill es el ángulo que forma el eje de bisagra condíleo con el plano oclusal (~26°). Ambos conceptos son fundamentales en prostodoncia para la programación de articuladores semi-ajustables y la planificación de la oclusión en restauraciones completas.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 3,
+    question: 'En odontología forense, ¿cómo se usa el método de Gustafson para estimar la edad?',
+    options: [
+      'Analiza la longitud de los dientes en radiografías',
+      'Evalúa 6 cambios regresivos del diente (desgaste oclusal, periodontosis, deposición secundaria de dentina, reabsorción radicular, aposición de cemento, transparencia apical) para estimar la edad cronológica',
+      'Compara el color del esmalte con una escala de colores estándar',
+      'Usa el tamaño de la cámara pulpar para determinar la edad',
+    ],
+    correctIndex: 1,
+    explanation:
+      'El método de Gustafson (1950) evalúa 6 cambios regresivos en dientes extraídos: (1) Atrición (desgaste oclusal), (2) Periodontosis (recesión periodontal), (3) Dentina secundaria (deposición interna en la cámara), (4) Transparencia radicular (calcificación de túbulos dentinarios en la raíz), (5) Cementoaposición (grosor del cemento), (6) Reabsorción radicular. Cada cambio se puntúa 0-3; la suma correlaciona con la edad. Error estimado: ±5-10 años.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 3,
+    question: '¿Qué es la dentinogénesis imperfecta y en qué se diferencia de la displasia de dentina?',
+    options: [
+      'Son el mismo defecto hereditario de la dentina',
+      'Dentinogénesis imperfecta: defecto en la colágena tipo I que produce dentina opalescente/azulada-marrón, obliteración cameral; se asocia o no a osteogénesis imperfecta. Displasia dentinal: cámaras pulpares obliteradas con raíces cortas y apicales; morfología coronaria normal',
+      'La displasia de dentina afecta solo al esmalte',
+      'Ambas solo ocurren en dentición temporal',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Dentinogénesis imperfecta (DI): mutación en el gen DSPP (dentina sialoproteína). Produce dentina translúcida/opalescente de color azulado a marrón, con desgaste rápido, obliteración de la cámara pulpar y conductos. Tipo I asociada a osteogénesis imperfecta; Tipo II aislada. Displasia dentinal: Tipo I (raíces cortas en "llama de vela", movilidad, exfoliación prematura, dientes de aspecto normal) y Tipo II (obliteración cameral en permanentes, cálculos pulpares en temporales).',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 3,
+    question: '¿Cuál es la base embriológica de la formación dental y cuándo ocurre cada etapa?',
+    options: [
+      'Los dientes se forman exclusivamente a partir del ectodermo en la 12.ª semana',
+      'Desde la 6.ª semana: lámina dental → botón (yema) → caperuza (casquete) → campana (inicio de diferenciación) → corona (mineralización) → erupción. Derivados del ectodermo oral (ameloblastos → esmalte) y del ectomesénquima (odontoblastos → dentina, pulpa, cemento, ligamento)',
+      'Los dientes se forman completamente antes del nacimiento',
+      'Solo la dentina y la pulpa tienen origen ectodérmico',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La odontogénesis comienza en la 6.ª semana de vida embrionaria: (1) Estadio de lámina dental, (2) Botón/yema (proliferación celular), (3) Caperuza/casquete (morfodifferenciación, 10-11 semanas), (4) Campana (histodifferenciación: aparecen ameloblastos, odontoblastos), (5) Corona (inicio de mineralización, calcificación), (6) Raíz (formación postnatal, erupción activa). El esmalte deriva del ectodermo (ameloblastos); dentina, pulpa, cemento, ligamento y hueso alveolar del ectomesénquima de la cresta neural.',
+  },
+  {
+    specialty: 'Anatomía Dental',
+    level: 3,
+    question: '¿Qué es la odontología forense y cuáles son sus aplicaciones principales?',
+    options: [
+      'La especialidad que se dedica exclusivamente a la estética dental en juicios',
+      'La aplicación del conocimiento odontológico en la investigación legal: identificación de restos humanos por registros dentales, estimación de edad y sexo, análisis de marcas de mordida, y peritaje de mala praxis',
+      'El análisis de la higiene oral en medicina legal',
+      'Solo la comparación de radiografías ante-mortem y post-mortem',
+    ],
+    correctIndex: 1,
+    explanation:
+      'La odontología forense aplica el conocimiento dental a casos médico-legales. Aplicaciones: (1) Identificación de cadáveres: comparación de registros dentales antemortem vs. postmortem (restauraciones, extracciones, morfología), (2) Estimación de edad cronológica (métodos de Gustafson, Moorrees, Demirjian), (3) Determinación de sexo por discrepancias en tamaño dental, amelogenina en pulpa dental, (4) Análisis de marcas de mordida en víctimas o alimentos (molde de la mordida vs. dentición del sospechoso), (5) Peritaje de mala praxis odontológica.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Mapa unificado y función de acceso
+// ---------------------------------------------------------------------------
+
+const QUESTION_MAP: Record<string, Question[]> = {
+  'Operatoria Dental': operatoriaDental,
+  'Endodoncia': endodoncia,
+  'Periodoncia': periodoncia,
+  'Ortodoncia': ortodoncia,
+  'Anatomía Dental': anatomiaDental,
+};
+
+/**
+ * Returns the list of questions for a given specialty and level.
+ * Falls back to all questions of the specialty if the level is not found.
+ */
+export function getQuizQuestions(specialty: string, level: number): Question[] {
+  const all = QUESTION_MAP[specialty] ?? [];
+  const filtered = all.filter((q) => q.level === level);
+  return filtered.length > 0 ? filtered : all.slice(0, 8);
+}
+
+/**
+ * Returns all available specialty names (matching useProgress / Supabase values).
+ */
+export const QUIZ_SPECIALTIES = Object.keys(QUESTION_MAP);
+
+/**
+ * Returns the levels available for a given specialty.
+ */
+export function getAvailableLevels(specialty: string): number[] {
+  const all = QUESTION_MAP[specialty] ?? [];
+  return [...new Set(all.map((q) => q.level))].sort((a, b) => a - b);
+}

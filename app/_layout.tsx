@@ -9,7 +9,8 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
+import Head from 'expo-router/head';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/src/hooks/useAuth';
@@ -86,6 +87,14 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Head>
+        <title>Dentify — Aprendizaje Dental Clínico</title>
+        <meta name="description" content="Dentify es una plataforma interactiva de aprendizaje dental con simulador 3D, quizzes clínicos y asistente IA especializado en odontología." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:title" content="Dentify — Aprendizaje Dental Clínico" />
+        <meta property="og:description" content="Plataforma interactiva de aprendizaje dental con simulador 3D, quizzes clínicos y asistente IA." />
+        <meta property="og:type" content="website" />
+      </Head>
       <AuthGuard>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

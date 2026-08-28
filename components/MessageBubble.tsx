@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { Colors } from '@/constants/theme';
+import { Colors, createShadow } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export interface MessageBubbleProps {
@@ -41,15 +41,15 @@ export default function MessageBubble({
         style={{
           maxWidth: '80%',
           backgroundColor: isUser ? colors.clinicalBlue : colors.surface,
+          borderColor: isUser ? '#005C8A' : '#E5E5E5',
+          borderWidth: isUser ? 1 : 2,
+          borderBottomWidth: isUser ? 4 : 5,
           borderRadius: 16,
           borderBottomRightRadius: isUser ? 4 : 16,
           borderBottomLeftRadius: isUser ? 16 : 4,
           paddingHorizontal: 16,
           paddingVertical: 10,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.08,
-          shadowRadius: 4,
+          ...createShadow(1, 4, '#000000', 0.06),
           elevation: 2,
         }}
       >

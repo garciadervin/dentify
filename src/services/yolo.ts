@@ -36,10 +36,11 @@ export interface YOLOMessage {
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
+// Must match assets/ml/metadata.yaml `names` exactly (classId ↔ label).
 export const CLASS_NAMES = [
   'Abrasion', 'Filling', 'Crown',
-  'Caries 1', 'Caries 2', 'Caries 3',
-  'Caries 4', 'Caries 5', 'Caries 6',
+  'Caries 1 class', 'Caries 2 class', 'Caries 3 class',
+  'Caries 4 class', 'Caries 5 class', 'Caries 6 class',
 ];
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -53,9 +54,13 @@ let _requestId = 0;
 /**
  * Register the WebView ref so this service can communicate with it.
  * Called from the scanner screen when it renders the hidden WebView.
+ * A new WebView means a fresh runtime, so reset the loaded/model state.
  */
 export function setWebViewRef(ref: any): void {
   _webViewRef = ref;
+  if (ref) {
+    _modelLoaded = false;
+  }
 }
 
 /**

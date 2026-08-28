@@ -1,50 +1,144 @@
-# Welcome to your Expo app 👋
+# 🦷 Dentify — Asistente educativo de odontología con IA
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Dentify** es una aplicación educativa móvil desarrollada con **Expo SDK 54 (React Native)** que ayuda a estudiantes de odontología a practicar diagnóstico clínico, estudiar anatomía dental y recibir tutoría personalizada con IA. Es el proyecto de grado de la Maestría en Desarrollo de Software (UPT Aragua, Venezuela), con caso de estudio en la Facultad de Odontología de la UNERG.
 
-## Get started
+Aplicación en español, con arquitectura **Edge-First**: visión (YOLO) y render 3D corren en el dispositivo; la nube (Supabase + Groq + OpenAI) se usa para inferencia de lenguaje, embeddings semánticos y persistencia.
 
-1. Install dependencies
+## Módulos
 
-   ```bash
-   npm install
-   ```
+| Módulo | Descripción |
+| --- | --- |
+| **Denty-AI** | Asistente multimodal (texto/voz) con respuestas fundamentadas en manuales clínicos venezolanos mediante RAG (pgvector). Navegación por comandos de voz. |
+| **Simulador 3D** | Visualización interactiva de 16 modelos de piezas dentales (`.glb` comprimidos con Draco) con rotación, zoom, selección de estructuras y vista de capas anatómicas. |
+| **Diagnóstico por visión** | Segmentación local (YOLO26n-seg, TFLite) de condiciones dentales en fotos: Abrasión, Obturación, Corona y clases de Caries 1–6, con descripción educativa vía RAG. |
+| **Ruta pedagógica** | Progresión por especialidades (Operatoria, Endodoncia, Periodoncia…) con quizzes, insignias (badges) y XP. Vista para docentes. |
 
-2. Start the app
+## Stack
 
-   ```bash
-   npx expo start
-   ```
+- **Frontend**: Expo SDK 54 · React Native 0.81 · TypeScript · NativeWind (Tailwind) · expo-router · three.js / React Three Fiber
+- **Backend**: Supabase (Auth, PostgreSQL + pgvector, Storage, Edge Functions)
+- **IA**: Groq (`qwen/qwen3.6-27b` para chat, `whisper-large-v3` para voz) · OpenAI (`text-embedding-3-small`) · YOLO26n-seg en dispositivo
+- **Tests**: Jest + React Native Testing Library
 
-In the output, you'll find options to open the app in a
+## Arquitectura (Edge-First)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+Dispositivo (Edge)                      Nube
+┌────────────────────────────┐         ┌──────────────────────────────┐
+│ Expo App (React Native)    │  HTTPS   │ Supabase                     │
+│  UI · 3D (three/R3F)       │◄───────►│  Auth (JWT) · PostgreSQL      │
+│  YOLO-seg (TFLite WebView) │          │  + pgvector (HNSW) · Storage  │
+│  SQLite (conversaciones)   │          │  Edge Function: groq-proxy    │
+└────────────┬───────────────┘          └──────────┬───────────────────┘
+             │                                     │
+             │                          ┌──────────▼──────────┐
+             │                          │ Groq  qwen3.6-27b ·  │
+             │                          │       whisper-large-v3│
+             │                          └──────────┬──────────┘
+             │                          ┌──────────▼──────────┐
+             └─────────────────────────►│ OpenAI embeddings   │
+                                        │  text-embedding-3-small│
+                                        └─────────────────────┘
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Las claves de API viven **solo en Supabase Secrets** (Edge Function `groq-proxy`); el cliente nunca las ve.
 
-## Learn more
+## Empezar
 
-To learn more about developing your project with Expo, look at the following resources:
+### Requisitos
+- Node.js ≥ 20, npm
+- Supabase CLI (para migraciones/functions) y un proyecto de Supabase activo
+- Clave de **Groq** (chat/voz) y de **OpenAI** (embeddings)
+- **Expo Go** (SDK 54) para probar en dispositivo, o `npx expo start --web`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 1. Configuración
 
-## Join the community
+```bash
+npm install
+cp .env.example .env
+# .env: EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY,
+#       SUPABASE_SERVICE_ROLE_KEY (ingesta), OPENAI_API_KEY (ingesta)
+```
 
-Join our community of developers creating universal apps.
+### 2. Base de datos y Edge Function
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+supabase link --project-ref <ref>   # ya vinculado en este repo
+supabase db push                    # aplica migraciones (esquema + pgvector + storage)
+supabase secrets set GROQ_API_KEY=<key>
+supabase secrets set OPENAI_API_KEY=<key>
+supabase functions deploy groq-proxy
+```
+
+### 3. Cargar los manuales clínicos (RAG)
+
+Los PDFs fuente van en `./docs/` (no se publican en git por derechos de autor). Para trocearlos, embederlos y cargarlos:
+
+```bash
+npm run ingest:rag -- --embedder openai      # carga a clinical_manuals
+npm run ingest:rag -- --embedder openai --dry-run   # exporta a docs/rag-export.json
+```
+
+> **Nota (Venezuela):** la API de OpenAI bloquea la región; usa una VPN de EE. UU. solo para ejecutar la ingesta desde tu máquina. En la app, el embedding de consultas lo llama el Edge Function desde los servidores de Supabase, por lo que **no** necesitas VPN en el dispositivo.
+
+### 4. Ejecutar
+
+```bash
+npm start                 # Expo dev server (QR para Expo Go)
+npm run web               # versión web
+npm test                  # suite de pruebas
+```
+
+## Scripts
+
+| Script | Descripción |
+| --- | --- |
+| `npm start` | Levanta el dev server de Expo |
+| `npm run web` | Dev server web |
+| `npm test` | Ejecuta Jest |
+| `npm run ingest:rag` | Ingesta RAG (usa `.env`) |
+| `npm run ingest:rag -- --dry-run` | Ingesta en modo export (sin BD) |
+| `npm run lint` | ESLint |
+
+## Estructura
+
+```
+app/            Rutas (tabs, auth, quiz, teacher) — expo-router
+components/     UI (AppHeader, ChatInput, ModelViewer, DetectionOverlay, …)
+src/
+  services/     rag, groq, embeddings, yolo, conversations, modelCache, …
+  hooks/        useAuth, useProgress, useBadges
+  lib/          cliente Supabase
+  data/         quizzes
+  types/        tipos de la BD (Database)
+assets/
+  models/       16 modelos GLB (Draco)
+  ml/           modelo YOLO26n-seg (TFLite) + runtime de inferencia
+supabase/
+  migrations/   esquema + pgvector + storage
+  functions/    groq-proxy (Edge Function)
+scripts/        ingest-rag.mjs
+docs/           manuales clínicos (locales, fuera de git)
+```
+
+## RAG y embeddings
+
+- Corpus: manuales clínicos troceados a ~500 palabras con solape de 50 (Appendix A del PRD).
+- Búsqueda semántica: `match_manuals` (pgvector HNSW, coseno) con `text-embedding-3-small` (1536 dim).
+- Fallback léxico: `match_manuals_by_text` (`pg_trgm`) que matchea cualquier término.
+- La consulta se embebe vía el Edge Function (clave de OpenAI server-side); si no está disponible, el RAG degrada a búsqueda léxica — nunca mezcla espacios vectoriales.
+
+## Documentación
+
+- [`PRD.md`](PRD.md) — Product Requirements Document (IEEE 830) con trazabilidad de requisitos.
+- [`DESIGN.md`](DESIGN.md) — Design system *Clinical Clarity*.
+
+## Limitaciones conocidas
+
+- La selección de estructuras en el simulador 3D usa el raycast de R3F (mapping aproximado del toque en dispositivo).
+- Los embeddings de OpenAI requieren VPN solo para re-ingesta desde Venezuela; la app en runtime no.
+- El diagnóstico por visión es educativo y **no sustituye** evaluación clínica profesional.
+
+---
+
+Proyecto de grado — Maestría en Desarrollo de Software, UPT Aragua. Caso de estudio: Facultad de Odontología, UNERG.
