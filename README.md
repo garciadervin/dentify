@@ -9,7 +9,7 @@ Aplicación en español, con arquitectura **Edge-First**: visión (YOLO) y rende
 | Módulo | Descripción |
 | --- | --- |
 | **Denty-AI** | Asistente multimodal (texto/voz) con respuestas fundamentadas en manuales clínicos venezolanos mediante RAG (pgvector). Navegación por comandos de voz. |
-| **Simulador 3D** | Visualización interactiva de 16 modelos de piezas dentales (`.glb` comprimidos con Draco) con rotación, zoom, selección de estructuras y vista de capas anatómicas. |
+| **Simulador 3D** | Visualización interactiva de 16 modelos de piezas dentales (`.glb` optimizados: `KHR_mesh_quantization` + texturas JPEG) con rotación, zoom, selección de estructuras y vista de capas anatómicas. |
 | **Diagnóstico por visión** | Segmentación local (YOLO26n-seg, TFLite) de condiciones dentales en fotos: Abrasión, Obturación, Corona y clases de Caries 1–6, con descripción educativa vía RAG. |
 | **Ruta pedagógica** | Progresión por especialidades (Operatoria, Endodoncia, Periodoncia…) con quizzes, insignias (badges) y XP. Vista para docentes. |
 
@@ -99,6 +99,8 @@ npm test                  # suite de pruebas
 | `npm run ingest:rag` | Ingesta RAG (usa `.env`) |
 | `npm run ingest:rag -- --dry-run` | Ingesta en modo export (sin BD) |
 | `npm run lint` | ESLint |
+| `npm run optimize:models` | Optimiza los modelos 3D (quantize + JPEG) |
+| `npm run optimize:models -- --restore` | Restaura los `.glb` originales |
 
 ## Estructura
 
@@ -112,7 +114,7 @@ src/
   data/         quizzes
   types/        tipos de la BD (Database)
 assets/
-  models/       16 modelos GLB (Draco)
+  models/       16 modelos GLB optimizados (KHR_mesh_quantization + JPEG)
   ml/           modelo YOLO26n-seg (TFLite) + runtime de inferencia
 supabase/
   migrations/   esquema + pgvector + storage

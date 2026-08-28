@@ -23,10 +23,9 @@ import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   ActivityIndicator,
 } from 'react-native';
-import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
+import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber/native';
 import { useGLTF, useProgress, OrbitControls } from '@react-three/drei/native';
 import * as THREE from 'three';
 
@@ -97,7 +96,6 @@ function ModelScene({
 }) {
   const { scene } = useGLTF(modelUri) as unknown as { scene: THREE.Scene };
   const groupRef = useRef<THREE.Group>(null);
-  const { camera } = useThree();
 
   // Traverse the scene and set transparent/opacity properties dynamically
   useEffect(() => {
@@ -157,36 +155,18 @@ function ModelScene({
     }
   });
 
+  // R3F pointer events raycast against the GLTF scene natively, so the hit
+  // coordinates are correct regardless of the canvas size or screen layout.
+  // `event.object` is the actual intersected mesh (the event bubbles up to
+  // the primitive). This replaces a manual Raycaster that used window
+  // dimensions and mapped taps inaccurately.
   const handlePointerDown = useCallback(
-    (event: any) => {
-      if (!scene || !camera) return;
-
-      const { locationX, locationY } = event.nativeEvent;
-      const { width, height } = Dimensions.get('window');
-
-      const x = (locationX / width) * 2 - 1;
-      const y = -(locationY / height) * 2 + 1;
-
-      const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-
-      const meshes: THREE.Mesh[] = [];
-      if (typeof scene.traverse === 'function') {
-        scene.traverse((child) => {
-          if ((child as THREE.Mesh).isMesh) meshes.push(child as THREE.Mesh);
-        });
-      }
-
-      const intersects = raycaster.intersectObjects(meshes, false);
-      if (intersects.length > 0) {
-        const hit = intersects[0].object;
-        const name = hit.userData?.name || hit.name || 'Estructura dental';
-        onStructureSelect?.(name);
-      } else {
-        onStructureSelect?.(null);
-      }
+    (event: ThreeEvent<PointerEvent>) => {
+      const hit = event.object;
+      const name = hit?.userData?.name || hit?.name || 'Estructura dental';
+      onStructureSelect?.(name);
     },
-    [scene, camera, onStructureSelect]
+    [onStructureSelect]
   );
 
   return (
@@ -238,6 +218,7 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
         onCreated={() => setCanvasReady(true)}
         camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{ antialias: true }}
+        onPointerMissed={() => onStructureSelect?.(null)}
       >
         {/* Orbit controls for pan / rotate / zoom */}
         <OrbitControls

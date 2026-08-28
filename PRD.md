@@ -54,7 +54,7 @@ The system follows an **Edge-First** architecture: vision and 3D processing run 
 | **YOLO26n-seg** | Nano segmentation variant of the YOLO architecture (Ultralytics YOLO v8.4+) used for object segmentation on mobile |
 | **TFLite** | TensorFlow Lite — framework for running ML models on mobile devices |
 | **pgvector** | PostgreSQL extension for vector similarity search (HNSW index) |
-| **GLB / Draco** | 3D file format and compression algorithm for polygonal meshes |
+| **GLB / KHR_mesh_quantization** | 3D file format and quantization extension used to compress polygonal meshes (supported natively by three.js, no runtime decoder) |
 | **Expo** | Development framework for React Native |
 | **NativeWind** | Tailwind CSS-based styling library for React Native |
 | **Groq** | Cloud inference provider serving the chat (Qwen 3.6 27B) and Whisper (STT) models |
@@ -82,7 +82,7 @@ Dentify is a standalone system that runs on students' mobile devices. It integra
 - **Supabase**: authentication, relational database (PostgreSQL), vector storage (pgvector) for RAG, and Edge Functions.
 - **Groq API**: inference for the chat model (**Qwen 3.6 27B**, multimodal) and **Whisper Large V3** (speech-to-text).
 - **OpenAI Embeddings API**: `text-embedding-3-small` (1536 dimensions) to embed RAG queries and manual fragments.
-- **3D Model CDN**: distribution of `.glb` models compressed with Draco.
+- **3D Model CDN**: distribution of `.glb` models optimized with `KHR_mesh_quantization` and JPEG textures (bundled assets, no runtime decoder).
 
 Vision processing (YOLO26n-seg) runs **locally** via TensorFlow Lite inside a WebView. Voice is recorded on the device, transcribed by Whisper through a Supabase Edge Function, and text is sent to the chat model.
 
@@ -135,7 +135,7 @@ Vision processing (YOLO26n-seg) runs **locally** via TensorFlow Lite inside a We
 
 | ID | Description | Priority |
 | --- | --- | --- |
-| **FR-06** | The system shall load and render 3D models of dental pieces in Draco-compressed `.glb` format. | High |
+| **FR-06** | The system shall load and render optimized 3D models of dental pieces (`.glb` with `KHR_mesh_quantization` and JPEG textures). | High |
 | **FR-07** | The user shall be able to rotate, zoom, and pan the model using touch gestures. | High |
 | **FR-08** | The system shall display labels with anatomical structure names when a structure is selected. | Medium |
 
@@ -202,7 +202,7 @@ Aligned with **ISO/IEC 25010**.
 | **Supabase** | REST / PostgreSQL | Auth, relational + vector storage, Edge Functions. |
 | **Groq API** | HTTPS / JSON | Chat (Qwen 3.6 27B) and Whisper (STT) inference. |
 | **OpenAI Embeddings API** | HTTPS / JSON | `text-embedding-3-small` for RAG. |
-| **3D Model CDN** | HTTPS / GLB (Draco) | Download of anatomical models. |
+| **3D Model CDN** | HTTPS / GLB (optimized) | Download of anatomical models. |
 
 ### 5.4 Communication Interfaces
 

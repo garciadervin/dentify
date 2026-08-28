@@ -54,5 +54,8 @@ dentify-*.png
 # CodeGraph local index
 .codegraph/
 
+# Backup of original GLB models (regenerate with: npm run optimize:models -- --restore)
+assets/models/.originals/
+
 # Clinical textbook PDFs (copyrighted — do not publish; re-ingest from a local copy)
 docs/*.pdf

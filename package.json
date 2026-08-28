@@ -14,7 +14,9 @@
     "lint": "expo lint",
     "test": "jest",
     "ingest:rag": "node scripts/ingest-rag.mjs",
-    "ingest:rag:dry": "node scripts/ingest-rag.mjs --dry-run"
+    "ingest:rag:dry": "node scripts/ingest-rag.mjs --dry-run",
+    "optimize:models": "node scripts/optimize-models.mjs",
+    "optimize:models:restore": "node scripts/optimize-models.mjs --restore"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
