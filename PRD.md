@@ -220,7 +220,7 @@ graph TD
         B1[UI - NativeWind]
         B2[3D Simulator - three.js/R3F]
         B3[Camera Capture]
-        C1[YOLO26n-seg - TFLite (WebView)]
+        C1["YOLO26n-seg - TFLite (WebView)"]
         C2[Audio Recording]
         C3[3D Model Cache]
         C4[Local DB - SQLite]
@@ -229,7 +229,7 @@ graph TD
     subgraph "Cloud / Services"
         D[Supabase]
         D1[Auth - JWT]
-        D2[PostgreSQL + pgvector (HNSW)]
+        D2["PostgreSQL + pgvector (HNSW)"]
         D3[Edge Functions - groq-proxy]
         E[Groq API]
         E1[Qwen 3.6 27B]
@@ -338,7 +338,7 @@ sequenceDiagram
 | Requirement | Description | Module | Technical Component | Verification |
 | --- | --- | --- | --- | --- |
 | FR-01 | Text questions | Denty-AI | `ChatInput`, `chatWithContext`, Groq (Qwen) | Manual + unit test |
-| FR-02 | Voice questions | Denty-AI | `expo-av` recording, `transcribeAudio`, Whisper | Audio integration test |
+| FR-02 | Voice questions | Denty-AI | `expo-audio` recording, `transcribeAudio`, Whisper | Audio integration test |
 | FR-03 | RAG over manuals | Denty-AI | `match_manuals` (pgvector), `embeddings.ts`, OpenAI | Vector retrieval test + live query |
 | FR-04 | Voice navigation | Denty-AI | `voiceCommands.ts` | Unit test |
 | FR-05 | Persistent history | Denty-AI | SQLite + `ai_conversations` | Offline/online sync test |

@@ -84,8 +84,8 @@ npm run ingest:rag -- --embedder openai --dry-run   # exporta a docs/rag-export.
 ### 4. Ejecutar
 
 ```bash
-npm start                 # Expo dev server (QR para Expo Go)
-npm run web               # versión web
+npx expo start            # Expo dev server (QR para Expo Go)
+npx expo start --web      # versión web
 npm test                  # suite de pruebas
 ```
 
@@ -93,8 +93,8 @@ npm test                  # suite de pruebas
 
 | Script | Descripción |
 | --- | --- |
-| `npm start` | Levanta el dev server de Expo |
-| `npm run web` | Dev server web |
+| `npx expo start` | Levanta el dev server de Expo |
+| `npx expo start --web` | Dev server web |
 | `npm test` | Ejecuta Jest |
 | `npm run ingest:rag` | Ingesta RAG (usa `.env`) |
 | `npm run ingest:rag -- --dry-run` | Ingesta en modo export (sin BD) |
@@ -119,7 +119,7 @@ assets/
 supabase/
   migrations/   esquema + pgvector + storage
   functions/    groq-proxy (Edge Function)
-scripts/        ingest-rag.mjs
+scripts/        ingest-rag.mjs, optimize-models.mjs
 docs/           manuales clínicos (locales, fuera de git)
 ```
 
