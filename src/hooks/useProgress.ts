@@ -1,170 +1,233 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@/src/types/supabase';
-
-type SupabaseFrom = ReturnType<SupabaseClient<Database>['from']>;
-
-type ProgressRow = Database['public']['Tables']['pedagogical_progress']['Row'];
 
 export interface Specialty {
   id: string;
+  slug: string;
   name: string;
   icon: string;
   currentLevel: number;
   totalLevels: number;
   status: 'locked' | 'active' | 'completed';
+  /** Porcentaje de niveles completados de la especialidad (0–100). */
+  progress: number;
+}
+
+interface SpecialtyDef {
+  id: string;
+  slug: string;
+  name: string;
+  icon: string;
+  levels_count: number;
+  levels: { level_number: number; xp_reward: number }[];
+}
+
+interface ProgressRow {
+  specialty: string;
+  level: number;
+  status: string;
+  completed_at: string | null;
 }
 
 export interface UseProgressReturn {
   specialties: Specialty[];
   currentLevel: number;
   loading: boolean;
-  completeLevel: (specialty: string, level: number) => Promise<void>;
+  completeLevel: (specialty: string, level: number) => Promise<boolean>;
   getProgress: (specialty: string) => number;
+  getXP: () => number;
+  completedQuizCount: number;
 }
 
-/**
- * Hook to manage student progress across dental specialties.
- * Fetches pedagogical_progress from Supabase and provides helpers
- * to complete levels and compute progress percentages.
- */
+function buildSpecialties(defs: SpecialtyDef[], rows: ProgressRow[]): Specialty[] {
+  const isDone = (def: SpecialtyDef) => {
+    const done = rows.filter(
+      (r) => r.specialty === def.name && r.status === 'completed'
+    );
+    return done.length >= def.levels_count;
+  };
+
+  const anyActive = defs.find((d) =>
+    rows.some((r) => r.specialty === d.name && r.status === 'active')
+  );
+  const firstNotDone = defs.find((d) => !isDone(d));
+  const activeDef = anyActive ?? firstNotDone;
+
+  return defs.map((def) => {
+    const completed = rows.filter(
+      (r) => r.specialty === def.name && r.status === 'completed'
+    );
+    const active = rows.filter((r) => r.specialty === def.name && r.status === 'active');
+    const highestCompleted = completed.reduce((m, r) => Math.max(m, r.level), 0);
+    const activeLevel = active.length
+      ? Math.min(...active.map((r) => r.level))
+      : null;
+
+    const total = def.levels_count || 3;
+    const done = highestCompleted >= total;
+    const status: Specialty['status'] = done
+      ? 'completed'
+      : def === activeDef
+        ? 'active'
+        : 'locked';
+
+    return {
+      id: def.id,
+      slug: def.slug,
+      name: def.name,
+      icon: def.icon,
+      currentLevel: activeLevel ?? highestCompleted + 1,
+      totalLevels: total,
+      status,
+      progress: Math.round((highestCompleted / total) * 100),
+    };
+  });
+}
+
 export function useProgress(): UseProgressReturn {
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
-  const [currentLevel, setCurrentLevel] = useState(1);
   const [loading, setLoading] = useState(true);
+  const defsRef = useRef<SpecialtyDef[]>([]);
+  const rowsRef = useRef<ProgressRow[]>([]);
 
   useEffect(() => {
     const supabase = getSupabase();
-
     if (!supabase) {
       // Defer setting loading to false so the initial render shows loading=true
-      // This is important for tests that check initial state
       const id = setTimeout(() => setLoading(false), 0);
       return () => clearTimeout(id);
     }
 
     let cancelled = false;
+    const client = supabase;
 
-    // Fetch progress from Supabase
-    supabase
-      .from('pedagogical_progress')
-      .select('*')
-      .then(({ data, error }) => {
+    async function load() {
+      try {
+        const [{ data: defs, error: defsError }, { data: rows, error: rowsError }] =
+          await Promise.all([
+            client
+              .from('specialties')
+              .select('id, slug, name, icon, levels_count, levels(level_number, xp_reward)')
+              .order('order_index'),
+            client
+              .from('pedagogical_progress')
+              .select('specialty, level, status, completed_at'),
+          ]);
+
         if (cancelled) return;
-        if (error) {
-          console.warn('Failed to fetch pedagogical progress:', error.message);
+        if (defsError || rowsError) {
+          console.warn('useProgress: no se pudieron cargar especialidades/progreso');
           setLoading(false);
           return;
         }
 
-        if (data && data.length > 0) {
-          // Group by specialty to build Specialty objects
-          const specialtyMap = new Map<string, Specialty>();
-          const rows = data as unknown as ProgressRow[];
-
-          for (const row of rows) {
-            const existing = specialtyMap.get(row.specialty);
-            if (!existing || row.level > existing.currentLevel) {
-              specialtyMap.set(row.specialty, {
-                id: row.id,
-                name: row.specialty,
-                icon: getIconForSpecialty(row.specialty),
-                currentLevel: row.level,
-                totalLevels: 5, // Default total levels per specialty
-                status: row.status,
-              });
-            }
-          }
-
-          const fetchedSpecialties = Array.from(specialtyMap.values());
-
-          // Determine current level from the highest active level across specialties
-          const highestActive = fetchedSpecialties.reduce(
-            (max, s) => (s.status === 'active' && s.currentLevel > max ? s.currentLevel : max),
-            0
-          );
-          const highestCompleted = fetchedSpecialties.reduce(
-            (max, s) => (s.status === 'completed' && s.currentLevel > max ? s.currentLevel : max),
-            0
-          );
-
-          setSpecialties(fetchedSpecialties);
-          setCurrentLevel(Math.max(highestActive, highestCompleted + 1, 1));
-        }
-
+        defsRef.current = (defs ?? []) as unknown as SpecialtyDef[];
+        rowsRef.current = (rows ?? []) as unknown as ProgressRow[];
+        setSpecialties(buildSpecialties(defsRef.current, rowsRef.current));
         setLoading(false);
-      });
+      } catch {
+        if (!cancelled) setLoading(false);
+      }
+    }
 
+    load();
     return () => {
       cancelled = true;
     };
   }, []);
 
   /**
-   * Mark a level as completed for a given specialty in Supabase.
+   * Marca un nivel como completado: hace UPSERT del progreso, activa el nivel
+   * siguiente (o la siguiente especialidad) y refresca el estado local.
+   * Devuelve true si persistió correctamente.
    */
-  const completeLevel = useCallback(async (specialty: string, level: number): Promise<void> => {
+  const completeLevel = useCallback(async (specialty: string, level: number): Promise<boolean> => {
     const supabase = getSupabase();
-    if (!supabase) {
-      console.warn('completeLevel: Supabase not available');
-      return;
+    if (!supabase) return false;
+    const client = supabase;
+    const { data: userData } = await client.auth.getUser();
+    const userId = userData.user?.id;
+    if (!userId) return false;
+
+    const now = new Date().toISOString();
+
+    const upsertRow = async (
+      spec: string,
+      lvl: number,
+      status: 'locked' | 'active' | 'completed',
+      completedAt?: string
+    ) => {
+      const { error } = await client
+        .from('pedagogical_progress')
+        .upsert(
+          {
+            profile_id: userId,
+            specialty: spec,
+            level: lvl,
+            status,
+            completed_at: completedAt ?? null,
+          },
+          { onConflict: 'profile_id,specialty,level' }
+        );
+      return !error;
+    };
+
+    const ok = await upsertRow(specialty, level, 'completed', now);
+    if (!ok) return false;
+
+    // Activa el siguiente nivel o la siguiente especialidad.
+    const def = defsRef.current.find((d) => d.name === specialty);
+    if (def && level < def.levels_count) {
+      await upsertRow(specialty, level + 1, 'active');
+    } else if (def) {
+      const idx = defsRef.current.findIndex((d) => d.id === def.id);
+      const next = defsRef.current[idx + 1];
+      if (next) await upsertRow(next.name, 1, 'active');
     }
 
-    const { error } = await (supabase
-      .from('pedagogical_progress') as unknown as SupabaseFrom)
-      .update({ status: 'completed', completed_at: new Date().toISOString() })
-      .eq('specialty', specialty)
-      .eq('level', level);
-
-    if (error) {
-      console.warn('Failed to complete level:', error.message);
-      return;
-    }
-
-    // Optimistically update local state
-    setSpecialties((prev) =>
-      prev.map((s) =>
-        s.name === specialty && s.currentLevel === level
-          ? { ...s, status: 'completed' as const }
-          : s
-      )
+    // Refresca estado local a partir de la última vista de filas.
+    const target = rowsRef.current.find(
+      (r) => r.specialty === specialty && r.level === level
     );
-    setCurrentLevel((prev) => Math.max(prev, level + 1));
+    if (target) target.status = 'completed';
+    else rowsRef.current.push({ specialty, level, status: 'completed', completed_at: now });
+
+    setSpecialties(buildSpecialties(defsRef.current, rowsRef.current));
+    return true;
   }, []);
 
-  /**
-   * Returns the progress percentage for a given specialty.
-   * Computed as (completed levels / total levels) * 100.
-   */
   const getProgress = useCallback(
-    (specialty?: string): number => {
-      if (!specialty) return 0;
-      const found = specialties.find((s) => s.name === specialty);
-      if (!found) return 0;
-      return Math.round((found.currentLevel / found.totalLevels) * 100);
+    (name?: string): number => {
+      if (!name) return 0;
+      return specialties.find((s) => s.name === name)?.progress ?? 0;
     },
     [specialties]
   );
 
-  return { specialties, currentLevel, loading, completeLevel, getProgress };
-}
+  const getXP = useCallback((): number => {
+    const defs = defsRef.current;
+    return rowsRef.current
+      .filter((r) => r.status === 'completed')
+      .reduce((sum, r) => {
+        const def = defs.find((d) => d.name === r.specialty);
+        const lvl = def?.levels.find((l) => l.level_number === r.level);
+        return sum + (lvl?.xp_reward ?? 0);
+      }, 0);
+  }, []);
 
-/**
- * Map specialty names to icons for display.
- */
-function getIconForSpecialty(specialty: string): string {
-  const iconMap: Record<string, string> = {
-    'Operatoria Dental': '🦷',
-    Endodoncia: '🔬',
-    Periodoncia: '🫀',
-    Ortodoncia: '😁',
-    'Cirugía Oral': '🔪',
-    Prostodoncia: '🦿',
-    Odontopediatría: '👶',
-    Radiología: '📡',
+  const completedQuizCount = rowsRef.current.filter((r) => r.status === 'completed').length;
+  const active = specialties.find((s) => s.status === 'active');
+  const currentLevel = active?.currentLevel ?? 1;
+
+  return {
+    specialties,
+    currentLevel,
+    loading,
+    completeLevel,
+    getProgress,
+    getXP,
+    completedQuizCount,
   };
-  return iconMap[specialty] ?? '📚';
 }
 
 export default useProgress;

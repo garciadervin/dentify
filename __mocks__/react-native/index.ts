@@ -77,6 +77,7 @@ const RN = {
     addEventListener: () => ({ remove: () => {} }),
     removeEventListener: () => {},
   },
+  useWindowDimensions: () => ({ width: 390, height: 884, scale: 2, fontScale: 1 }),
   PixelRatio: {
     get: () => 2,
     getFontScale: () => 1,
@@ -221,6 +222,7 @@ export const {
   NativeModules,
   findNodeHandle,
   useColorScheme,
+  useWindowDimensions,
   Appearance,
   Image,
   TextInput,

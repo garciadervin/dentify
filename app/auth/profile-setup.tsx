@@ -19,7 +19,7 @@ export default function ProfileSetupScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
 
   const [fullName, setFullName] = useState('');
   const [studentId, setStudentId] = useState('');
@@ -48,6 +48,9 @@ export default function ProfileSetupScreen() {
       return;
     }
 
+    // Refleja el nombre en user_metadata (avatars, guards) y en profiles.
+    await supabase.auth.updateUser({ data: { full_name: fullName.trim() } });
+
     // Upsert so revisiting this screen after a partial setup does not fail
     // on a duplicate primary key (profiles.id references auth.users.id).
     const { error: dbError } = await (supabase.from('profiles') as any).upsert(
@@ -65,6 +68,7 @@ export default function ProfileSetupScreen() {
     if (dbError) {
       setError(dbError.message);
     } else {
+      await refreshProfile(user.id);
       router.replace('/(tabs)');
     }
   };
@@ -83,6 +87,7 @@ export default function ProfileSetupScreen() {
           }}
           keyboardShouldPersistTaps="handled"
         >
+          <View style={{ width: '100%' }}>
           {/* Header */}
           <View style={{ marginBottom: 40, alignItems: 'center' }}>
             <Text
@@ -209,6 +214,7 @@ export default function ProfileSetupScreen() {
               {submitting ? 'Guardando...' : 'Guardar perfil'}
             </Text>
           </TouchableOpacity>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

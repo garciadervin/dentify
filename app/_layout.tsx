@@ -2,17 +2,16 @@ import '../global.css';
 // Configure Three.js for React Native (Worker mock, DRACOLoader)
 import '@/src/lib/threeConfig';
 
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useSegments, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { View, ActivityIndicator, Platform } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import Head from 'expo-router/head';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/src/hooks/useAuth';
 import { Colors } from '@/constants/theme';
 
@@ -24,27 +23,31 @@ export const unstable_settings = {
 };
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, profile, profileLoaded, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const colors = Colors.light;
 
   useEffect(() => {
     if (loading) return;
 
     const isAuthRoute = segments[0] === 'auth';
+    const isProfileSetup = isAuthRoute && segments[1] === 'profile-setup';
     const isTeacherRoute = segments[0] === '(teacher)';
     const userRole = user?.user_metadata?.role;
 
     if (!user && !isAuthRoute) {
       router.replace('/auth/login');
-    } else if (user && isAuthRoute) {
+    } else if (user && isAuthRoute && !isProfileSetup) {
+      // Permite /auth/profile-setup con sesión (flujo de registro).
       router.replace('/(tabs)');
+    } else if (user && !isAuthRoute && !isTeacherRoute && profileLoaded && !profile) {
+      // Primer login sin perfil creado → completar perfil.
+      router.replace('/auth/profile-setup');
     } else if (isTeacherRoute && userRole !== 'teacher') {
       router.replace('/(tabs)');
     }
-  }, [user, loading, segments]);
+  }, [user, profile, profileLoaded, loading, segments]);
 
   if (loading) {
     return (
@@ -65,8 +68,6 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   const [loaded] = useFonts({
     'Inter': require('@/assets/fonts/Inter-Regular.ttf'),
     'Inter-SemiBold': require('@/assets/fonts/Inter-SemiBold.ttf'),
@@ -86,7 +87,7 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DefaultTheme}>
       <Head>
         <title>Dentify — Aprendizaje Dental Clínico</title>
         <meta name="description" content="Dentify es una plataforma interactiva de aprendizaje dental con simulador 3D, quizzes clínicos y asistente IA especializado en odontología." />
@@ -100,10 +101,13 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(teacher)" options={{ headerShown: false }} />
           <Stack.Screen name="auth" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+          <Stack.Screen name="profile" options={{ headerShown: false }} />
+          <Stack.Screen name="settings" options={{ headerShown: false }} />
+          <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
+          <Stack.Screen name="quiz" options={{ headerShown: false }} />
         </Stack>
       </AuthGuard>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </ThemeProvider>
   );
 }

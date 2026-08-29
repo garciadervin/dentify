@@ -5,7 +5,7 @@
  * and camera flip controls. Shows a loading indicator while processing.
  */
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { View, TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { CameraView as ExpoCameraView, useCameraPermissions, CameraType, FlashMode } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,11 +19,20 @@ export interface CameraViewProps {
   /** Optional callback for real-time frame processing */
   onFrame?: (tensor: any) => void;
   isProcessing: boolean;
+  /** Modo enmarcado: oculta el botón de captura interno (se usa un disparador externo vía ref). */
+  framed?: boolean;
+}
+
+export interface CameraViewHandle {
+  capture: () => Promise<string | null>;
 }
 
 // ── Component ──────────────────────────────────────────────────────────────
 
-export default function CameraView({ onCapture, isProcessing }: CameraViewProps) {
+const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(function CameraView(
+  { onCapture, isProcessing, framed = false },
+  ref
+) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const [permission, requestPermission] = useCameraPermissions();
@@ -48,12 +57,16 @@ export default function CameraView({ onCapture, isProcessing }: CameraViewProps)
         });
         if (photo?.uri) {
           onCapture(photo.uri);
+          return photo.uri;
         }
       } catch {
         // Silently fail — camera might not be ready
       }
     }
+    return null;
   }, [isProcessing, onCapture]);
+
+  useImperativeHandle(ref, () => ({ capture: handleCapture }), [handleCapture]);
 
   // Permission handling
   if (!permission) {
@@ -156,24 +169,28 @@ export default function CameraView({ onCapture, isProcessing }: CameraViewProps)
           </TouchableOpacity>
         </View>
 
-        {/* Bottom capture button */}
-        <View style={styles.bottomControls}>
-          <TouchableOpacity
-            testID="capture-button"
-            style={[
-              styles.captureButton,
-              { backgroundColor: isProcessing ? 'rgba(255,255,255,0.4)' : '#FFFFFF' },
-            ]}
-            onPress={handleCapture}
-            disabled={isProcessing}
-          >
-            <View style={styles.captureInner} />
-          </TouchableOpacity>
-        </View>
+        {/* Bottom capture button (oculto en modo enmarcado) */}
+        {!framed && (
+          <View style={styles.bottomControls}>
+            <TouchableOpacity
+              testID="capture-button"
+              style={[
+                styles.captureButton,
+                { backgroundColor: isProcessing ? 'rgba(255,255,255,0.4)' : '#FFFFFF' },
+              ]}
+              onPress={handleCapture}
+              disabled={isProcessing}
+            >
+              <View style={styles.captureInner} />
+            </TouchableOpacity>
+          </View>
+        )}
       </ExpoCameraView>
     </View>
   );
-}
+});
+
+export default CameraView;
 
 // ── Styles ─────────────────────────────────────────────────────────────────
 

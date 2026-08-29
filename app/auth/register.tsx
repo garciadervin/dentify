@@ -71,6 +71,7 @@ export default function RegisterScreen() {
           }}
           keyboardShouldPersistTaps="handled"
         >
+          <View style={{ width: '100%' }}>
           {/* Header */}
           <View style={{ marginBottom: 40, alignItems: 'center' }}>
             <Text
@@ -246,6 +247,7 @@ export default function RegisterScreen() {
               {submitting ? 'Creando cuenta...' : 'Crear cuenta'}
             </Text>
           </TouchableOpacity>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

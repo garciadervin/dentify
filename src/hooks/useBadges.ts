@@ -40,14 +40,7 @@ export function useBadges(): UseBadgesReturn {
     const supabase = getSupabase();
 
     if (!supabase) {
-      // When Supabase is not configured, show placeholder badges
-      setBadges([
-        { id: '1', name: 'Primer Quiz', description: 'Completa tu primer quiz', icon: '🎯', earned: false },
-        { id: '2', name: 'Estudiante Dedicated', description: 'Completa 5 quizzes', icon: '📚', earned: false },
-        { id: '3', name: 'Sube de Nivel', description: 'Alcanza el nivel 2 en cualquier especialidad', icon: '⬆️', earned: false },
-        { id: '4', name: 'Racha Inicial', description: 'Mantén una racha de 3 días', icon: '🔥', earned: false },
-        { id: '5', name: 'Diagnóstico Inicial', description: 'Realiza tu primer diagnóstico', icon: '🔬', earned: false },
-      ]);
+      // Sin Supabase no hay badges reales; no se muestran datos falsos.
       setLoading(false);
       return;
     }

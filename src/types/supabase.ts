@@ -11,6 +11,10 @@ export interface Database {
           role: 'student' | 'teacher' | 'admin';
           created_at: string;
           updated_at: string;
+          settings: Json;
+          streak_count: number;
+          last_active_at: string | null;
+          avatar_color: string | null;
         };
         Insert: {
           id: string;
@@ -19,6 +23,10 @@ export interface Database {
           role?: 'student' | 'teacher' | 'admin';
           created_at?: string;
           updated_at?: string;
+          settings?: Json;
+          streak_count?: number;
+          last_active_at?: string | null;
+          avatar_color?: string | null;
         };
         Update: {
           id?: string;
@@ -27,6 +35,114 @@ export interface Database {
           role?: 'student' | 'teacher' | 'admin';
           created_at?: string;
           updated_at?: string;
+          settings?: Json;
+          streak_count?: number;
+          last_active_at?: string | null;
+          avatar_color?: string | null;
+        };
+        Relationships: [];
+      };
+      specialties: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          order_index: number;
+          icon: string;
+          description: string | null;
+          levels_count: number;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          name: string;
+          order_index?: number;
+          icon?: string;
+          description?: string | null;
+          levels_count?: number;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          name?: string;
+          order_index?: number;
+          icon?: string;
+          description?: string | null;
+          levels_count?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'levels_specialty_id_fkey';
+            columns: ['id'];
+            referencedRelation: 'levels';
+            referencedColumns: ['specialty_id'];
+          },
+        ];
+      };
+      levels: {
+        Row: {
+          id: string;
+          specialty_id: string;
+          level_number: number;
+          title: string;
+          description: string | null;
+          xp_reward: number;
+        };
+        Insert: {
+          id?: string;
+          specialty_id: string;
+          level_number: number;
+          title?: string;
+          description?: string | null;
+          xp_reward?: number;
+        };
+        Update: {
+          id?: string;
+          specialty_id?: string;
+          level_number?: number;
+          title?: string;
+          description?: string | null;
+          xp_reward?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'levels_specialty_id_fkey';
+            columns: ['specialty_id'];
+            referencedRelation: 'specialties';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      questions: {
+        Row: {
+          id: string;
+          specialty_slug: string;
+          level: number;
+          question: string;
+          options: Json;
+          correct_index: number;
+          explanation: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          specialty_slug: string;
+          level: number;
+          question: string;
+          options: Json;
+          correct_index: number;
+          explanation?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          specialty_slug?: string;
+          level?: number;
+          question?: string;
+          options?: Json;
+          correct_index?: number;
+          explanation?: string | null;
+          created_at?: string;
         };
         Relationships: [];
       };

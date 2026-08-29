@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { createShadow } from '@/constants/theme';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors, createShadow } from '@/constants/theme';
 
 interface ModelControlsProps {
   onZoomIn?: () => void;
@@ -11,8 +12,8 @@ interface ModelControlsProps {
 }
 
 /**
- * Floating control buttons overlaid on the 3D viewer.
- * Positioned bottom-right for one-handed thumb reach.
+ * Controles flotantes sobre el viewer 3D.
+ * Posicionados abajo-centro del viewer para el pulgar.
  */
 export default function ModelControls({
   onZoomIn,
@@ -23,7 +24,6 @@ export default function ModelControls({
 }: ModelControlsProps) {
   return (
     <View style={styles.container} testID="model-controls">
-      {/* Zoom in */}
       <TouchableOpacity
         testID="zoom-in"
         style={styles.button}
@@ -31,10 +31,9 @@ export default function ModelControls({
         accessibilityLabel="Acercar"
         accessibilityRole="button"
       >
-        <Text style={styles.icon}>+</Text>
+        <MaterialCommunityIcons name="magnify-plus" size={20} color={Colors.deepSlate} />
       </TouchableOpacity>
 
-      {/* Zoom out */}
       <TouchableOpacity
         testID="zoom-out"
         style={styles.button}
@@ -42,10 +41,9 @@ export default function ModelControls({
         accessibilityLabel="Alejar"
         accessibilityRole="button"
       >
-        <Text style={styles.icon}>−</Text>
+        <MaterialCommunityIcons name="magnify-minus" size={20} color={Colors.deepSlate} />
       </TouchableOpacity>
 
-      {/* Reset view */}
       <TouchableOpacity
         testID="reset-view"
         style={styles.button}
@@ -53,10 +51,9 @@ export default function ModelControls({
         accessibilityLabel="Restablecer vista"
         accessibilityRole="button"
       >
-        <Text style={styles.icon}>⟲</Text>
+        <MaterialCommunityIcons name="restore" size={20} color={Colors.deepSlate} />
       </TouchableOpacity>
 
-      {/* Auto-rotate toggle */}
       <TouchableOpacity
         testID="auto-rotate-toggle"
         style={[styles.button, autoRotate && styles.buttonActive]}
@@ -65,7 +62,11 @@ export default function ModelControls({
         accessibilityRole="button"
         accessibilityState={{ selected: autoRotate }}
       >
-        <Text style={[styles.icon, autoRotate && styles.iconActive]}>↻</Text>
+        <MaterialCommunityIcons
+          name="rotate-right"
+          size={20}
+          color={autoRotate ? '#FFFFFF' : Colors.deepSlate}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     gap: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.80)',
+    backgroundColor: 'rgba(255, 255, 255, 0.82)',
     borderRadius: 24,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -97,15 +98,7 @@ const styles = StyleSheet.create({
     ...createShadow(1, 3, '#000000', 0.05),
   },
   buttonActive: {
-    backgroundColor: '#0077B6',
-    borderColor: '#0077B6',
-  },
-  icon: {
-    fontSize: 18,
-    color: '#191C1E',
-    fontWeight: 'bold',
-  },
-  iconActive: {
-    color: '#FFFFFF',
+    backgroundColor: Colors.clinicalBlue,
+    borderColor: Colors.clinicalBlue,
   },
 });

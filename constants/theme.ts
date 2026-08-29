@@ -1,52 +1,51 @@
 /**
- * Dentify — Clinical Clarity Design System
- * Based on DESIGN.md tokens
+ * Dentify — Clinical Clarity Design System (light-only)
+ * Based on DESIGN.md tokens and the dentify.pen sketch.
+ *
+ * `Colors.light` es la única paleta: el modo oscuro fue eliminado.
  */
 
 import { Platform } from 'react-native';
 
-export const Colors = {
-  light: {
-    /** Clinical Blue — primary action color */
-    clinicalBlue: '#0077B6',
-    /** Sky Light — main page background */
-    skyLight: '#F7F9FB',
-    /** Deep Slate — headings, primary text */
-    deepSlate: '#191C1E',
-    /** Success Teal — progress nodes, checkmarks */
-    successTeal: '#006B5F',
-    /** Neutral — inactive icons, secondary text */
-    neutral: '#70787D',
-    /** Surface — card backgrounds */
-    surface: '#FFFFFF',
-    /** Border Light — thin separators */
-    borderLight: '#F2F4F6',
+/**
+ * Paleta única (light). Se expone plana (`Colors.clinicalBlue`) y también como
+ * `Colors.light` para que `Colors[colorScheme]` siga funcionando en el código
+ * existente. El modo oscuro fue eliminado.
+ */
+const light = {
+  /** Clinical Blue — primary action color */
+  clinicalBlue: '#0077B6',
+  /** Clinical Cyan — secondary accent */
+  clinicalCyan: '#00B4D8',
+  /** Sky Light — main page background */
+  skyLight: '#F7F9FB',
+  /** Deep Slate — headings, primary text */
+  deepSlate: '#191C1E',
+  /** Success Teal — progress nodes, checkmarks */
+  successTeal: '#006B5F',
+  /** Neutral — inactive icons, secondary text */
+  neutral: '#70787D',
+  /** Muted text — placeholder / disabled */
+  muted: '#9AA1A7',
+  /** Surface — card backgrounds */
+  surface: '#FFFFFF',
+  /** Border Light — thin separators */
+  borderLight: '#F2F4F6',
+  /** Pill border — chips, inputs (sketch #E7EBEF) */
+  pillBorder: '#E7EBEF',
+  /** Source row fill (sketch #F2F6FA) */
+  sourceFill: '#F2F6FA',
 
-    // Legacy / compatibility aliases
-    text: '#191C1E',
-    background: '#F7F9FB',
-    tint: '#0077B6',
-    icon: '#70787D',
-    tabIconDefault: '#70787D',
-    tabIconSelected: '#0077B6',
-  },
-  dark: {
-    clinicalBlue: '#4CC9F0',
-    skyLight: '#121416',
-    deepSlate: '#F2F4F6',
-    successTeal: '#2DD4BF',
-    neutral: '#9CA3AF',
-    surface: '#1A1D21',
-    borderLight: '#2A2D31',
-
-    text: '#F2F4F6',
-    background: '#121416',
-    tint: '#4CC9F0',
-    icon: '#9CA3AF',
-    tabIconDefault: '#9CA3AF',
-    tabIconSelected: '#4CC9F0',
-  },
+  // Legacy / compatibility aliases
+  text: '#191C1E',
+  background: '#F7F9FB',
+  tint: '#0077B6',
+  icon: '#70787D',
+  tabIconDefault: '#70787D',
+  tabIconSelected: '#0077B6',
 };
+
+export const Colors = { ...light, light } as const;
 
 export const Fonts = {
   families: {
@@ -82,11 +81,6 @@ export const BorderRadius = {
 /**
  * Cross-platform shadow helper.
  * Uses boxShadow (web) or native shadow props based on platform.
- *
- * @param offsetY — vertical offset in px
- * @param blur — blur radius in px
- * @param color — hex color (e.g. '#000000')
- * @param opacity — shadow opacity 0–1
  */
 export function createShadow(
   offsetY: number = 2,
@@ -115,30 +109,26 @@ export function createShadow(
 }
 
 /**
- * 3D Button Style Generator.
+ * 3D Button Style Generator (light).
  * Returns styles for normal and pressed states of 3D buttons.
  */
-export function getButton3DStyles(
-  type: 'primary' | 'success' | 'secondary' | 'error',
-  colorScheme: 'light' | 'dark' = 'light'
-) {
-  const colors = Colors[colorScheme];
-  
+export function getButton3DStyles(type: 'primary' | 'success' | 'secondary' | 'error') {
+  const c = Colors.light;
   const config = {
     primary: {
-      bg: colors.clinicalBlue,
-      border: colorScheme === 'dark' ? '#0077B6' : '#005C8A',
+      bg: c.clinicalBlue,
+      border: '#005C8A',
       text: '#FFFFFF',
     },
     success: {
-      bg: colors.successTeal,
-      border: colorScheme === 'dark' ? '#004D44' : '#004037',
+      bg: c.successTeal,
+      border: '#004037',
       text: '#FFFFFF',
     },
     secondary: {
-      bg: colors.surface,
-      border: colors.borderLight,
-      text: colors.deepSlate,
+      bg: c.surface,
+      border: c.borderLight,
+      text: c.deepSlate,
     },
     error: {
       bg: '#E74C3C',
@@ -177,4 +167,3 @@ export function getButton3DStyles(
     }
   };
 }
-

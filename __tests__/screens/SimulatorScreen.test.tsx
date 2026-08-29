@@ -2,6 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import SimulatorScreen from '@/app/(tabs)/simulator';
 
+jest.mock('expo-network', () => ({
+  getNetworkStateAsync: jest.fn(async () => ({ type: 'WIFI' })),
+  NetworkStateType: { CELLULAR: 'CELLULAR', WIFI: 'WIFI', NONE: 'NONE' },
+}));
+
 describe('SimulatorScreen', () => {
   it('should render the ModelViewer component with testID "model-viewer"', async () => {
     render(<SimulatorScreen />);
@@ -20,28 +25,20 @@ describe('SimulatorScreen', () => {
     expect(screen.getByTestId('tooth-selector')).toBeTruthy();
   });
 
-  it('should render a model selector with testID "model-selector"', () => {
+  it('should display the default tooth name (Incisivo Central Superior)', async () => {
     render(<SimulatorScreen />);
-    expect(screen.getByTestId('model-selector')).toBeTruthy();
+    await waitFor(() => {
+      expect(screen.getAllByText(/incisivo central superior/i).length).toBeGreaterThan(0);
+    });
   });
 
-  it('should display tooth names in the model selector', () => {
+  it('should update the model viewer when a different tooth is selected', async () => {
     render(<SimulatorScreen />);
-    // The tooth name appears in both header and chips — use getAllByText
-    const elements = screen.getAllByText(/incisivo central superior izquierdo/i);
-    expect(elements.length).toBeGreaterThan(0);
-  });
-
-  it('should load the corresponding 3D model when a tooth is selected from the selector', () => {
-    render(<SimulatorScreen />);
-    const selector = screen.getByTestId('model-selector');
-    expect(selector).toBeTruthy();
-  });
-
-  it('should update the model viewer URI when a different tooth is selected', async () => {
-    render(<SimulatorScreen />);
-    const toothOption = screen.getByText(/primer molar superior derecho/i);
-    fireEvent.press(toothOption);
+    await waitFor(() => {
+      expect(screen.getByTestId('model-viewer')).toBeTruthy();
+    });
+    const tooth16 = screen.getByTestId('tooth-16');
+    fireEvent.press(tooth16);
     await waitFor(() => {
       expect(screen.getByTestId('model-viewer')).toBeTruthy();
     });

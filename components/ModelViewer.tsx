@@ -15,7 +15,6 @@ import React, {
   useRef,
   useState,
   useCallback,
-  useEffect,
   forwardRef,
   useImperativeHandle,
 } from 'react';
@@ -40,10 +39,6 @@ interface ModelViewerProps {
   autoRotate?: boolean;
   onStructureSelect?: (name: string | null) => void;
   selectedStructure?: string | null;
-  esmalteOpacity?: number;
-  dentinaOpacity?: number;
-  pulpaOpacity?: number;
-  exploded?: boolean;
 }
 
 /**
@@ -81,73 +76,13 @@ function ModelScene({
   modelUri,
   autoRotate,
   onStructureSelect,
-  esmalteOpacity = 1,
-  dentinaOpacity = 1,
-  pulpaOpacity = 1,
-  exploded = false,
 }: {
   modelUri: string;
   autoRotate: boolean;
   onStructureSelect?: (name: string | null) => void;
-  esmalteOpacity?: number;
-  dentinaOpacity?: number;
-  pulpaOpacity?: number;
-  exploded?: boolean;
 }) {
   const { scene } = useGLTF(modelUri) as unknown as { scene: THREE.Scene };
   const groupRef = useRef<THREE.Group>(null);
-
-  // Traverse the scene and set transparent/opacity properties dynamically
-  useEffect(() => {
-    if (!scene || typeof scene.traverse !== 'function') return;
-    scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        const name = (mesh.name || '').toLowerCase();
-        
-        // Ensure material transparency is active
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        
-        materials.forEach((mat) => {
-          if (mat) {
-            mat.transparent = true;
-            
-            // Check if mesh name matches dental structure layers
-            if (name.includes('esmalte') || name.includes('enamel') || name.includes('crown') || name.includes('external')) {
-              mat.opacity = esmalteOpacity;
-            } else if (name.includes('dentina') || name.includes('dentin') || name.includes('middle')) {
-              mat.opacity = dentinaOpacity;
-            } else if (name.includes('pulpa') || name.includes('pulp') || name.includes('nerve') || name.includes('inner')) {
-              mat.opacity = pulpaOpacity;
-            }
-          }
-        });
-      }
-    });
-  }, [scene, esmalteOpacity, dentinaOpacity, pulpaOpacity]);
-
-  // Apply explosion view displacement vertically
-  useEffect(() => {
-    if (!scene || typeof scene.traverse !== 'function') return;
-    scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        const name = (mesh.name || '').toLowerCase();
-        
-        if (!exploded) {
-          mesh.position.set(0, 0, 0);
-          return;
-        }
-
-        // Apply offset displacement
-        if (name.includes('esmalte') || name.includes('enamel') || name.includes('crown') || name.includes('external')) {
-          mesh.position.set(0, 0.6, 0);
-        } else if (name.includes('pulpa') || name.includes('pulp') || name.includes('nerve') || name.includes('inner')) {
-          mesh.position.set(0, -0.6, 0);
-        }
-      }
-    });
-  }, [scene, exploded]);
 
   useFrame((_state, delta) => {
     if (autoRotate && groupRef.current) {
@@ -193,10 +128,6 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
     autoRotate = false,
     onStructureSelect,
     selectedStructure,
-    esmalteOpacity = 1,
-    dentinaOpacity = 1,
-    pulpaOpacity = 1,
-    exploded = false,
   },
   ref
 ) {
@@ -214,6 +145,7 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
   return (
     <View style={styles.container} testID="model-viewer">
       <Canvas
+        testID="model-canvas"
         style={styles.canvas}
         onCreated={() => setCanvasReady(true)}
         camera={{ position: [0, 0, 5], fov: 45 }}
@@ -237,10 +169,6 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
             modelUri={modelUri}
             autoRotate={autoRotate}
             onStructureSelect={onStructureSelect}
-            esmalteOpacity={esmalteOpacity}
-            dentinaOpacity={dentinaOpacity}
-            pulpaOpacity={pulpaOpacity}
-            exploded={exploded}
           />
         </Suspense>
         {/* NOTE: No RN View inside Canvas — causes "Div is not part of THREE" on web */}

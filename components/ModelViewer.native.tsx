@@ -7,12 +7,11 @@
  * Raycasting detects tapped mesh and surfaces anatomical names.
  */
 
-import React, { Suspense, useRef, useState, useCallback, useEffect } from 'react';
+import React, { Suspense, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   ActivityIndicator,
 } from 'react-native';
 import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
@@ -24,10 +23,6 @@ interface ModelViewerProps {
   autoRotate?: boolean;
   onStructureSelect?: (name: string | null) => void;
   selectedStructure?: string | null;
-  esmalteOpacity?: number;
-  dentinaOpacity?: number;
-  pulpaOpacity?: number;
-  exploded?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -38,74 +33,14 @@ function ModelScene({
   modelUri,
   autoRotate,
   onStructureSelect,
-  esmalteOpacity = 1,
-  dentinaOpacity = 1,
-  pulpaOpacity = 1,
-  exploded = false,
 }: {
   modelUri: string;
   autoRotate: boolean;
   onStructureSelect?: (name: string | null) => void;
-  esmalteOpacity?: number;
-  dentinaOpacity?: number;
-  pulpaOpacity?: number;
-  exploded?: boolean;
 }) {
   const { scene } = useGLTF(modelUri) as unknown as { scene: THREE.Scene };
   const groupRef = useRef<THREE.Group>(null);
-  const { camera } = useThree();
-
-  // Traverse the scene and set transparent/opacity properties dynamically
-  useEffect(() => {
-    if (!scene || typeof scene.traverse !== 'function') return;
-    scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        const name = (mesh.name || '').toLowerCase();
-        
-        // Ensure material transparency is active
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        
-        materials.forEach((mat) => {
-          if (mat) {
-            mat.transparent = true;
-            
-            // Check if mesh name matches dental structure layers
-            if (name.includes('esmalte') || name.includes('enamel') || name.includes('crown') || name.includes('external')) {
-              mat.opacity = esmalteOpacity;
-            } else if (name.includes('dentina') || name.includes('dentin') || name.includes('middle')) {
-              mat.opacity = dentinaOpacity;
-            } else if (name.includes('pulpa') || name.includes('pulp') || name.includes('nerve') || name.includes('inner')) {
-              mat.opacity = pulpaOpacity;
-            }
-          }
-        });
-      }
-    });
-  }, [scene, esmalteOpacity, dentinaOpacity, pulpaOpacity]);
-
-  // Apply explosion view displacement vertically
-  useEffect(() => {
-    if (!scene || typeof scene.traverse !== 'function') return;
-    scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        const name = (mesh.name || '').toLowerCase();
-        
-        if (!exploded) {
-          mesh.position.set(0, 0, 0);
-          return;
-        }
-
-        // Apply offset displacement
-        if (name.includes('esmalte') || name.includes('enamel') || name.includes('crown') || name.includes('external')) {
-          mesh.position.set(0, 0.6, 0);
-        } else if (name.includes('pulpa') || name.includes('pulp') || name.includes('nerve') || name.includes('inner')) {
-          mesh.position.set(0, -0.6, 0);
-        }
-      }
-    });
-  }, [scene, exploded]);
+  const { camera, size } = useThree();
 
   useFrame((_state, delta) => {
     if (autoRotate && groupRef.current) {
@@ -118,10 +53,11 @@ function ModelScene({
       if (!scene || !camera) return;
 
       const { locationX, locationY } = event.nativeEvent;
-      const { width, height } = Dimensions.get('window');
+      const vw = size?.width || 1;
+      const vh = size?.height || 1;
 
-      const x = (locationX / width) * 2 - 1;
-      const y = -(locationY / height) * 2 + 1;
+      const x = (locationX / vw) * 2 - 1;
+      const y = -(locationY / vh) * 2 + 1;
 
       const raycaster = new THREE.Raycaster();
       raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
@@ -142,7 +78,7 @@ function ModelScene({
         onStructureSelect?.(null);
       }
     },
-    [scene, camera, onStructureSelect]
+    [scene, camera, size, onStructureSelect]
   );
 
   return (
@@ -180,10 +116,6 @@ export default function ModelViewer({
   autoRotate = false,
   onStructureSelect,
   selectedStructure,
-  esmalteOpacity = 1,
-  dentinaOpacity = 1,
-  pulpaOpacity = 1,
-  exploded = false,
 }: ModelViewerProps) {
   const [canvasReady, setCanvasReady] = useState(false);
   const { progress } = useProgress();
@@ -214,10 +146,6 @@ export default function ModelViewer({
             modelUri={modelUri}
             autoRotate={autoRotate}
             onStructureSelect={onStructureSelect}
-            esmalteOpacity={esmalteOpacity}
-            dentinaOpacity={dentinaOpacity}
-            pulpaOpacity={pulpaOpacity}
-            exploded={exploded}
           />
         </Suspense>
 

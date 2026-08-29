@@ -45,9 +45,12 @@ export async function syncToSupabase(profileId: string): Promise<void> {
   if (!supabase) return;
   const localConvs = await getConversationsLocal();
   for (const conv of localConvs) {
-    await (supabase.from('ai_conversations') as unknown as SupabaseFrom)
-      .upsert({ id: conv.id, profile_id: profileId, messages: conv.messages, started_at: conv.started_at, last_updated: conv.last_updated }, { onConflict: 'id' })
-      .catch((e: unknown) => { console.warn('conversations: failed to sync to Supabase', e); });
+    try {
+      await (supabase.from('ai_conversations') as unknown as SupabaseFrom)
+        .upsert({ id: conv.id, profile_id: profileId, messages: conv.messages, started_at: conv.started_at, last_updated: conv.last_updated }, { onConflict: 'id' });
+    } catch (e) {
+      console.warn('conversations: failed to sync to Supabase', e);
+    }
   }
 }
 

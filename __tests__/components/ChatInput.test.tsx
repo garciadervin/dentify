@@ -18,9 +18,9 @@ describe('ChatInput', () => {
     expect(screen.getByTestId('voice-button')).toBeTruthy();
   });
 
-  it('should render an attach button for files', () => {
+  it('should not render an attach button (eliminado del diseño)', () => {
     render(<ChatInput onSend={jest.fn()} />);
-    expect(screen.getByTestId('attach-button')).toBeTruthy();
+    expect(screen.queryByTestId('attach-button')).toBeNull();
   });
 
   it('should not call onSend when pressing send with empty text', () => {

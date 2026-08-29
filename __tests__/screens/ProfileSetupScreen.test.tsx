@@ -30,12 +30,17 @@ jest.mock('@/src/lib/supabase', () => ({
       signOut: jest.fn(async () => ({ error: null })),
       getSession: jest.fn(async () => ({ data: { session: null }, error: null })),
       onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+      updateUser: jest.fn(async () => ({ error: null })),
+      getUser: jest.fn(async () => ({ data: { user: { id: 'test-user' } }, error: null })),
     },
     from: jest.fn(() => ({
       insert: jest.fn(async () => ({ error: null })),
       upsert: jest.fn(async () => ({ error: null })),
       select: jest.fn(() => ({
-        eq: jest.fn(() => ({ single: jest.fn(async () => ({ data: null, error: null })) })),
+        eq: jest.fn(() => ({
+          single: jest.fn(async () => ({ data: null, error: null })),
+          maybeSingle: jest.fn(async () => ({ data: null, error: null })),
+        })),
       })),
     })),
   })),
@@ -46,9 +51,12 @@ jest.mock('@/src/hooks/useAuth', () => ({
   useAuth: jest.fn(() => ({
     user: { id: 'test-user', email: 'test@example.com' },
     session: null,
+    profile: null,
+    profileLoaded: false,
     loading: false,
     signIn: jest.fn(),
     signUp: jest.fn(),
+    refreshProfile: jest.fn(async () => {}),
   })),
 }));
 

@@ -1,368 +1,240 @@
 /**
- * DashboardScreen — Pantalla de inicio de Dentify.
+ * DashboardScreen — Inicio (boceto dentify.pen).
  *
- * Muestra:
- * - Bienvenida con nombre del estudiante
- * - Métricas reales (racha de días, XP calculado desde progreso)
- * - Botón "Continuar" que navega al quiz activo dinámicamente
- * - Ruta de aprendizaje tappable conectada al sistema de progreso
- * - Grilla de especialidades tappables con estado real
- * - Logros del estudiante
+ * Saludo, métricas reales (racha desde profiles, XP derivado de niveles
+ * completados), botón Continuar, ruta de aprendizaje e insignias.
+ * Sin datos de muestra: si no hay progreso se muestra un empty state honesto.
  */
 
-import React, { useMemo } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import ScreenContainer from '@/components/ScreenContainer';
+import AppHeader from '@/components/AppHeader';
+import LearningPath, { type LevelNode } from '@/components/LearningPath';
+import BadgeCard from '@/components/BadgeCard';
 import { Colors, createShadow } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useProgress } from '@/src/hooks/useProgress';
 import { useBadges } from '@/src/hooks/useBadges';
-import AppHeader from '@/components/AppHeader';
-import LearningPath from '@/components/LearningPath';
-import SpecialtyCard from '@/components/SpecialtyCard';
-import BadgeCard from '@/components/BadgeCard';
-import type { LevelNode } from '@/components/LearningPath';
-
-// XP earned per completed level (simplified formula)
-const XP_PER_LEVEL = 250;
-
-// Placeholder specialties when no data has loaded from Supabase yet
-const PLACEHOLDER_SPECIALTIES = [
-  { name: 'Operatoria Dental', level: 1, progress: 0, status: 'active' as const },
-  { name: 'Endodoncia', level: 1, progress: 0, status: 'locked' as const },
-  { name: 'Periodoncia', level: 1, progress: 0, status: 'locked' as const },
-  { name: 'Ortodoncia', level: 1, progress: 0, status: 'locked' as const },
-];
+import { recordStudyActivity } from '@/src/services/activity';
 
 export default function DashboardScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
-  const { user } = useAuth();
-  const { specialties, getProgress, loading } = useProgress();
-  const { badges } = useBadges();
+  const colors = Colors;
+  const { user, profile } = useAuth();
+  const { specialties, loading, getXP } = useProgress();
+  const { badges, checkAndAwardBadge } = useBadges();
   const router = useRouter();
 
-  const userName =
-    user?.user_metadata?.full_name ?? user?.email?.split('@')[0] ?? 'Estudiante';
+  const [streak, setStreak] = useState(profile?.streak_count ?? 0);
 
-  // Use real specialties or fallback to placeholders during initial load
-  const displaySpecialties = specialties.length > 0 ? specialties : PLACEHOLDER_SPECIALTIES;
+  // Registra actividad del día y otorga el badge de racha cuando corresponde.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    recordStudyActivity(user.id).then((s) => {
+      if (cancelled) return;
+      setStreak(s);
+      if (s >= 3) {
+        void checkAndAwardBadge('streak', s);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [user, checkAndAwardBadge]);
 
-  // Find the current active specialty for the "Continuar" button
-  const activeSpecialty = useMemo(
-    () => displaySpecialties.find((s) => s.status === 'active'),
-    [displaySpecialties]
-  );
+  const displayName =
+    profile?.full_name ??
+    user?.user_metadata?.full_name ??
+    user?.email?.split('@')[0] ??
+    'Estudiante';
 
-  // Build the quiz route for the active specialty
-  const continueRoute = useMemo(() => {
-    if (!activeSpecialty) return '/quiz/Operatoria%20Dental-1';
-    const level = 'currentLevel' in activeSpecialty ? activeSpecialty.currentLevel : 1;
-    return `/quiz/${encodeURIComponent(`${activeSpecialty.name}-${level}`)}`;
-  }, [activeSpecialty]);
+  const xp = useMemo(() => getXP(), [getXP]);
 
-  // Calculate approximate XP from completed levels
-  const totalXP = useMemo(() => {
-    const completedCount = specialties.filter((s) => s.status === 'completed').length;
-    return completedCount * XP_PER_LEVEL;
-  }, [specialties]);
+  const activeSpecialty = specialties.find((s) => s.status === 'active');
+  const continueRoute = activeSpecialty
+    ? `/quiz/${encodeURIComponent(`${activeSpecialty.name}-${activeSpecialty.currentLevel}`)}`
+    : null;
 
-  // Build learning path nodes (one per specialty, showing current level)
-  const learningNodes: LevelNode[] = useMemo(
-    () =>
-      displaySpecialties.map((s) => ({
-        id: 'id' in s ? s.id : s.name,
-        label: s.name,
-        level: 'currentLevel' in s ? s.currentLevel : 1,
-        status: s.status,
-      })),
-    [displaySpecialties]
-  );
-
-  // Calculation of overall course progress dynamically based on real Specialties data
-  const completedSpecialtiesCount = useMemo(() => {
-    return specialties.filter((s) => s.status === 'completed').length;
-  }, [specialties]);
-  
-  const totalSpecialtiesCount = useMemo(() => {
-    return displaySpecialties.length;
-  }, [displaySpecialties]);
-
-  const lessonsCompleted = useMemo(() => {
-    return completedSpecialtiesCount * 3 + (specialties.some(s => s.status === 'active') ? 1 : 0);
-  }, [completedSpecialtiesCount, specialties]);
-
-  const totalLessons = useMemo(() => {
-    return totalSpecialtiesCount * 3;
-  }, [totalSpecialtiesCount]);
-
-  const quizzesCompleted = useMemo(() => {
-    return completedSpecialtiesCount;
-  }, [completedSpecialtiesCount]);
-
-  const totalQuizzes = useMemo(() => {
-    return totalSpecialtiesCount;
-  }, [totalSpecialtiesCount]);
-
-  const overallProgressPct = useMemo(() => {
-    return totalLessons > 0 ? Math.round((lessonsCompleted / totalLessons) * 100) : 0;
-  }, [lessonsCompleted, totalLessons]);
-
-  const showMockData = specialties.length === 0 || loading;
-  const displayLessons = showMockData ? '12/18' : `${lessonsCompleted}/${totalLessons}`;
-  const displayQuizzesText = showMockData ? '04/06' : `0${quizzesCompleted}/0${totalQuizzes}`;
-  const displayProgress = showMockData ? 65 : overallProgressPct;
-
-  const displayStreak = showMockData ? '5 Días' : specialties.length > 0 ? `${specialties.length} Días` : '0 Días';
-  const displayXP = showMockData ? '1,240' : totalXP.toLocaleString();
+  const learningNodes: LevelNode[] = specialties.map((s) => ({
+    id: s.id,
+    label: s.name,
+    level: s.currentLevel,
+    status: s.status,
+    progress: s.progress,
+    totalLevels: s.totalLevels,
+  }));
 
   return (
-    <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: colors.skyLight }]}
-      edges={['bottom']}
-    >
+    <ScreenContainer scroll edges={['top']}>
       <AppHeader />
 
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Context / Unit title */}
-        <View style={styles.headerInfoBlock}>
-          <Text style={[styles.sectionSubtitle, { color: colors.neutral }]}>
-            SECCIÓN 1, UNIDAD 1: BASES ANATÓMICAS
-          </Text>
-          <Text style={[styles.welcomeText, { color: colors.deepSlate }]}>
-            ¡Bienvenido de nuevo!
-          </Text>
+      <View style={styles.content}>
+        {/* Saludo */}
+        <View style={styles.greeting}>
+          <Text style={styles.greetTitle}>Hola, {displayName}</Text>
+          <Text style={styles.greetSub}>Continúa tu ruta de aprendizaje</Text>
         </View>
 
         {/* Métricas */}
         <View style={styles.metricsRow}>
-          {/* Racha */}
-          <View
-            testID="metric-streak"
-            style={[
-              styles.metricCard,
-              {
-                backgroundColor: colors.surface,
-                borderLeftColor: colors.successTeal,
-              },
-            ]}
-          >
-            <View style={[styles.metricIconContainer, { backgroundColor: colors.successTeal + '15' }]}>
-              <MaterialCommunityIcons name="fire" size={24} color={colors.successTeal} />
+          <View testID="metric-streak" style={styles.metricCard}>
+            <View style={styles.metricTop}>
+              <MaterialCommunityIcons name="fire" size={16} color={colors.successTeal} />
+              <Text style={styles.metricLabel}>Racha</Text>
             </View>
-            <View style={styles.metricInfo}>
-              <Text style={[styles.metricLabel, { color: colors.neutral }]}>Racha</Text>
-              <Text testID="streak-value" style={[styles.metricValue, { color: colors.deepSlate }]}>
-                {displayStreak}
-              </Text>
-            </View>
+            <Text testID="streak-value" style={styles.metricValue}>
+              {streak}
+            </Text>
+            <Text style={styles.metricUnit}>días de estudio</Text>
           </View>
 
-          {/* XP */}
-          <View
-            testID="metric-xp"
-            style={[
-              styles.metricCard,
-              {
-                backgroundColor: colors.surface,
-                borderLeftColor: colors.clinicalBlue,
-              },
-            ]}
-          >
-            <View style={[styles.metricIconContainer, { backgroundColor: colors.clinicalBlue + '15' }]}>
-              <MaterialCommunityIcons name="star-four-points" size={22} color={colors.clinicalBlue} />
+          <View testID="metric-xp" style={styles.metricCard}>
+            <View style={styles.metricTop}>
+              <MaterialCommunityIcons name="star-four-points" size={16} color={colors.clinicalBlue} />
+              <Text style={styles.metricLabel}>XP</Text>
             </View>
-            <View style={styles.metricInfo}>
-              <Text style={[styles.metricLabel, { color: colors.neutral }]}>XP</Text>
-              <Text testID="xp-value" style={[styles.metricValue, { color: colors.deepSlate }]}>
-                {displayXP}
-              </Text>
-            </View>
+            <Text testID="xp-value" style={styles.metricValue}>
+              {xp.toLocaleString()}
+            </Text>
+            <Text style={styles.metricUnit}>puntos acumulados</Text>
           </View>
         </View>
 
-        {/* Botón Continuar (con estilo 3D) */}
-        <TouchableOpacity
-          testID="next-level"
-          style={[styles.continueButton, { backgroundColor: colors.clinicalBlue, borderColor: '#005C8A' }]}
-          onPress={() => router.push(continueRoute as any)}
-          activeOpacity={0.85}
-        >
-          <MaterialCommunityIcons name="play-circle" size={26} color="#FFFFFF" />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.continueButtonTitle}>Continuar aprendizaje</Text>
-            <Text style={styles.continueButtonSub} numberOfLines={1}>
-              {activeSpecialty?.name ?? 'Operatoria Dental'} · Nivel{' '}
-              {'currentLevel' in (activeSpecialty ?? {})
-                ? (activeSpecialty as any).currentLevel
-                : 1}
-            </Text>
+        {loading ? (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>Cargando tu progreso...</Text>
           </View>
-          <MaterialCommunityIcons name="chevron-right" size={22} color="#FFFFFF" />
-        </TouchableOpacity>
-
-        {/* Learning path rendered directly on background (snake layout) */}
-        <LearningPath levels={learningNodes} />
-
-        {/* Performance Card / Tu Rendimiento */}
-        <View style={[styles.performanceCard, { backgroundColor: colors.surface }]}>
-          <View style={styles.performanceHeader}>
-            <MaterialCommunityIcons name="chart-bar" size={20} color={colors.clinicalBlue} />
-            <Text style={[styles.performanceTitle, { color: colors.deepSlate }]}>Tu Rendimiento</Text>
-          </View>
-          
-          <View style={styles.performanceRow}>
-            <Text style={[styles.performanceLabel, { color: colors.neutral }]}>UNIDAD ACTUAL</Text>
-            <Text style={[styles.performancePercent, { color: colors.successTeal }]}>{displayProgress}%</Text>
-          </View>
-
-          <View style={[styles.performanceTrack, { backgroundColor: colors.borderLight }]}>
-            <View
-              style={[
-                styles.performanceFill,
-                {
-                  width: `${displayProgress}%` as any,
-                  backgroundColor: colors.successTeal,
-                },
-              ]}
+        ) : specialties.length === 0 ? (
+          <View style={styles.emptyCard}>
+            <MaterialCommunityIcons
+              name="school-outline"
+              size={32}
+              color={colors.neutral}
             />
-          </View>
-
-          <View style={styles.performanceGrid}>
-            <View style={[styles.performanceSubCard, { backgroundColor: colors.skyLight }]}>
-              <Text style={[styles.performanceSubLabel, { color: colors.neutral }]}>LECCIONES</Text>
-              <Text style={[styles.performanceSubValue, { color: colors.clinicalBlue }]}>{displayLessons}</Text>
-            </View>
-            <View style={[styles.performanceSubCard, { backgroundColor: colors.skyLight }]}>
-              <Text style={[styles.performanceSubLabel, { color: colors.neutral }]}>QUIZZES</Text>
-              <Text style={[styles.performanceSubValue, { color: colors.clinicalBlue }]}>{displayQuizzesText}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Especialidades */}
-        <Text style={[styles.sectionTitle, { color: colors.deepSlate, marginTop: 12 }]}>
-          Especialidades
-        </Text>
-        <View style={styles.specialtyGrid}>
-          {displaySpecialties.map((s, i) => (
-            <View key={'id' in s ? s.id : i} style={styles.specialtyCell}>
-              <SpecialtyCard
-                name={s.name}
-                level={'currentLevel' in s ? s.currentLevel : 1}
-                progress={getProgress(s.name)}
-                locked={s.status === 'locked'}
-              />
-            </View>
-          ))}
-        </View>
-
-        {/* Logros */}
-        {badges.length > 0 && (
-          <>
-            <Text style={[styles.sectionTitle, { color: colors.deepSlate, marginTop: 12 }]}>
-              Logros
+            <Text style={styles.emptyTitle}>Aún no hay progreso</Text>
+            <Text style={styles.emptySub}>
+              Completa tu primer quiz para comenzar la ruta de aprendizaje.
             </Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.badgesScroll}
+            <TouchableOpacity
+              testID="next-level"
+              onPress={() => router.push('/quiz/Operatoria%20Dental-1')}
+              style={[styles.continueButton, { backgroundColor: colors.clinicalBlue, borderColor: '#005C8A' }]}
             >
+              <Text style={styles.continueButtonTitle}>Comenzar Operatoria Dental</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            {/* Botón Continuar */}
+            {continueRoute && (
+              <TouchableOpacity
+                testID="next-level"
+                style={[styles.continueButton, { backgroundColor: colors.clinicalBlue, borderColor: '#005C8A' }]}
+                onPress={() => router.push(continueRoute as any)}
+                activeOpacity={0.85}
+              >
+                <MaterialCommunityIcons name="play-circle" size={26} color="#FFFFFF" />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.continueButtonTitle}>Continuar aprendizaje</Text>
+                  <Text style={styles.continueButtonSub} numberOfLines={1}>
+                    {activeSpecialty?.name ?? 'Especialidad'} · Nivel{' '}
+                    {activeSpecialty?.currentLevel ?? 1}
+                  </Text>
+                </View>
+                <MaterialCommunityIcons name="chevron-right" size={22} color="#FFFFFF" />
+              </TouchableOpacity>
+            )}
+
+            {/* Ruta de aprendizaje */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Tu ruta de aprendizaje</Text>
+              <LearningPath levels={learningNodes} />
+            </View>
+          </>
+        )}
+
+        {/* Insignias */}
+        {badges.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Insignias</Text>
+            <View style={styles.badgeRow}>
               {badges.map((badge) => (
                 <BadgeCard key={badge.id} badge={badge} />
               ))}
-            </ScrollView>
-          </>
+            </View>
+          </View>
         )}
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
-  scroll: {
+  content: {
     paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 40,
+    paddingTop: 20,
+    gap: 24,
   },
-  headerInfoBlock: {
-    marginBottom: 20,
+  greeting: {
+    gap: 4,
   },
-  sectionSubtitle: {
+  greetTitle: {
     fontFamily: 'Manrope-Bold',
-    fontSize: 10,
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-    marginBottom: 4,
+    fontSize: 28,
+    color: Colors.deepSlate,
   },
-  welcomeText: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 24,
-    lineHeight: 32,
+  greetSub: {
+    fontFamily: 'Inter',
+    fontSize: 14,
+    color: Colors.neutral,
   },
   metricsRow: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 22,
   },
   metricCard: {
     flex: 1,
+    backgroundColor: Colors.surface,
+    borderRadius: 24,
+    padding: 16,
+    gap: 8,
+    ...createShadow(1, 8, '#000000', 0.04),
+    elevation: 1,
+  },
+  metricTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderLeftWidth: 4,
-    ...createShadow(2, 8, '#000000', 0.05),
-    elevation: 2,
-    gap: 10,
-  },
-  metricIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  metricInfo: {
-    flex: 1,
-    justifyContent: 'center',
+    gap: 8,
   },
   metricLabel: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: 10,
+    fontSize: 13,
+    color: Colors.neutral,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
   },
   metricValue: {
     fontFamily: 'Manrope-Bold',
-    fontSize: 18,
-    marginTop: 1,
+    fontSize: 28,
+    color: Colors.deepSlate,
+  },
+  metricUnit: {
+    fontFamily: 'Inter',
+    fontSize: 12,
+    color: Colors.neutral,
   },
   continueButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    borderRadius: 16,
+    borderRadius: 24,
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderBottomWidth: 4,
-    marginBottom: 24,
-    ...createShadow(4, 12, '#0077B6', 0.25),
+    ...createShadow(4, 12, Colors.clinicalBlue, 0.25),
     elevation: 6,
   },
   continueButtonTitle: {
@@ -376,88 +248,37 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.8)',
     marginTop: 2,
   },
+  section: {
+    gap: 12,
+  },
   sectionTitle: {
     fontFamily: 'Manrope-Bold',
     fontSize: 18,
-    marginBottom: 14,
+    color: Colors.deepSlate,
   },
-  performanceCard: {
-    borderRadius: 24,
-    padding: 20,
-    marginVertical: 20,
-    ...createShadow(2, 10, '#000000', 0.04),
-    elevation: 2,
-  },
-  performanceHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 16,
-  },
-  performanceTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 16,
-  },
-  performanceRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  performanceLabel: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 10,
-    letterSpacing: 0.5,
-  },
-  performancePercent: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 15,
-  },
-  performanceTrack: {
-    height: 8,
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginBottom: 16,
-  },
-  performanceFill: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  performanceGrid: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  performanceSubCard: {
-    flex: 1,
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  performanceSubLabel: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 9,
-    letterSpacing: 0.5,
-    marginBottom: 4,
-  },
-  performanceSubValue: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 16,
-  },
-  specialtyGrid: {
+  badgeRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 28,
+    gap: 10,
   },
-  specialtyCell: {
-    width: '47%',
+  emptyCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+    gap: 8,
   },
-  badgesScroll: {
-    gap: 12,
-    paddingRight: 24,
-    paddingBottom: 8,
+  emptyTitle: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 16,
+    color: Colors.deepSlate,
+    textAlign: 'center',
+  },
+  emptySub: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    color: Colors.neutral,
+    textAlign: 'center',
+    lineHeight: 19,
   },
 });
-

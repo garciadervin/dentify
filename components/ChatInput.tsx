@@ -1,18 +1,16 @@
 /**
- * ChatInput — Message composition component
+ * ChatInput — barra de entrada (boceto dentify.pen).
  *
- * Provides a text input with send, voice, and attach buttons.
- * Voice button records with expo-audio and transcribes with Groq Whisper.
- * If the transcribed text matches a navigation command, it navigates instead
- * of sending.
+ * Píldora blanca con micrófono (grabar → transcribir), campo de texto y botón
+ * de enviar circular azul. La voz se transcribe con Groq Whisper y soporta
+ * comandos de navegación por voz.
  */
 
 import React, { useState, useRef, useCallback } from 'react';
-import { View, TextInput, TouchableOpacity, Platform, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, TextInput, TouchableOpacity, Platform, Alert, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
   useAudioRecorder,
   RecordingPresets,
@@ -34,25 +32,14 @@ if (Platform.OS !== 'web') {
 
 export interface ChatInputProps {
   onSend: (text: string) => void;
-  onVoice?: () => void;
-  onAttach?: () => void;
   disabled?: boolean;
 }
 
-export default function ChatInput({
-  onSend,
-  onVoice,
-  onAttach,
-  disabled = false,
-}: ChatInputProps) {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+export default function ChatInput({ onSend, disabled = false }: ChatInputProps) {
   const router = useRouter();
   const [text, setText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-  // Guards the press-in → press-out race: stop() must not run before record()
-  // has finished starting (a fast tap).
   const startingRef = useRef(false);
 
   const handleSend = () => {
@@ -65,7 +52,7 @@ export default function ChatInput({
   const canSend = text.trim().length > 0 && !disabled;
 
   /**
-   * Start audio recording (native only; shows alert on web).
+   * Start audio recording (native only; web muestra una nota de plataforma).
    */
   const startRecording = useCallback(async () => {
     if (Platform.OS === 'web') {
@@ -107,7 +94,6 @@ export default function ChatInput({
       const transcribedText = await transcribeAudio(uri);
       if (!transcribedText.trim()) return;
 
-      // Check if it's a navigation command
       const route = parseNavigationCommand(transcribedText);
 
       if (route) {
@@ -124,7 +110,6 @@ export default function ChatInput({
 
         router.replace(route as any);
       } else {
-        // Treat as regular chat input — clear text state first to avoid double-send
         setText('');
         onSend(transcribedText);
       }
@@ -136,113 +121,97 @@ export default function ChatInput({
   }, [audioRecorder, onSend, router]);
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        backgroundColor: colors.surface,
-        borderTopWidth: 1,
-        borderTopColor: colors.borderLight,
-        gap: 8,
-      }}
-    >
-      {/* Text Input */}
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          backgroundColor: colors.skyLight,
-          borderRadius: 24,
-          paddingHorizontal: 16,
-          height: 44,
-        }}
-      >
-        <TextInput
-          testID="chat-input"
-          value={text}
-          onChangeText={setText}
-          onSubmitEditing={handleSend}
-          placeholder="Escribe un mensaje..."
-          placeholderTextColor={colors.neutral}
-          editable={!disabled}
-          multiline
-          blurOnSubmit={false}
-          style={{
-            flex: 1,
-            fontSize: 15,
-            fontFamily: 'Inter',
-            color: colors.deepSlate,
-            maxHeight: 100,
-            paddingVertical: 0,
-          }}
-        />
-      </View>
-
-      {/* Attach Button */}
-      <TouchableOpacity
-        testID="attach-button"
-        onPress={onAttach}
-        disabled={disabled}
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 20,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: colors.skyLight,
-        }}
-        activeOpacity={0.6}
-      >
-        <Ionicons name="attach-outline" size={22} color={colors.neutral} />
-      </TouchableOpacity>
-
-      {/* Voice Button — press to start, release to stop */}
+    <View style={styles.pill}>
+      {/* Micrófono — mantener para grabar, soltar para transcribir */}
       <TouchableOpacity
         testID="voice-button"
         onPressIn={startRecording}
         onPressOut={stopRecording}
         disabled={disabled}
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 20,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: isRecording ? '#FF4444' : colors.skyLight,
-        }}
+        style={[styles.micButton, isRecording && styles.micButtonRecording]}
         activeOpacity={0.6}
+        accessibilityLabel="Grabar por voz"
+        accessibilityRole="button"
       >
-        <Ionicons
-          name={isRecording ? 'mic' : 'mic-outline'}
-          size={22}
-          color={isRecording ? '#FFFFFF' : colors.neutral}
+        <MaterialCommunityIcons
+          name={isRecording ? 'microphone' : 'microphone-outline'}
+          size={20}
+          color={isRecording ? '#FFFFFF' : Colors.neutral}
         />
       </TouchableOpacity>
 
-      {/* Send Button */}
+      <TextInput
+        testID="chat-input"
+        value={text}
+        onChangeText={setText}
+        onSubmitEditing={handleSend}
+        placeholder="Escribe tu pregunta…"
+        placeholderTextColor={Colors.muted}
+        editable={!disabled}
+        multiline
+        blurOnSubmit={false}
+        style={styles.input}
+      />
+
+      {/* Enviar */}
       <TouchableOpacity
         testID="send-button"
         onPress={handleSend}
         disabled={!canSend}
-        style={{
-          width: 44,
-          height: 44,
-          borderRadius: 22,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: canSend ? colors.clinicalBlue : colors.borderLight,
-        }}
+        style={[styles.sendButton, { backgroundColor: canSend ? Colors.clinicalBlue : Colors.pillBorder }]}
         activeOpacity={0.7}
+        accessibilityLabel="Enviar mensaje"
+        accessibilityRole="button"
       >
-        <Ionicons
+        <MaterialCommunityIcons
           name="send"
-          size={20}
-          color={canSend ? '#FFFFFF' : colors.neutral}
+          size={16}
+          color={canSend ? '#FFFFFF' : Colors.neutral}
         />
       </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.pillBorder,
+    paddingLeft: 10,
+    paddingRight: 6,
+    marginHorizontal: 24,
+    marginBottom: 8,
+  },
+  micButton: {
+    width: 34,
+    height: 40,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  micButtonRecording: {
+    backgroundColor: '#E74C3C',
+  },
+  input: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: 'Inter',
+    color: Colors.deepSlate,
+    paddingVertical: 0,
+    maxHeight: 80,
+  },
+  sendButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

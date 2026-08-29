@@ -17,44 +17,13 @@ describe('ToothSelector', () => {
     expect(screen.getByTestId('tooth-selector-grid')).toBeTruthy();
   });
 
-  it('should render tooth 11 with testID "tooth-11"', () => {
+  it('should render the 16 unique models (superiores 11–18, inferiores 31–38)', () => {
     render(<ToothSelector {...defaultProps} />);
-    expect(screen.getByTestId('tooth-11')).toBeTruthy();
-  });
-
-  it('should render tooth 18 with testID "tooth-18"', () => {
-    render(<ToothSelector {...defaultProps} />);
-    expect(screen.getByTestId('tooth-18')).toBeTruthy();
-  });
-
-  it('should render tooth 21 with testID "tooth-21"', () => {
-    render(<ToothSelector {...defaultProps} />);
-    expect(screen.getByTestId('tooth-21')).toBeTruthy();
-  });
-
-  it('should render tooth 28 with testID "tooth-28"', () => {
-    render(<ToothSelector {...defaultProps} />);
-    expect(screen.getByTestId('tooth-28')).toBeTruthy();
-  });
-
-  it('should render tooth 31 with testID "tooth-31"', () => {
-    render(<ToothSelector {...defaultProps} />);
-    expect(screen.getByTestId('tooth-31')).toBeTruthy();
-  });
-
-  it('should render tooth 38 with testID "tooth-38"', () => {
-    render(<ToothSelector {...defaultProps} />);
-    expect(screen.getByTestId('tooth-38')).toBeTruthy();
-  });
-
-  it('should render tooth 41 with testID "tooth-41"', () => {
-    render(<ToothSelector {...defaultProps} />);
-    expect(screen.getByTestId('tooth-41')).toBeTruthy();
-  });
-
-  it('should render tooth 48 with testID "tooth-48"', () => {
-    render(<ToothSelector {...defaultProps} />);
-    expect(screen.getByTestId('tooth-48')).toBeTruthy();
+    for (const num of [11, 12, 13, 14, 15, 16, 17, 18, 31, 32, 33, 34, 35, 36, 37, 38]) {
+      expect(screen.getByTestId(`tooth-${num}`)).toBeTruthy();
+    }
+    expect(screen.queryByTestId('tooth-21')).toBeNull();
+    expect(screen.queryByTestId('tooth-41')).toBeNull();
   });
 
   it('should call onSelectTooth with the tooth number when a tooth is pressed', () => {
@@ -76,7 +45,7 @@ describe('ToothSelector', () => {
 
   it('should show the correct tooth name text when a tooth is selected', () => {
     render(<ToothSelector {...defaultProps} selectedTooth={11} />);
-    expect(screen.getByText(/incisivo central superior izquierdo/i)).toBeTruthy();
+    expect(screen.getByText(/incisivo central superior/i)).toBeTruthy();
   });
 
   it('should not show selected-tooth-name when no tooth is selected', () => {
@@ -86,7 +55,6 @@ describe('ToothSelector', () => {
 
   it('should apply a highlighted style to the selected tooth', () => {
     render(<ToothSelector {...defaultProps} selectedTooth={11} />);
-    const tooth = screen.getByTestId('tooth-11');
-    expect(tooth).toBeTruthy();
+    expect(screen.getByTestId('tooth-11')).toBeTruthy();
   });
 });

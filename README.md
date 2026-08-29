@@ -64,7 +64,8 @@ cp .env.example .env
 
 ```bash
 supabase link --project-ref <ref>   # ya vinculado en este repo
-supabase db push                    # aplica migraciones (esquema + pgvector + storage)
+supabase db push                    # aplica migraciones: esquema + pgvector + storage + seed
+                                    # (especialidades, niveles y banco de preguntas en BD)
 supabase secrets set GROQ_API_KEY=<key>
 supabase secrets set OPENAI_API_KEY=<key>
 supabase functions deploy groq-proxy
@@ -97,10 +98,10 @@ npm test                  # suite de pruebas
 | `npx expo start --web` | Dev server web |
 | `npm test` | Ejecuta Jest |
 | `npm run ingest:rag` | Ingesta RAG (usa `.env`) |
-| `npm run ingest:rag -- --dry-run` | Ingesta en modo export (sin BD) |
+| `npm run ingest:rag:dry` | Ingesta en modo export (sin BD) |
 | `npm run lint` | ESLint |
 | `npm run optimize:models` | Optimiza los modelos 3D (quantize + JPEG) |
-| `npm run optimize:models -- --restore` | Restaura los `.glb` originales |
+| `npm run optimize:models:restore` | Restaura los `.glb` originales |
 
 ## Estructura
 
@@ -111,7 +112,7 @@ src/
   services/     rag, groq, embeddings, yolo, conversations, modelCache, …
   hooks/        useAuth, useProgress, useBadges
   lib/          cliente Supabase
-  data/         quizzes
+  data/         structures (estructuras anatómicas del simulador 3D)
   types/        tipos de la BD (Database)
 assets/
   models/       16 modelos GLB optimizados (KHR_mesh_quantization + JPEG)

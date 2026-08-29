@@ -34,20 +34,31 @@ export async function syncToSupabase(profileId: string): Promise<void> {
   const supabase = getSupabase();
   if (!supabase) return;
   for (const conv of memoryStore) {
-    await (supabase.from('ai_conversations') as unknown as SupabaseFrom).upsert(
-      { id: conv.id, profile_id: profileId, messages: conv.messages, started_at: conv.started_at, last_updated: conv.last_updated },
-      { onConflict: 'id' }
-    ).catch((e: unknown) => { console.warn('conversations: failed to sync to Supabase', e); });
+    try {
+      await (supabase.from('ai_conversations') as unknown as SupabaseFrom).upsert(
+        { id: conv.id, profile_id: profileId, messages: conv.messages, started_at: conv.started_at, last_updated: conv.last_updated },
+        { onConflict: 'id' }
+      );
+    } catch (e) {
+      console.warn('conversations: failed to sync to Supabase', e);
+    }
   }
 }
 
 export async function syncFromSupabase(profileId: string): Promise<void> {
   const supabase = getSupabase();
   if (!supabase) return;
-  const { data } = await (supabase.from('ai_conversations') as unknown as SupabaseFrom).select('*').eq('profile_id', profileId).order('last_updated', { ascending: false }).catch((e: unknown) => { console.warn('conversations: failed to sync from Supabase', e); return { data: null }; });
-  if (data) {
-    for (const conv of data) {
-      saveConversationLocal(conv);
+  try {
+    const { data } = await (supabase.from('ai_conversations') as unknown as SupabaseFrom)
+      .select('*')
+      .eq('profile_id', profileId)
+      .order('last_updated', { ascending: false });
+    if (data) {
+      for (const conv of data) {
+        saveConversationLocal(conv);
+      }
     }
+  } catch (e) {
+    console.warn('conversations: failed to sync from Supabase', e);
   }
 }

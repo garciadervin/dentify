@@ -61,6 +61,7 @@ export default function LoginScreen() {
           }}
           keyboardShouldPersistTaps="handled"
         >
+          <View style={{ width: '100%' }}>
           {/* Header */}
           <View style={{ marginBottom: 40, alignItems: 'center' }}>
             <Text
@@ -225,6 +226,7 @@ export default function LoginScreen() {
                 </TouchableOpacity>
               </Link>
             </Text>
+          </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

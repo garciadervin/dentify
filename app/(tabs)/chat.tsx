@@ -1,8 +1,8 @@
 /**
- * ChatScreen — Denty-AI Clinical Assistant
+ * ChatScreen — Denty-AI Clinical Assistant (boceto dentify.pen).
  *
- * Full chat interface with FlatList of messages, ChatInput at the bottom,
- * welcome message, RAG-powered responses via Groq, and conversation history.
+ * Chat RAG con historial local (SQLite) sincronizado a ai_conversations,
+ * sugerencias rápidas, burbujas con avatar y entrada en píldora.
  */
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
@@ -16,14 +16,15 @@ import {
   Modal,
   Alert,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Colors, createShadow } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import ScreenContainer from '@/components/ScreenContainer';
 import AppHeader from '@/components/AppHeader';
 import MessageBubble from '@/components/MessageBubble';
 import ChatInput from '@/components/ChatInput';
+import { Colors } from '@/constants/theme';
+import { useAuth } from '@/src/hooks/useAuth';
 import { chatWithContext } from '@/src/services/rag';
 import type { GroqMessage } from '@/src/services/groq';
 import { getOfflineMessage } from '@/src/services/groq';
@@ -32,6 +33,8 @@ import {
   saveConversationLocal,
   getConversationsLocal,
   deleteConversationLocal,
+  syncToSupabase,
+  syncFromSupabase,
   type Conversation,
   type StoredMessage,
 } from '@/src/services/conversations';
@@ -59,18 +62,29 @@ function formatTimestamp(): string {
 
 const WELCOME_MESSAGE: ChatMessage = {
   id: 'welcome',
-  text: '¡Hola! Soy tu asistente clínico dental. ¿En qué puedo ayudarte?',
+  text: '¡Hola! Soy Denty, tu asistente clínico. Pregúntame sobre anatomía, operatoria, endodoncia y periodoncia.',
   role: 'assistant',
   timestamp: formatTimestamp(),
 };
 
 function generateConversationId(): string {
-  return `conv-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  // ai_conversations.id es UUID en Supabase.
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
+const SUGGESTIONS = [
+  '¿Qué es la caries dental?',
+  '¿Cómo identificar restauraciones?',
+  'Explícame la anatomía pulpar',
+  'Protocolo de endodoncia',
+];
+
 export default function ChatScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
   const [isLoading, setIsLoading] = useState(false);
   const [showConversations, setShowConversations] = useState(false);
@@ -78,24 +92,21 @@ export default function ChatScreen() {
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
   const flatListRef = useRef<FlatList>(null);
 
-  // Initialize local DB and load conversations on mount
   useEffect(() => {
     initLocalDB().then(() => {
       loadConversations();
+      if (user) {
+        void syncFromSupabase(user.id).then(() => loadConversations());
+      }
     });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const loadConversations = useCallback(async () => {
     const convs = await getConversationsLocal();
     setConversations(convs);
   }, []);
 
-  /**
-   * Save messages as a conversation to local DB.
-   * Accepts an explicit message list so callers can save the exact array they
-   * just rendered (avoids the stale-closure bug where a deferred save missed
-   * the latest exchange). Preserves started_at across updates.
-   */
   const saveCurrentConversation = useCallback(
     async (messageList?: ChatMessage[]) => {
       const source = messageList ?? messages;
@@ -126,8 +137,12 @@ export default function ChatScreen() {
 
       await saveConversationLocal(conv);
       await loadConversations();
+      // Sincroniza a Supabase (ai_conversations) si hay sesión.
+      if (user) {
+        void syncToSupabase(user.id);
+      }
     },
-    [messages, currentConvId, conversations, loadConversations]
+    [messages, currentConvId, conversations, loadConversations, user]
   );
 
   const handleSend = useCallback(
@@ -158,13 +173,10 @@ export default function ChatScreen() {
         finalMessages[finalMessages.length - 1] = reply;
         setMessages(finalMessages);
         setIsLoading(false);
-        // Save with the actual final messages.
         void saveCurrentConversation(finalMessages);
       };
 
       try {
-        // Full conversation history (minus welcome + loading placeholder) so
-        // the assistant has context from previous turns.
         const history: GroqMessage[] = nextMessages
           .filter((m) => m.id !== 'welcome' && !m.isLoading)
           .map((m) => ({ role: m.role, content: m.text }));
@@ -201,9 +213,6 @@ export default function ChatScreen() {
     [isLoading, messages, saveCurrentConversation]
   );
 
-  /**
-   * Load a past conversation into the chat.
-   */
   const loadConversation = useCallback((conv: Conversation) => {
     const loadedMessages: ChatMessage[] = conv.messages.map((m, i) => ({
       id: `restored-${i}`,
@@ -217,9 +226,6 @@ export default function ChatScreen() {
     setShowConversations(false);
   }, []);
 
-  /**
-   * Delete a conversation with confirmation.
-   */
   const handleDeleteConversation = useCallback(
     (conv: Conversation) => {
       Alert.alert(
@@ -245,9 +251,6 @@ export default function ChatScreen() {
     [currentConvId, loadConversations]
   );
 
-  /**
-   * Format a date string for display.
-   */
   const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
     const now = new Date();
@@ -260,20 +263,29 @@ export default function ChatScreen() {
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   };
 
-  const SUGGESTIONS = [
-    '¿Qué es la periodontitis?',
-    '¿Cómo identificar caries?',
-    'Explícame la anatomía pulpar',
-    'Protocolo de endodoncia',
-  ];
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.skyLight }} edges={['bottom']}>
-      <AppHeader subtitle="Denty-AI" />
+    <ScreenContainer style={styles.flex} edges={['top']}>
+      <AppHeader
+        variant="bot"
+        right={
+          <TouchableOpacity
+            testID="conversations-button"
+            onPress={() => {
+              loadConversations();
+              setShowConversations(true);
+            }}
+            style={styles.historyButton}
+            accessibilityLabel="Historial de conversaciones"
+            accessibilityRole="button"
+          >
+            <MaterialCommunityIcons name="history" size={20} color={Colors.neutral} />
+          </TouchableOpacity>
+        }
+      />
+
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
         <FlatList
           ref={flatListRef}
@@ -288,46 +300,36 @@ export default function ChatScreen() {
               isLoading={item.isLoading}
             />
           )}
-          contentContainerStyle={{
-            paddingTop: 16,
-            paddingBottom: 8,
-          }}
+          contentContainerStyle={styles.listContent}
           onContentSizeChange={() => {
             flatListRef.current?.scrollToEnd({ animated: true });
           }}
         />
 
-        {/* Suggestion Chips */}
         {messages.length === 1 && (
-          <View style={{ marginBottom: 12 }}>
+          <View style={styles.suggestions}>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
+              contentContainerStyle={styles.suggestionsScroll}
             >
-              {SUGGESTIONS.map((suggestion, index) => (
-                <TouchableOpacity
-                  key={`suggest-${index}`}
-                  onPress={() => handleSend(suggestion)}
-                  style={{
-                    backgroundColor: colors.surface,
-                    borderColor: colors.borderLight,
-                    borderWidth: 1.5,
-                    borderBottomWidth: 3.5,
-                    borderRadius: 16,
-                    paddingHorizontal: 14,
-                    paddingVertical: 8,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 6,
-                  }}
-                >
-                  <MaterialCommunityIcons name="lightbulb-on-outline" size={14} color={colors.clinicalBlue} />
-                  <Text style={{ fontFamily: 'Inter-SemiBold', fontSize: 12, color: colors.deepSlate }}>
-                    {suggestion}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              <View style={styles.suggestionsRow}>
+                {SUGGESTIONS.map((suggestion, index) => (
+                  <TouchableOpacity
+                    key={`suggest-${index}`}
+                    onPress={() => handleSend(suggestion)}
+                    style={styles.suggestionChip}
+                    accessibilityRole="button"
+                  >
+                    <MaterialCommunityIcons
+                      name="lightbulb-on-outline"
+                      size={14}
+                      color={Colors.clinicalBlue}
+                    />
+                    <Text style={styles.suggestionText}>{suggestion}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </ScrollView>
           </View>
         )}
@@ -335,125 +337,35 @@ export default function ChatScreen() {
         <ChatInput onSend={handleSend} disabled={isLoading} />
       </KeyboardAvoidingView>
 
-      {/* Conversation history button */}
-      <TouchableOpacity
-        testID="conversations-button"
-        onPress={() => {
-          loadConversations();
-          setShowConversations(true);
-        }}
-        style={{
-          position: 'absolute',
-          top: 80,
-          right: 16,
-          width: 40,
-          height: 40,
-          borderRadius: 20,
-          backgroundColor: colors.surface,
-          alignItems: 'center',
-          justifyContent: 'center',
-          ...createShadow(2, 4, '#000000', 0.1),
-          elevation: 3,
-        }}
-      >
-        <Ionicons name="chatbubbles-outline" size={20} color={colors.neutral} />
-      </TouchableOpacity>
-
-      {/* Conversations modal */}
+      {/* Modal de conversaciones */}
       <Modal
         visible={showConversations}
         animationType="slide"
         transparent
         onRequestClose={() => setShowConversations(false)}
       >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: colors.surface,
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              maxHeight: '70%',
-              paddingTop: 16,
-              paddingBottom: 32,
-            }}
-          >
-            {/* Handle */}
-            <View
-              style={{
-                width: 40,
-                height: 4,
-                borderRadius: 2,
-                backgroundColor: colors.borderLight,
-                alignSelf: 'center',
-                marginBottom: 16,
-              }}
-            />
-
-            <Text
-              style={{
-                fontFamily: 'Manrope-Bold',
-                fontSize: 18,
-                color: colors.deepSlate,
-                paddingHorizontal: 24,
-                marginBottom: 16,
-              }}
-            >
-              Conversaciones
-            </Text>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalSheet}>
+            <View style={styles.modalHandle} />
+            <Text style={styles.modalTitle}>Conversaciones</Text>
 
             {conversations.length === 0 ? (
-              <Text
-                style={{
-                  fontFamily: 'Inter',
-                  fontSize: 14,
-                  color: colors.neutral,
-                  textAlign: 'center',
-                  paddingVertical: 32,
-                }}
-              >
-                No hay conversaciones guardadas
-              </Text>
+              <Text style={styles.modalEmpty}>No hay conversaciones guardadas</Text>
             ) : (
               <FlatList
                 data={conversations}
                 keyExtractor={(item) => item.id}
-                contentContainerStyle={{ paddingHorizontal: 16 }}
+                contentContainerStyle={styles.modalList}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => loadConversation(item)}
                     onLongPress={() => handleDeleteConversation(item)}
-                    style={{
-                      paddingVertical: 12,
-                      paddingHorizontal: 12,
-                      borderRadius: 12,
-                      backgroundColor: colors.skyLight,
-                      marginBottom: 8,
-                    }}
+                    style={styles.convRow}
                   >
-                    <Text
-                      style={{
-                        fontFamily: 'Inter-SemiBold',
-                        fontSize: 14,
-                        color: colors.deepSlate,
-                        marginBottom: 4,
-                      }}
-                      numberOfLines={1}
-                    >
+                    <Text style={styles.convTitle} numberOfLines={1}>
                       {item.title}
                     </Text>
-                    <Text
-                      style={{
-                        fontFamily: 'Inter',
-                        fontSize: 12,
-                        color: colors.neutral,
-                      }}
-                    >
+                    <Text style={styles.convMeta}>
                       {formatDate(item.last_updated)} · {item.messages.length} mensajes
                     </Text>
                   </TouchableOpacity>
@@ -463,28 +375,128 @@ export default function ChatScreen() {
 
             <TouchableOpacity
               onPress={() => setShowConversations(false)}
-              style={{
-                marginHorizontal: 24,
-                marginTop: 12,
-                paddingVertical: 12,
-                borderRadius: 12,
-                backgroundColor: colors.borderLight,
-                alignItems: 'center',
-              }}
+              style={styles.modalClose}
             >
-              <Text
-                style={{
-                  fontFamily: 'Inter-SemiBold',
-                  fontSize: 14,
-                  color: colors.deepSlate,
-                }}
-              >
-                Cerrar
-              </Text>
+              <Text style={styles.modalCloseText}>Cerrar</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  historyButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listContent: {
+    paddingTop: 12,
+    paddingBottom: 12,
+  },
+  suggestions: {
+    marginBottom: 10,
+  },
+  suggestionsScroll: {
+    paddingHorizontal: 24,
+  },
+  suggestionsRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  suggestionChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: Colors.pillBorder,
+    backgroundColor: Colors.surface,
+    paddingHorizontal: 14,
+  },
+  suggestionText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 12,
+    color: Colors.deepSlate,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    backgroundColor: Colors.surface,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '70%',
+    paddingTop: 16,
+    paddingBottom: 32,
+  },
+  modalHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: Colors.borderLight,
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 18,
+    color: Colors.deepSlate,
+    paddingHorizontal: 24,
+    marginBottom: 16,
+  },
+  modalEmpty: {
+    fontFamily: 'Inter',
+    fontSize: 14,
+    color: Colors.neutral,
+    textAlign: 'center',
+    paddingVertical: 32,
+  },
+  modalList: {
+    paddingHorizontal: 16,
+  },
+  convRow: {
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: Colors.skyLight,
+    marginBottom: 8,
+  },
+  convTitle: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    color: Colors.deepSlate,
+    marginBottom: 4,
+  },
+  convMeta: {
+    fontFamily: 'Inter',
+    fontSize: 12,
+    color: Colors.neutral,
+  },
+  modalClose: {
+    marginHorizontal: 24,
+    marginTop: 12,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: Colors.borderLight,
+    alignItems: 'center',
+  },
+  modalCloseText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    color: Colors.deepSlate,
+  },
+});
