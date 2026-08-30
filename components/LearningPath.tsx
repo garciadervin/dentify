@@ -9,7 +9,7 @@ export interface LevelNode {
   label: string;
   level?: number;
   status: 'locked' | 'active' | 'completed';
-  /** Progreso 0–100 de la especialidad (solo activa). */
+  /** Specialty progress 0–100 (active only). */
   progress?: number;
   totalLevels?: number;
 }
@@ -20,8 +20,8 @@ interface LearningPathProps {
 }
 
 /**
- * Ruta de aprendizaje — lista vertical (boceto dentify.pen).
- * Tarjeta blanca con filas: rail (nodo + línea) + información de la especialidad.
+ * Learning path — vertical list.
+ * White card with rows: rail (node + line) + specialty info.
  */
 export default function LearningPath({ levels, onNodePress }: LearningPathProps) {
   const router = useRouter();
@@ -61,7 +61,7 @@ export default function LearningPath({ levels, onNodePress }: LearningPathProps)
             accessibilityRole={isLocked ? 'text' : 'button'}
             style={[styles.row, !isLast && styles.rowWithLine]}
           >
-            {/* Rail: nodo + línea vertical */}
+            {/* Rail: node + vertical line */}
             <View style={styles.rail}>
               <View
                 style={[
@@ -102,7 +102,7 @@ export default function LearningPath({ levels, onNodePress }: LearningPathProps)
               )}
             </View>
 
-            {/* Info de la especialidad */}
+            {/* Specialty info */}
             <View style={styles.info}>
               <Text
                 style={[

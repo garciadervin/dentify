@@ -1,0 +1,548 @@
+[
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "En el sistema de notación dental de la FDI (Federación Dental Internacional), el primer dígito indica el cuadrante y el segundo la posición del diente. ¿Qué código identifica al primer molar superior derecho permanente?",
+    "options": ["16", "26", "46", "36"],
+    "correctIndex": 0,
+    "explanation": "En la FDI, el dígito de las decenas indica el cuadrante: el 1 corresponde al cuadrante superior derecho de la dentición permanente. El dígito 6 señala el primer molar, por lo que el código correcto es 16.",
+    "hint": "El primer dígito identifica el cuadrante: 1 = superior derecho.",
+    "tags": ["nomenclatura dental", "sistema FDI"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Cuál de los siguientes dientes temporales es, por lo general, el primero en erupcionar en la cavidad bucal del niño?",
+    "options": ["Incisivo central inferior", "Incisivo central superior", "Primer molar superior", "Canino inferior"],
+    "correctIndex": 0,
+    "explanation": "En la mayoría de los niños, el incisivo central inferior es el primer diente temporal en erupcionar, alrededor de los 6 a 8 meses de edad. La erupción continúa luego en un patrón más o menos predecible hacia los dientes posteriores.",
+    "hint": "Los primeros dientes suelen aparecer en la arcada inferior y en la zona anterior.",
+    "tags": ["erupción", "dentición decidua"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "Respecto a la morfología, ¿cuál es una característica distintiva de la corona de los dientes temporales frente a sus sucesores permanentes?",
+    "options": ["Es más ancha en sentido mesiodistal en relación con su altura", "Presenta mayor grosor de esmalte", "Es más estrecha mesiodistalmente que el cuello", "Tiene una coloración amarillenta marcada"],
+    "correctIndex": 0,
+    "explanation": "Las coronas de los dientes temporales son proporcionalmente más anchas en sentido mesiodistal respecto a su altura, y su esmalte es más delgado. Esto les confiere un aspecto más abultado en comparación con los dientes permanentes.",
+    "hint": "Compara la proporción ancho-altura de la corona temporal con la permanente.",
+    "tags": ["morfología dental", "dentición decidua"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "En un bracket convencional, ¿qué parte es la que se adhiere directamente a la superficie del esmalte dental?",
+    "options": ["La base", "El slot (ranura)", "Los alerones (aletas)", "El gancho"],
+    "correctIndex": 0,
+    "explanation": "La base del bracket es la superficie que se adhiere al esmalte. El slot aloja el arco, los alerones sujetan la ligadura y los ganchos sirven para colocar elásticos o cadenetas.",
+    "hint": "Piensa en la cara del bracket que queda en contacto con el diente.",
+    "tags": ["aparatología fija", "brackets"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Cuántos dientes conforman la dentición permanente completa en un adulto, incluyendo los terceros molares?",
+    "options": ["32", "28", "24", "36"],
+    "correctIndex": 0,
+    "explanation": "La dentición permanente completa está formada por 32 dientes: 8 incisivos, 4 caninos, 8 premolares y 12 molares (incluidos los terceros molares). Sin los terceros molares serían 28.",
+    "hint": "Suma incisivos, caninos, premolares y molares de ambas arcadas.",
+    "tags": ["dentición permanente", "anatomía dental"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Cuántas raíces presenta normalmente el primer molar superior permanente?",
+    "options": ["Tres", "Una", "Dos", "Cinco"],
+    "correctIndex": 0,
+    "explanation": "El primer molar superior permanente tiene normalmente tres raíces: dos vestibulares (mesiovestibular y distovestibular) y una palatina. Este rasgo es relevante al planificar extracciones, endodoncia y movimientos ortodóncicos.",
+    "hint": "Recuerda la clásica trirradicularidad del primer molar superior.",
+    "tags": ["morfología dental", "primer molar superior"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "true_false",
+    "question": "El esmalte de los dientes temporales es más delgado que el de los dientes permanentes.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "El esmalte de la dentición temporal es efectivamente más delgado que el de la permanente, lo que lo hace más susceptible a la caries y al desgaste. Por eso la protección y la higiene son esenciales desde edades tempranas.",
+    "tags": ["dentición decidua", "esmalte"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "true_false",
+    "question": "Los dientes permanentes presentan, en general, coronas más pequeñas que los dientes temporales que reemplazan.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "La afirmación es falsa: los dientes permanentes son, en general, de mayor tamaño que sus predecesores temporales. La pérdida temprana de un diente temporal puede provocar pérdida de espacio porque los permanentes necesitan más espacio para ubicarse.",
+    "tags": ["dentición permanente", "tamaño dental"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "true_false",
+    "question": "La caries en los dientes temporales no tiene ningún efecto sobre los dientes permanentes.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "La afirmación es falsa: la caries o infección en dientes temporales puede afectar al germen del permanente en desarrollo, y su pérdida prematura produce pérdida de espacio y alteraciones de la erupción. Por eso la caries de la dentición decidua sí importa para la oclusión.",
+    "tags": ["dentición decidua", "caries"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "Los dientes posteriores cuya función principal es triturar los alimentos son los ____.",
+    "options": ["molares y premolares", "incisivos", "caninos", "temporales"],
+    "correctIndex": 0,
+    "explanation": "Los molares y premolares tienen la función principal de triturar y moler los alimentos. Los incisivos cortan y los caninos desgarran, funciones que también forman parte de la valoración funcional en ortodoncia.",
+    "tags": ["anatomía dental", "función dentaria"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "Los terceros molares, conocidos también como ____, son los últimos dientes en erupcionar en la dentición permanente.",
+    "options": ["muelas del juicio", "caninos", "premolares", "incisivos"],
+    "correctIndex": 0,
+    "explanation": "Los terceros molares, llamados popularmente muelas del juicio, erupcionan por lo general entre los 17 y los 21 años. Su erupción tardía y la frecuente falta de espacio los convierten en un tema relevante en la valoración ortodóncica.",
+    "tags": ["terceros molares", "erupción"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "El tejido que recubre la raíz del diente y en el que se insertan las fibras del ligamento periodontal se denomina ____.",
+    "options": ["cemento", "esmalte", "pulpa", "dentina"],
+    "correctIndex": 0,
+    "explanation": "El cemento es el tejido mineralizado que recubre la raíz y sirve de inserción a las fibras del ligamento periodontal. El esmalte cubre la corona, la dentina forma la mayor parte del diente y la pulpa aloja los nervios y vasos.",
+    "tags": ["anatomía dental", "cemento"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de los siguientes son hábitos orales que pueden influir en el desarrollo de la oclusión y que el ortodoncista evalúa en el diagnóstico?",
+    "options": ["Succión digital", "Respiración bucal", "Deglución atípica", "Cepillado dental correcto", "Uso de hilo dental"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "La succión digital, la respiración bucal y la deglución atípica son hábitos parafuncionales que alteran el equilibrio muscular y pueden modificar la posición dental y el crecimiento. El cepillado correcto y el uso de hilo dental son hábitos saludables, no deformantes.",
+    "tags": ["hábitos", "diagnóstico"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "match",
+    "question": "Empareja cada superficie dental con su descripción.",
+    "pairs": [
+      { "left": "Cara vestibular", "right": "Superficie orientada hacia el labio o la mejilla" },
+      { "left": "Cara lingual o palatina", "right": "Superficie orientada hacia la lengua o el paladar" },
+      { "left": "Cara mesial", "right": "Superficie más próxima a la línea media" },
+      { "left": "Cara distal", "right": "Superficie más alejada de la línea media" }
+    ],
+    "explanation": "La nomenclatura de las superficies dentales permite ubicar y comunicar con precisión cada zona del diente. La cara mesial está hacia la línea media y la distal en dirección opuesta, mientras que vestibular y lingual/palatina describen la orientación externa e interna.",
+    "tags": ["nomenclatura dental", "superficies"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "match",
+    "question": "Empareja cada diente permanente con su edad típica de erupción.",
+    "pairs": [
+      { "left": "Primer molar permanente", "right": "Erupciona alrededor de los 6 años" },
+      { "left": "Canino superior permanente", "right": "Erupciona alrededor de los 11 a 12 años" },
+      { "left": "Incisivo lateral superior", "right": "Erupciona alrededor de los 7 a 8 años" },
+      { "left": "Segundo molar permanente", "right": "Erupciona alrededor de los 12 años" }
+    ],
+    "explanation": "La cronología de erupción orienta el diagnóstico y la detección de alteraciones. El primer molar permanente es el hito de los 6 años, el incisivo lateral superior aparece hacia los 7-8 años, el canino superior hacia los 11-12 y el segundo molar alrededor de los 12.",
+    "tags": ["erupción", "cronología"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 1,
+    "type": "order",
+    "question": "Ordena de forma cronológica las etapas de la dentición.",
+    "orderItems": [
+      { "text": "Erupción de los dientes temporales", "position": 1 },
+      { "text": "Dentición decidua completa", "position": 2 },
+      { "text": "Inicio de la dentición mixta", "position": 3 },
+      { "text": "Dentición permanente", "position": 4 }
+    ],
+    "explanation": "El desarrollo de la dentición sigue un orden: primero erupcionan los dientes temporales, que completan la dentición decidua hacia los 3 años; con el primer molar permanente comienza la dentición mixta; y finalmente se establece la dentición permanente completa.",
+    "tags": ["dentición", "cronología"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Cuál de los siguientes alambres se caracteriza por ser superelástico y por ello se emplea con frecuencia en las fases iniciales de nivelación y alineación?",
+    "options": ["Níquel-titanio (NiTi)", "Acero inoxidable", "Titanio-molibdeno (TMA)", "Cromo-cobalto"],
+    "correctIndex": 0,
+    "explanation": "Los arcos de níquel-titanio presentan superelasticidad y memoria de forma, lo que permite aplicar fuerzas ligeras y constantes ideales para nivelar y alinear al inicio del tratamiento. El acero inoxidable es más rígido y se emplea en fases posteriores.",
+    "hint": "Busca el alambre con memoria de forma y baja rigidez.",
+    "tags": ["arcos", "níquel-titanio", "biomecánica"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Cómo se denominan los elásticos que se colocan entre el arco superior y el arco inferior para modificar la relación entre ambas arcadas?",
+    "options": ["Elásticos intermaxilares", "Ligaduras metálicas", "Cadenetas de cierre", "Separadores elásticos"],
+    "correctIndex": 0,
+    "explanation": "Los elásticos intermaxilares unen un arco al otro para corregir la relación sagital, vertical o transversal entre los maxilares. Las cadenetas cierran espacios dentro de una misma arcada, y las ligaduras y separadores cumplen otras funciones.",
+    "hint": "El nombre indica que van entre maxilares.",
+    "tags": ["elásticos", "biomecánica"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "En un bracket convencional, ¿cuál es la función principal de la ligadura?",
+    "options": ["Mantener el arco dentro del slot", "Generar fuerzas de intrusión", "Separar los dientes", "Cerrar espacios"],
+    "correctIndex": 0,
+    "explanation": "La ligadura, elástica o metálica, mantiene el arco asentado dentro del slot del bracket. El cierre de espacios y los movimientos verticales dependen de otros mecanismos y fuerzas.",
+    "hint": "Es lo que amarra el arco al bracket.",
+    "tags": ["aparatología fija", "ligaduras"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "Durante el movimiento dental ortodóncico, ¿qué células son las principales responsables de la resorción ósea en el lado de presión del ligamento periodontal?",
+    "options": ["Osteoclastos", "Osteoblastos", "Fibroblastos", "Odontoblastos"],
+    "correctIndex": 0,
+    "explanation": "En el lado de presión, la compresión estimula a los osteoclastos para reabsorber hueso y permitir el avance del diente. En el lado de tensión, los osteoblastos depositan hueso nuevo. Este recambio óseo es la base biológica del movimiento ortodóncico.",
+    "tags": ["biología del movimiento", "periodonto"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Cómo se denomina el movimiento dentario en el que la corona se inclina y el ápice permanece casi en su posición original?",
+    "options": ["Inclinación (tipping)", "Movimiento de cuerpo (traslación)", "Rotación", "Intrusión"],
+    "correctIndex": 0,
+    "explanation": "En la inclinación o tipping, la corona se desplaza y el ápice se mueve muy poco, produciendo un movimiento de palanca alrededor de un centro de rotación cercano al ápice. La traslación, en cambio, desplaza corona y raíz en igual magnitud.",
+    "hint": "Piensa en un diente que se dobla por la corona.",
+    "tags": ["tipos de movimiento", "biomecánica"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Cuál es la función de los separadores (elásticos o metálicos) en ortodoncia?",
+    "options": ["Crear espacio interproximal para la colocación de bandas", "Cerrar espacios de extracción", "Enderezar las raíces", "Servir de ligadura del arco"],
+    "correctIndex": 0,
+    "explanation": "Los separadores se colocan unos días antes para abrir espacio entre los dientes y permitir que las bandas asienten correctamente. Una vez retirados, las bandas se cementan en su posición definitiva.",
+    "tags": ["bandas", "separadores"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Qué material se utiliza habitualmente para adherir los brackets al esmalte dental?",
+    "options": ["Resina compuesta", "Amalgama de plata", "Óxido de zinc y eugenol", "Silicona de impresión"],
+    "correctIndex": 0,
+    "explanation": "Los brackets se adhieren con resinas compuestas, generalmente de fotocurado, tras acondicionar el esmalte con ácido. La amalgama, el óxido de zinc-eugenol y las siliconas tienen otros usos y no son aptos para esta adhesión.",
+    "tags": ["adhesión", "aparatología fija"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "true_false",
+    "question": "El desgaste interproximal (stripping o desgaste proximal) es un recurso válido para ganar espacio en apiñamientos dentales leves o moderados.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "El desgaste interproximal controlado del esmalte (IPR) permite ganar espacio en apiñamientos leves o moderados sin necesidad de extracciones. Debe realizarse con cuidado y con control adecuado para preservar el esmalte y la anatomía dental.",
+    "tags": ["espacio", "desgaste interproximal"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "true_false",
+    "question": "Las cadenetas elásticas se utilizan habitualmente para cerrar espacios entre los dientes.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "Las cadenetas o cadenas elásticas generan una fuerza continua que aproxima los dientes y cierra espacios, por ejemplo tras las extracciones. Son un recurso habitual dentro de la mecánica de cierre de espacios.",
+    "tags": ["cadenetas", "cierre de espacios"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "El movimiento en el que la corona y el ápice del diente se desplazan en la misma dirección y en la misma cantidad se denomina movimiento de ____.",
+    "options": ["cuerpo o traslación", "inclinación", "rotación", "extrusión"],
+    "correctIndex": 0,
+    "explanation": "En el movimiento de cuerpo o traslación, todo el diente se desplaza como una unidad manteniendo la relación entre corona y raíz. Para lograrlo se necesita un sistema de fuerzas más complejo que el de la simple inclinación.",
+    "hint": "El diente se desliza completo, sin inclinarse.",
+    "tags": ["tipos de movimiento", "biomecánica"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "El dispositivo que conserva el espacio dejado por un diente temporal hasta la erupción de su sucesor permanente se denomina ____.",
+    "options": ["mantenedor de espacio", "retenedor fijo", "arco de cierre", "arco de intrusión"],
+    "correctIndex": 0,
+    "explanation": "El mantenedor de espacio evita que los dientes adyacentes se inclinen o migren hacia el espacio del diente temporal perdido. Es una medida interceptiva fundamental para preservar la longitud del arco en la dentición mixta.",
+    "hint": "Su nombre indica que mantiene el espacio.",
+    "tags": ["dentición mixta", "mantenedores de espacio"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de los siguientes son objetivos fundamentales del tratamiento de ortodoncia?",
+    "options": ["Lograr una oclusión funcional y estable", "Mejorar la estética dental y facial", "Obtener resultados estables a largo plazo", "Eliminar la necesidad de higiene dental", "Aumentar el tamaño de los dientes"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "El tratamiento ortodóncico busca una oclusión funcional y estética, así como la estabilidad de los resultados. No elimina la necesidad de higiene ni modifica el tamaño dental; por el contrario, la higiene se vuelve más exigente durante el tratamiento.",
+    "tags": ["objetivos del tratamiento", "plan de tratamiento"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de los siguientes son componentes de la aparatología fija convencional?",
+    "options": ["Brackets", "Arco de ortodoncia", "Ligaduras", "Férula de contención", "Aparato removible de acrílico"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "La aparatología fija convencional está compuesta por brackets, arcos y ligaduras, además de bandas y tubos. La férula de contención y el aparato removible de acrílico pertenecen a otras fases o tipos de tratamiento.",
+    "tags": ["aparatología fija", "componentes"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de las siguientes son recomendaciones habituales para un paciente con ortodoncia fija durante el tratamiento?",
+    "options": ["Mantener una higiene rigurosa con cepillos interdentales", "Evitar alimentos muy duros o pegajosos", "Asistir puntualmente a los controles periódicos", "Suprimir por completo el cepillado para no dañar los brackets", "Usar exclusivamente colutorios en lugar del cepillado"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "La higiene rigurosa, una dieta adecuada y los controles periódicos son esenciales para evitar manchas blancas, inflamación gingival y retrasos del tratamiento. El cepillado nunca debe suprimirse y los colutorios no sustituyen al cepillado.",
+    "tags": ["higiene", "cuidados del paciente"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "match",
+    "question": "Empareja cada componente de un aparato removible con su función.",
+    "pairs": [
+      { "left": "Tornillo de expansión", "right": "Activa la expansión del aparato removible" },
+      { "left": "Resortes", "right": "Producen movimientos puntuales, por ejemplo de un canino" },
+      { "left": "Arcos de retención (Adams)", "right": "Sujetan el aparato a los dientes" },
+      { "left": "Placa acrílica", "right": "Base del aparato removible" }
+    ],
+    "explanation": "Los aparatos removibles están formados por una placa acrílica que sirve de base, junto con tornillos, resortes y arcos de retención que generan y transmiten las fuerzas activas a los dientes.",
+    "tags": ["aparatología removible", "componentes"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "match",
+    "question": "Empareja cada tipo de bracket con su característica principal.",
+    "pairs": [
+      { "left": "Bracket metálico", "right": "El más utilizado por su resistencia y costo accesible" },
+      { "left": "Bracket cerámico", "right": "Más estético, aunque más frágil" },
+      { "left": "Bracket autoligable", "right": "Retiene el arco sin necesidad de ligaduras" },
+      { "left": "Bracket lingual", "right": "Se coloca en la cara lingual del diente" }
+    ],
+    "explanation": "Existen distintos tipos de brackets según material y diseño. Los metálicos son los más comunes; los cerámicos mejoran la estética pero son más frágiles; los autoligables prescinden de ligaduras; y los linguales se ocultan en la cara interna.",
+    "tags": ["brackets", "tipos"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 2,
+    "type": "order",
+    "question": "Ordena la secuencia habitual de arcos durante un tratamiento de ortodoncia fija.",
+    "orderItems": [
+      { "text": "Arco de níquel-titanio de calibre fino", "position": 1 },
+      { "text": "Arco de níquel-titanio de mayor calibre", "position": 2 },
+      { "text": "Arco de acero inoxidable de trabajo", "position": 3 },
+      { "text": "Arco de finalización y acabado", "position": 4 }
+    ],
+    "explanation": "La secuencia habitual comienza con alambres de NiTi finos y flexibles para nivelar y alinear, continúa con NiTi de mayor calibre para asentar el arco, sigue con acero inoxidable rígido para cerrar espacios y termina con arcos de acabado.",
+    "tags": ["secuencia de arcos", "nivelación"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "Un paciente adulto de 45 años, con periodontitis tratada y estabilizada, solicita tratamiento ortodóncico para cerrar espacios. ¿Cuál es la conducta más adecuada antes y durante el tratamiento?",
+    "options": ["Evaluar el riesgo periodontal y coordinar con periodoncia con un estricto control de placa", "Iniciar el tratamiento con fuerzas pesadas para acortar los plazos", "Omitir la higiene especial porque el periodonto ya está sano", "Evitar por completo la evaluación periodontal"],
+    "correctIndex": 0,
+    "explanation": "En el paciente adulto con antecedente periodontal, la inflamación debe estar controlada antes de mover los dientes. Se requiere evaluación periodontal, control de placa y, con frecuencia, coordinación con el periodoncista para reducir el riesgo de pérdida de inserción.",
+    "hint": "La salud del periodonto es la base para mover dientes con seguridad.",
+    "tags": ["ortodoncia en adultos", "periodoncia"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "En un niño se detecta un diente supernumerario (mesiodens) entre los incisivos centrales superiores. ¿Cuál es la complicación más frecuente asociada a su presencia?",
+    "options": ["Retención o alteración de la erupción del incisivo permanente", "Sobreerupción del incisivo vecino", "Aumento del tamaño de la corona", "Fractura espontánea del diente permanente"],
+    "correctIndex": 0,
+    "explanation": "Los mesiodens ubicados en la línea media del maxilar suelen obstruir la vía de erupción de los incisivos permanentes, provocando retraso o retención. El manejo habitual incluye su extracción y, en ocasiones, la exposición del diente retenido.",
+    "tags": ["dientes supernumerarios", "erupción"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "¿En cuál de las siguientes condiciones es más frecuente que el ortodoncista solicite la valoración y el manejo conjunto con fonoaudiología?",
+    "options": ["Disfunciones orofaciales y deglución atípica", "Caries extensa no tratada", "Bruxismo nocturno aislado", "Enfermedad periodontal activa"],
+    "correctIndex": 0,
+    "explanation": "La deglución atípica y otras disfunciones orofaciales, como la interposición lingual, afectan la función y la estabilidad del tratamiento, por lo que su manejo conjunto con fonoaudiología mejora el resultado. La caries, el bruxismo y la enfermedad periodontal se manejan principalmente con otras especialidades.",
+    "tags": ["fonoaudiología", "deglución atípica", "interdisciplinario"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "Ante una asimetría mandibular notable en un paciente en crecimiento, ¿qué estudio es indispensable para descartar alteraciones del cóndilo o de la articulación temporomandibular?",
+    "options": ["Tomografía computarizada de haz cónico (CBCT)", "Fotografía intraoral", "Examen con sonda periodontal", "Prueba de vitalidad pulpar"],
+    "correctIndex": 0,
+    "explanation": "La CBCT permite evaluar en tres dimensiones los cóndilos, el espacio articular y posibles alteraciones (como anquilosis o asimetría condilar) que expliquen una asimetría mandibular. Los otros estudios evalúan tejidos blandos, periodonto o pulpa, no la estructura ósea articular.",
+    "tags": ["asimetría", "ATM", "imagenología"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "En términos generales, ¿qué tipo de fuerza se considera la más adecuada para producir un movimiento dental eficiente y con menor daño tisular?",
+    "options": ["Fuerzas ligeras y continuas", "Fuerzas pesadas e intermitentes", "Fuerzas pesadas aplicadas de forma continua", "Fuerzas intensas de corta duración"],
+    "correctIndex": 0,
+    "explanation": "Las fuerzas ligeras y continuas producen un movimiento más fisiológico, con menor hialinización y menor riesgo de reabsorción radicular. Las fuerzas excesivas pueden detener el movimiento por zonas de hialinización y dañar los tejidos.",
+    "tags": ["biomecánica", "fuerzas óptimas"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "¿Cuál es el fundamento de la corticotomía para acelerar el movimiento dentario?",
+    "options": ["Provoca un fenómeno de aceleración del recambio óseo regional (RAP)", "Aumenta directamente el tamaño de los dientes", "Elimina la necesidad de aparatología", "Endurece el hueso para lograr mayor anclaje"],
+    "correctIndex": 0,
+    "explanation": "La corticotomía induce una respuesta inflamatoria local que acelera el recambio óseo regional (fenómeno RAP), lo que permite mover los dientes en menos tiempo. No modifica el tamaño dental ni sustituye a la aparatología.",
+    "tags": ["corticotomía", "movimiento acelerado"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "Un molar temporal permanece en infraoclusión (sumergido) en comparación con sus vecinos. ¿Cuál es la causa más probable?",
+    "options": ["Anquilosis del diente temporal", "Caries extensa del diente", "Sobreerupción del diente vecino", "Traumatismo reciente"],
+    "correctIndex": 0,
+    "explanation": "La infraoclusión de un diente temporal suele deberse a la anquilosis dentoalveolar, en la que el diente se fusiona al hueso y deja de acompañar la erupción de los vecinos. Puede interferir con la erupción del sucesor permanente y causar pérdida de espacio.",
+    "tags": ["anquilosis", "dentición mixta"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "true_false",
+    "question": "Los dientes que han recibido tratamiento de conducto (endodoncia) están contraindicados de forma absoluta para el movimiento ortodóncico.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "La afirmación es falsa: los dientes endodonciados pueden moverse ortodóncicamente sin contraindicación absoluta, siempre que la endodoncia sea correcta y el diente esté asintomático. No hay evidencia de que la ortodoncia por sí sola dañe significativamente un diente bien tratado.",
+    "tags": ["endodoncia", "movimiento dental"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "true_false",
+    "question": "La colaboración del paciente (cumplimiento del uso de elásticos y de la higiene) no influye en el resultado final del tratamiento de ortodoncia.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "La afirmación es falsa: el cumplimiento es determinante, ya que el uso regular de los elásticos y una buena higiene condicionan la velocidad, la calidad y la estabilidad del resultado. Sin colaboración, incluso el plan más correcto puede fracasar o alargarse.",
+    "tags": ["cumplimiento", "elásticos"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "Excluyendo los terceros molares, el diente que con mayor frecuencia presenta agenesia (ausencia congénita) es el ____.",
+    "options": ["segundo premolar inferior", "incisivo central superior", "primer molar", "canino inferior"],
+    "correctIndex": 0,
+    "explanation": "Después de los terceros molares, los dientes con mayor frecuencia de agenesia son los segundos premolares inferiores, seguidos de los incisivos laterales superiores. Este dato orienta el diagnóstico y el plan de tratamiento del paciente.",
+    "tags": ["agenesia", "hipodoncia"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "La medida más importante para prevenir la desmineralización del esmalte (manchas blancas) durante un tratamiento de ortodoncia fija es el control de ____.",
+    "options": ["placa bacteriana", "temperatura bucal", "pH salival", "posición del bracket"],
+    "correctIndex": 0,
+    "explanation": "Las manchas blancas aparecen por la desmineralización localizada del esmalte debida a la acumulación de placa alrededor de los brackets. Un control riguroso de placa con cepillado, cepillos interdentales e higiene profesional es la principal medida preventiva.",
+    "tags": ["desmineralización", "higiene", "prevención"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de las siguientes son consideraciones importantes al planificar la ortodoncia en un paciente adulto?",
+    "options": ["Evaluar la salud periodontal y la presencia de enfermedad activa", "Considerar que el crecimiento óseo ya se completó", "Coordinar con otras especialidades cuando sea necesario", "Aplicar fuerzas pesadas continuas para acelerar el tratamiento", "Ignorar las expectativas estéticas del paciente"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "En el adulto se debe evaluar el periodonto, asumir que el crecimiento óseo ya se completó y coordinar con otras especialidades cuando se requiera. Las fuerzas excesivas y el desconocimiento de las expectativas del paciente no son conductas adecuadas.",
+    "tags": ["ortodoncia en adultos", "plan de tratamiento"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿En cuáles de las siguientes situaciones es recomendable la evaluación o el manejo interdisciplinario durante el tratamiento ortodóncico?",
+    "options": ["Paciente con enfermedad periodontal activa", "Paciente con disfunción temporomandibular (ATM)", "Paciente con asimetrías esqueléticas severas", "Paciente con caries pequeñas y controladas", "Paciente asintomático sin patologías asociadas"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "La enfermedad periodontal activa, la disfunción de la ATM y las asimetrías esqueléticas severas requieren con frecuencia la participación de periodoncia, especialistas en ATM o cirugía maxilofacial. Los casos sin patología asociada no necesitan manejo interdisciplinario.",
+    "tags": ["interdisciplinario", "ATM", "periodoncia"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "order",
+    "question": "Ordena los pasos del manejo inicial de un paciente que acude por un alambre que se salió y le molesta.",
+    "orderItems": [
+      { "text": "Identificar la zona que causa la molestia", "position": 1 },
+      { "text": "Cubrir el extremo del alambre con cera ortodóncica", "position": 2 },
+      { "text": "Acudir al ortodoncista para el ajuste definitivo", "position": 3 }
+    ],
+    "explanation": "Ante un alambre que se sale y molesta, primero se identifica la zona irritada; luego, como alivio inmediato, se cubre el extremo con cera; y finalmente el paciente acude al ortodoncista para recortar o reubicar el alambre. No debe intentarse cortar el arco sin supervisión.",
+    "tags": ["urgencias", "manejo clínico"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "or-case-erupcion-ectopica",
+    "caseText": "Paciente femenina de 9 años acude por molestias al masticar del lado derecho. En el examen clínico y radiográfico se observa el primer molar superior derecho en erupción ectópica, con reabsorción de la raíz distal del segundo molar temporal adyacente y leve inflamación gingival en la zona.",
+    "question": "Con base en el caso, ¿cuál es el diagnóstico más probable?",
+    "options": ["Erupción ectópica del primer molar permanente superior", "Anquilosis del primer molar temporal", "Agenesia del segundo molar temporal", "Fractura radicular del primer molar permanente"],
+    "correctIndex": 0,
+    "explanation": "El primer molar permanente que erupciona en dirección mesial y reabsorbe la raíz distal del segundo molar temporal es el cuadro clásico de erupción ectópica del primer molar. La anquilosis y la agenesia no explican la reabsorción distal del temporal.",
+    "tags": ["erupción ectópica", "diagnóstico"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "or-case-erupcion-ectopica",
+    "caseText": "Paciente femenina de 9 años acude por molestias al masticar del lado derecho. En el examen clínico y radiográfico se observa el primer molar superior derecho en erupción ectópica, con reabsorción de la raíz distal del segundo molar temporal adyacente y leve inflamación gingival en la zona.",
+    "question": "¿Cuál es la conducta ortodóncica inicial más adecuada en este caso?",
+    "options": ["Redirigir o distalizar el molar ectópico para liberar la vía de erupción", "Extraer de inmediato el primer molar permanente", "No tratar, porque se corrige siempre espontáneamente", "Colocar brackets sin ninguna otra medida"],
+    "correctIndex": 0,
+    "explanation": "El objetivo es liberar el molar ectópico para que erupcione en su posición correcta y evitar mayor reabsorción del molar temporal. La extracción del primer molar permanente no está indicada como primera opción, y el cuadro no siempre se resuelve solo.",
+    "tags": ["erupción ectópica", "manejo interceptivo"]
+  },
+  {
+    "specialty_slug": "ortodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "or-case-erupcion-ectopica",
+    "caseText": "Paciente femenina de 9 años acude por molestias al masticar del lado derecho. En el examen clínico y radiográfico se observa el primer molar superior derecho en erupción ectópica, con reabsorción de la raíz distal del segundo molar temporal adyacente y leve inflamación gingival en la zona.",
+    "question": "Si el cuadro no se corrige a tiempo, ¿qué consecuencia es la más probable?",
+    "options": ["Pérdida prematura del segundo molar temporal y pérdida de espacio en el arco", "Sobreerupción del molar temporal afectado", "Formación de un diente supernumerario", "Aumento del tamaño de la corona del molar"],
+    "correctIndex": 0,
+    "explanation": "La reabsorción progresiva de la raíz del segundo molar temporal puede llevar a su pérdida prematura, con la consecuente pérdida de espacio y complicaciones en la oclusión. Por eso se recomienda el manejo temprano del molar ectópico.",
+    "tags": ["erupción ectópica", "complicaciones"]
+  }
+]

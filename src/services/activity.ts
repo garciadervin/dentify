@@ -1,11 +1,11 @@
 /**
- * activity — registro de actividad de estudio (racha real).
+ * activity — study activity tracking (real streak).
  *
- * Actualiza profiles.streak_count / last_active_at:
- * - misma fecha: no cambia la racha;
- * - ayer: incrementa la racha;
- * - hueco: reinicia a 1.
- * Devuelve el valor de racha actual para otorgar el badge correspondiente.
+ * Updates profiles.streak_count / last_active_at:
+ * - same day: streak unchanged;
+ * - yesterday: streak increments;
+ * - gap: resets to 1.
+ * Returns the current streak to award the matching badge.
  */
 
 import { getSupabase } from '@/src/lib/supabase';
@@ -32,7 +32,7 @@ export async function recordStudyActivity(userId?: string): Promise<number> {
 
     let streak = data?.streak_count ?? 0;
     if (lastKey === today) {
-      // Ya se contó actividad hoy.
+      // Activity already counted today.
     } else if (lastKey) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);

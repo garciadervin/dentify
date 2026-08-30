@@ -40,7 +40,7 @@ export function useBadges(): UseBadgesReturn {
     const supabase = getSupabase();
 
     if (!supabase) {
-      // Sin Supabase no hay badges reales; no se muestran datos falsos.
+      // Without Supabase there are no real badges; never show fake data.
       setLoading(false);
       return;
     }

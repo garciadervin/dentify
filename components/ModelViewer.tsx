@@ -27,6 +27,7 @@ import {
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber/native';
 import { useGLTF, useProgress, OrbitControls } from '@react-three/drei/native';
 import * as THREE from 'three';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export interface ModelViewerHandle {
   zoomIn: () => void;
@@ -144,35 +145,37 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
 
   return (
     <View style={styles.container} testID="model-viewer">
-      <Canvas
-        testID="model-canvas"
-        style={styles.canvas}
-        onCreated={() => setCanvasReady(true)}
-        camera={{ position: [0, 0, 5], fov: 45 }}
-        gl={{ antialias: true }}
-        onPointerMissed={() => onStructureSelect?.(null)}
-      >
-        {/* Orbit controls for pan / rotate / zoom */}
-        <OrbitControls
-          enablePan
-          enableZoom
-          enableRotate
-          minDistance={2}
-          maxDistance={10}
-          dampingFactor={0.1}
-          enableDamping
-        />
-        <CameraController ref={cameraHandleRef} />
-
-        <Suspense fallback={null}>
-          <ModelScene
-            modelUri={modelUri}
-            autoRotate={autoRotate}
-            onStructureSelect={onStructureSelect}
+      <ErrorBoundary testID="model-error">
+        <Canvas
+          testID="model-canvas"
+          style={styles.canvas}
+          onCreated={() => setCanvasReady(true)}
+          camera={{ position: [0, 0, 5], fov: 45 }}
+          gl={{ antialias: true }}
+          onPointerMissed={() => onStructureSelect?.(null)}
+        >
+          {/* Orbit controls for pan / rotate / zoom */}
+          <OrbitControls
+            enablePan
+            enableZoom
+            enableRotate
+            minDistance={2}
+            maxDistance={10}
+            dampingFactor={0.1}
+            enableDamping
           />
-        </Suspense>
-        {/* NOTE: No RN View inside Canvas — causes "Div is not part of THREE" on web */}
-      </Canvas>
+          <CameraController ref={cameraHandleRef} />
+
+          <Suspense fallback={null}>
+            <ModelScene
+              modelUri={modelUri}
+              autoRotate={autoRotate}
+              onStructureSelect={onStructureSelect}
+            />
+          </Suspense>
+          {/* NOTE: No RN View inside Canvas — causes "Div is not part of THREE" on web */}
+        </Canvas>
+      </ErrorBoundary>
 
       {/* Loading indicator outside Canvas */}
       {isLoading && (

@@ -31,7 +31,7 @@ describe('Groq API Client', () => {
       await sendMessage([{ role: 'user', content: 'Tell me about caries' }]);
       const body = lastSentBody();
       expect(body.endpoint).toBe('chat/completions');
-      expect(body.payload.model).toBe('qwen/qwen3.6-27b');
+      expect(body.payload.model).toBe('qwen/qwen3.8-27b');
       expect(body.payload.messages[0].role).toBe('system');
       expect(body.payload.messages[0].content).toMatch(/asistente clínico/i);
     });

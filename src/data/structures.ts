@@ -1,6 +1,6 @@
 /**
- * Estructuras anatómicas seleccionables del simulador 3D (boceto dentify.pen).
- * Cada estructura tiene una descripción educativa breve para la InfoCard.
+ * Selectable anatomical structures of the 3D simulator.
+ * Each structure has a short educational description for the info card.
  */
 
 export interface ToothStructure {
@@ -36,7 +36,7 @@ export const TOOTH_STRUCTURES: ToothStructure[] = [
   },
 ];
 
-/** Busca una estructura por nombre (insensible a mayúsculas/acentos parcial). */
+/** Finds a structure by name (case/partial-accent insensitive). */
 export function findStructure(name: string | null): ToothStructure | undefined {
   if (!name) return undefined;
   const normalized = name.toLowerCase().trim();

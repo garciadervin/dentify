@@ -1,9 +1,9 @@
 /**
- * ScannerScreen — Escáner de diagnóstico (boceto dentify.pen).
+ * ScannerScreen — Diagnostic scanner.
  *
- * Cámara enmarcada con overlay de alineación, disparador externo, tarjeta de
- * resultado con confianza y descripción educativa (RAG), y guardado en
- * Supabase. Sin datos falsos de latencia: se muestra el estado real del modelo.
+ * Framed camera with alignment overlay, external shutter, result card
+ * with confidence and an educational description (RAG), saved to
+ * Supabase. No fake latency data: the real model state is shown.
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
@@ -59,6 +59,8 @@ export default function ScannerScreen() {
   const [loadingDescription, setLoadingDescription] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [modelReady, setModelReady] = useState(false);
+  const [modelError, setModelError] = useState(false);
+  const [inferenceError, setInferenceError] = useState(false);
 
   const cameraHeight = Math.min(460, Math.max(300, height * 0.45));
 
@@ -73,17 +75,38 @@ export default function ScannerScreen() {
       const data = JSON.parse(event.nativeEvent?.data || event.data);
       if (data.type === 'ready') {
         loadModel()
-          .then(() => setModelReady(true))
-          .catch((err) => console.warn('YOLO load failed:', err?.message));
+          .then(() => {
+            setModelReady(true);
+            setModelError(false);
+          })
+          .catch((err) => {
+            console.warn('YOLO load failed:', err?.message);
+            setModelError(true);
+          });
       }
     } catch {
       // ignore malformed messages
     }
   }, []);
 
+  const retryModel = useCallback(() => {
+    setModelError(false);
+    setModelReady(false);
+    loadModel()
+      .then(() => {
+        setModelReady(true);
+        setModelError(false);
+      })
+      .catch((err) => {
+        console.warn('YOLO load retry failed:', err?.message);
+        setModelError(true);
+      });
+  }, []);
+
   const handleCapture = useCallback(async (uri: string) => {
     setCapturedUri(uri);
     setScannerState('processing');
+    setInferenceError(false);
     try {
       const results = await processImage(uri);
       setDetections(results);
@@ -91,13 +114,22 @@ export default function ScannerScreen() {
     } catch (error) {
       console.warn('YOLO inference failed:', error);
       setDetections([]);
+      setInferenceError(true);
       setScannerState('results');
     }
   }, []);
 
   const handleShutter = useCallback(async () => {
-    const uri = await cameraRef.current?.capture();
-    if (uri) void handleCapture(uri);
+    try {
+      const uri = await cameraRef.current?.capture();
+      if (uri) void handleCapture(uri);
+      else Alert.alert('Aún no lista', 'La cámara no está lista. Intenta de nuevo.');
+    } catch {
+      Alert.alert(
+        'Permiso de cámara',
+        'No se pudo acceder a la cámara. Revisa que el permiso esté concedido en los ajustes del dispositivo.'
+      );
+    }
   }, [handleCapture]);
 
   const handleRetake = useCallback(() => {
@@ -105,6 +137,7 @@ export default function ScannerScreen() {
     setCapturedUri(null);
     setDescription(null);
     setShowDescription(false);
+    setInferenceError(false);
     setScannerState('idle');
   }, []);
 
@@ -205,7 +238,7 @@ export default function ScannerScreen() {
     </View>
   );
 
-  // Estados idle / capturing / processing: cámara + disparador.
+  // idle / capturing / processing states: camera + shutter.
   if (scannerState !== 'results') {
     return (
       <ScreenContainer style={styles.flex} edges={['top']}>
@@ -236,12 +269,25 @@ export default function ScannerScreen() {
             )}
           </View>
 
-          <View style={styles.modelStatusRow}>
-            <View style={[styles.statusDot, { backgroundColor: modelReady ? Colors.successTeal : Colors.neutral }]} />
-            <Text style={styles.modelStatusText}>
-              {modelReady ? 'Modelo YOLO cargado en el dispositivo' : 'Cargando modelo YOLO...'}
-            </Text>
-          </View>
+          {modelError ? (
+            <View style={styles.modelErrorRow}>
+              <MaterialCommunityIcons name="alert-circle-outline" size={16} color="#C0392B" />
+              <Text style={[styles.modelStatusText, { color: '#C0392B', flex: 1 }]}>
+                No se pudo cargar el modelo de visión.
+              </Text>
+              <TouchableOpacity testID="retry-model" onPress={retryModel} style={styles.retryChip}>
+                <MaterialCommunityIcons name="refresh" size={14} color={Colors.clinicalBlue} />
+                <Text style={styles.retryChipText}>Reintentar</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.modelStatusRow}>
+              <View style={[styles.statusDot, { backgroundColor: modelReady ? Colors.successTeal : Colors.neutral }]} />
+              <Text style={styles.modelStatusText}>
+                {modelReady ? 'Modelo YOLO cargado en el dispositivo' : 'Cargando modelo YOLO...'}
+              </Text>
+            </View>
+          )}
 
           <View style={styles.shutter}>
             <TouchableOpacity
@@ -262,7 +308,7 @@ export default function ScannerScreen() {
     );
   }
 
-  // Estado results: imagen + tarjeta de resultado + acciones.
+  // results state: image + result card + actions.
   return (
     <ScreenContainer style={styles.flex} edges={['top']}>
       <AppHeader variant="title" title="Escáner" />
@@ -297,9 +343,22 @@ export default function ScannerScreen() {
           <Text style={styles.resultTag}>DETECCIÓN</Text>
 
           {detections.length === 0 ? (
-            <Text style={styles.resultEmpty}>
-              No se detectaron condiciones dentales en la imagen.
-            </Text>
+            inferenceError ? (
+              <View style={styles.inferenceErrorBox}>
+                <MaterialCommunityIcons name="alert-circle-outline" size={18} color="#C0392B" />
+                <Text style={styles.inferenceErrorText}>
+                  No se pudo analizar la imagen. Revisa que esté bien enfocada e iluminada.
+                </Text>
+                <TouchableOpacity onPress={handleRetake} style={styles.retryChip}>
+                  <MaterialCommunityIcons name="camera-outline" size={14} color={Colors.clinicalBlue} />
+                  <Text style={styles.retryChipText}>Intentar de nuevo</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <Text style={styles.resultEmpty}>
+                No se detectaron condiciones dentales en la imagen.
+              </Text>
+            )
           ) : (
             detections.map((detection, index) => {
               const isSevere =
@@ -506,6 +565,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
+  modelErrorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   statusDot: {
     width: 8,
     height: 8,
@@ -515,6 +579,38 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontSize: 12,
     color: Colors.neutral,
+  },
+  retryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    backgroundColor: Colors.sourceFill,
+  },
+  retryChipText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 12,
+    color: Colors.clinicalBlue,
+  },
+  inferenceErrorBox: {
+    gap: 10,
+    backgroundColor: '#FDE8E7',
+    borderWidth: 1,
+    borderColor: '#F5C6C1',
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  inferenceErrorText: {
+    flex: 1,
+    fontFamily: 'Inter',
+    fontSize: 13,
+    lineHeight: 19,
+    color: Colors.deepSlate,
   },
   shutter: {
     alignItems: 'center',

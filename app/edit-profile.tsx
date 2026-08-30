@@ -1,8 +1,8 @@
 /**
- * EditProfileScreen — Editar perfil (funcional).
+ * EditProfileScreen — Edit profile (functional).
  *
- * Actualiza full_name y avatar_color en profiles y en user_metadata (para que
- * AppHeader y Perfil reflejen el cambio de inmediato).
+ * Updates full_name and avatar_color in profiles and user_metadata so that
+ * AppHeader and Profile reflect the change immediately).
  */
 
 import React, { useState } from 'react';
@@ -37,7 +37,7 @@ export default function EditProfileScreen() {
     }
     setSaving(true);
     try {
-      // Refleja el nombre en metadata (para guards/avatars) y en profiles.
+      // Mirror the name into metadata (guards/avatars) and profiles.
       await supabase.auth.updateUser({ data: { full_name: name } });
       const { error } = await supabase
         .from('profiles')

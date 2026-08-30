@@ -1,9 +1,9 @@
 /**
- * SimulatorScreen — Simulador 3D (boceto dentify.pen).
+ * SimulatorScreen — 3D Simulator.
  *
- * Viewer 3D con selección de estructura por raycast o chips (Corona, Cuello,
- * Raíz, Pulpa) y tarjeta de información educativa. Selector de los 16 modelos
- * (odontograma) y descarga offline con gate de datos móviles.
+ * 3D viewer with structure selection via raycast or chips (Crown, Neck,
+ * Root, Pulp) and an educational info card. Selector for the 16 models
+ * (odontogram) and offline download with a mobile-data gate.
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
@@ -58,12 +58,12 @@ export default function SimulatorScreen() {
   const currentModel = DENTAL_MODELS[selectedTooth];
   const viewerHeight = Math.min(430, Math.max(320, width - 48));
 
-  // Sync auto-rotate con el setting al cargar.
+  // Sync auto-rotate with the setting on load.
   useEffect(() => {
     setAutoRotate(settings.autoRotate);
   }, [settings.autoRotate]);
 
-  // Verifica caché de modelos al montar.
+  // Verify model cache on mount.
   useEffect(() => {
     checkCacheStatus();
   }, []);
@@ -77,7 +77,7 @@ export default function SimulatorScreen() {
     setCachedModels(cached);
   }, []);
 
-  // Resuelve el URI del modelo al cambiar de diente.
+  // Resolve the model URI when the tooth changes.
   useEffect(() => {
     let cancelled = false;
     setModelUri(null);
@@ -209,7 +209,7 @@ export default function SimulatorScreen() {
       )}
 
       <View style={styles.content}>
-        {/* Caption del diente */}
+        {/* Tooth caption */}
         <Text style={styles.caption}>
           {(currentModel?.name ?? 'Selecciona un diente').toUpperCase()} ·{' '}
           {(currentModel?.arch === 'superior' ? 'ARCADA SUPERIOR' : 'ARCADA INFERIOR').toUpperCase()}

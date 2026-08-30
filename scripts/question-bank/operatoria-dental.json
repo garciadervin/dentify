@@ -1,0 +1,587 @@
+[
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Cuál es el principal componente orgánico de la dentina?",
+    "options": ["Colágeno tipo I", "Queratina", "Elastina", "Colágeno tipo IV"],
+    "correctIndex": 0,
+    "explanation": "La dentina está formada en su mayor parte por cristales de hidroxiapatita (fase inorgánica), pero su matriz orgánica está dominada por fibras de colágeno tipo I. Ese colágeno es el armazón sobre el que se deposita el mineral y le confiere cierta elasticidad. La queratina y la elastina no forman parte de la matriz dentinaria.",
+    "hint": "Piensa en la proteína estructural que predomina en los tejidos mineralizados del diente.",
+    "tags": ["estructura-dentina", "composicion", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Qué células se encuentran en la periferia de la pulpa y son responsables de la formación de la dentina?",
+    "options": ["Odontoblastos", "Ameloblastos", "Cementoblastos", "Osteoblastos"],
+    "correctIndex": 0,
+    "explanation": "Los odontoblastos revisten la periferia de la pulpa y elaboran la matriz dentinaria; sus prolongaciones se alojan en los túbulos dentinarios. Los ameloblastos forman el esmalte durante el desarrollo y los cementoblastos elaboran el cemento radicular, por lo que no son las células que forman la dentina.",
+    "hint": "Son las células que viven 'pegadas' a la dentina, en la parte externa de la pulpa.",
+    "tags": ["pulpa", "odontoblastos", "histologia", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Cuál es el principal componente inorgánico del esmalte dental?",
+    "options": ["Hidroxiapatita", "Calcita", "Carbonato de calcio", "Sulfato de calcio"],
+    "correctIndex": 0,
+    "explanation": "El esmalte está compuesto en aproximadamente un 95-96 % de material inorgánico, representado sobre todo por cristales de hidroxiapatita, que es un fosfato de calcio. Se trata de la misma fase mineral de los demás tejidos calcificados del organismo. La calcita, el carbonato y el sulfato de calcio no constituyen la fase mineral del esmalte.",
+    "hint": "Es el mineral de calcio y fosfato que forma la fase dura de los tejidos calcificados.",
+    "tags": ["esmalte", "composicion", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "El índice de placa de O'Leary (IP) expresa:",
+    "options": ["El porcentaje de superficies dentales con placa bacteriana revelada", "La profundidad de las bolsas periodontales", "El grado de movilidad dental", "El nivel de sangrado al sondaje"],
+    "correctIndex": 0,
+    "explanation": "El índice de placa de O'Leary registra el porcentaje de superficies dentales que presentan placa visible tras el uso de una solución reveladora. Es una herramienta de motivación y de evaluación de la higiene del paciente. Los demás parámetros (bolsa, movilidad y sangrado) miden condiciones periodontales distintas.",
+    "hint": "Se calcula dividiendo las superficies teñidas entre el total de superficies examinadas.",
+    "tags": ["indice-de-placa", "diagnostico", "prevencion", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "La pulpa dental está constituida por:",
+    "options": ["Tejido conectivo laxo con vasos y nervios", "Tejido epitelial estratificado", "Tejido óseo esponjoso", "Cartílago hialino"],
+    "correctIndex": 0,
+    "explanation": "La pulpa es un tejido conectivo laxo, ricamente vascularizado e inervado, que ocupa la cámara pulpar y los conductos radiculares. No es un tejido epitelial ni óseo, aunque contiene células propias como los odontoblastos y fibroblastos.",
+    "hint": "Es el 'nervio del diente', el tejido blando que se inflama en las pulpitis.",
+    "tags": ["pulpa", "histologia", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Cuál es la función principal del cemento radicular?",
+    "options": ["Permitir la inserción de las fibras del ligamento periodontal", "Formar el esmalte de la corona", "Cubrir la cámara pulpar", "Proteger la dentina de la caries"],
+    "correctIndex": 0,
+    "explanation": "El cemento recubre la dentina radicular y sirve de anclaje para las fibras del ligamento periodontal, manteniendo el diente insertado en el hueso alveolar. No forma esmalte ni cubre la cámara pulpar, funciones que corresponden a otros tejidos.",
+    "hint": "Es el tejido que 'sujeta' el diente a su ligamento alrededor de la raíz.",
+    "tags": ["cemento", "periodonto", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "La línea que marca la unión entre el esmalte y la dentina se denomina:",
+    "options": ["Unión amelodentinaria", "Unión cementodentinaria", "Línea cervical", "Línea de crecimiento"],
+    "correctIndex": 0,
+    "explanation": "La unión amelodentinaria (UAD) es la interfaz entre el esmalte y la dentina, con un contorno festoneado que favorece la cohesión entre ambos tejidos. La unión cementodentinaria se localiza en la raíz y la línea cervical corresponde al cuello del diente.",
+    "hint": "Es la frontera entre los dos tejidos duros principales de la corona.",
+    "tags": ["esmalte", "dentina", "anatomia", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "true_false",
+    "question": "La dentina es menos radiopaca que el esmalte en una radiografía periapical.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "Cuanto mayor es el grado de mineralización de un tejido, más radiopaco (más blanco) se observa en la radiografía. Como el esmalte está más mineralizado que la dentina, aparece más radiopaco, mientras que la dentina se ve ligeramente menos blanca.",
+    "hint": "Piensa en cuál de los dos tejidos aparece 'más blanco' en la imagen.",
+    "tags": ["dentina", "esmalte", "radiografia", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "true_false",
+    "question": "La pulpa dental carece de inervación y, por tanto, no responde a los estímulos.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "La pulpa está ricamente inervada por fibras sensitivas que le permiten responder a estímulos térmicos, químicos y mecánicos, generando sensibilidad. Esa capacidad de respuesta es la base de las pruebas de sensibilidad pulpar que se usan en el diagnóstico.",
+    "hint": "Si la pulpa no respondiera, no existiría la sensibilidad al frío o al calor.",
+    "tags": ["pulpa", "inervacion", "diagnostico", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "La unidad estructural básica del esmalte se denomina ____.",
+    "options": ["prisma del esmalte", "túbulo dentinario", "capa odontoblástica", "unidad cementaria"],
+    "correctIndex": 0,
+    "explanation": "El esmalte está organizado en prismas o varillas de hidroxiapatita que van desde la unión amelodentinaria hacia la superficie. Los túbulos dentinarios pertenecen a la dentina y la capa odontoblástica es una zona celular de la pulpa.",
+    "hint": "Es la 'columna' vertical que forma la estructura del esmalte.",
+    "tags": ["esmalte", "prisma", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "Las células que sintetizan la matriz del esmalte durante la formación del diente se denominan ____.",
+    "options": ["ameloblastos", "odontoblastos", "cementoblastos", "fibroblastos"],
+    "correctIndex": 0,
+    "explanation": "Los ameloblastos son las células del órgano del esmalte que producen y mineralizan la matriz del esmalte; tras la erupción dejan de ser funcionales. Los odontoblastos forman dentina y los cementoblastos forman cemento.",
+    "hint": "Su nombre empieza igual que la palabra inglesa para esmalte: enamel.",
+    "tags": ["esmalte", "ameloblastos", "histologia", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "La porción del diente visible en la cavidad bucal, expuesta por encima de la encía, se denomina ____.",
+    "options": ["corona clínica", "corona anatómica", "cuello dental", "raíz clínica"],
+    "correctIndex": 0,
+    "explanation": "La corona clínica es la parte del diente que se observa en boca, delimitada por el margen gingival. La corona anatómica está cubierta por esmalte y puede ser mayor que la clínica si hay recesión, o menor si la encía la cubre.",
+    "hint": "Su tamaño depende del nivel de la encía, no del esmalte.",
+    "tags": ["anatomia", "corona-clinica", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles son funciones de la saliva que protegen contra la caries dental?",
+    "options": ["Acción de limpieza que arrastra restos alimentarios", "Capacidad amortiguadora que neutraliza los ácidos", "Aporta iones calcio y fosfato para la remineralización", "Disminuye el flujo salival para secar las superficies", "Aumenta la acidez del medio bucal"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "La saliva protege el diente mediante el arrastre mecánico de restos, su capacidad amortiguadora que neutraliza los ácidos y el aporte de calcio y fosfato que favorece la remineralización. Las opciones que reducen el flujo o aumentan la acidez describen condiciones que, al contrario, predisponen a la caries.",
+    "hint": "Elimina las opciones que describen un efecto negativo o 'secante'.",
+    "tags": ["saliva", "prevencion", "caries", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "match",
+    "question": "Empareja cada método de prevención con su mecanismo de acción.",
+    "pairs": [
+      {"left": "Sellantes de fosas y fisuras", "right": "Barrera física que ocluye las fosas oclusales"},
+      {"left": "Cepillado dental", "right": "Remoción mecánica del biofilm de las superficies"},
+      {"left": "Control de azúcares en la dieta", "right": "Disminuye el sustrato disponible para los microorganismos"},
+      {"left": "Control odontológico periódico", "right": "Detección temprana de lesiones incipientes"}
+    ],
+    "explanation": "Cada método de prevención actúa sobre un eslabón distinto del proceso carioso: los sellantes bloquean físicamente las zonas retentivas, el cepillado elimina el biofilm, la dieta limita el sustrato y el control profesional detecta lesiones en etapas tempranas, cuando aún pueden manejarse de forma mínimamente invasiva.",
+    "hint": "Relaciona cada método con la fase del proceso carioso que interrumpe.",
+    "tags": ["prevencion", "sellantes", "higiene", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "match",
+    "question": "Empareja cada tejido del diente con su localización.",
+    "pairs": [
+      {"left": "Esmalte", "right": "Recubre la corona del diente por fuera"},
+      {"left": "Dentina", "right": "Forma la mayor parte del cuerpo de la corona y la raíz"},
+      {"left": "Pulpa", "right": "Ocupa la cámara pulpar y los conductos radiculares"},
+      {"left": "Cemento", "right": "Recubre la superficie radicular"}
+    ],
+    "explanation": "Los tejidos del diente se organizan en capas concéntricas: el esmalte rodea la corona, la dentina constituye el cuerpo del diente, la pulpa ocupa el centro y el cemento cubre la raíz. Comprender esta disposición es esencial para localizar cada tejido al preparar y restaurar.",
+    "hint": "Piensa en la disposición 'de afuera hacia adentro' del diente.",
+    "tags": ["anatomia", "tejidos-dentarios", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 1,
+    "type": "order",
+    "question": "Ordena los pasos para la colocación del aislamiento absoluto con dique de goma.",
+    "orderItems": [
+      {"text": "Perforar el dique de goma en la posición del diente o dientes a aislar", "position": 1},
+      {"text": "Seleccionar el clamp adecuado y colocarlo en el diente", "position": 2},
+      {"text": "Deslizar el dique sobre el clamp y asentarlo en el diente", "position": 3},
+      {"text": "Colocar el arco y ajustar la tensión del dique", "position": 4},
+      {"text": "Invertir los bordes del dique en el cuello de los dientes con la sonda", "position": 5}
+    ],
+    "explanation": "El aislamiento absoluto sigue una secuencia lógica: primero se prepara el dique (perforación), luego se asegura el clamp, se asienta el dique, se coloca el arco y por último se invierten los bordes para sellar el cuello. Respetar el orden evita que el dique se desplace o que el campo se contamine.",
+    "hint": "Piensa en qué debe estar 'listo' antes de que el dique toque el diente.",
+    "tags": ["aislamiento-absoluto", "dique-de-goma", "operatoria", "nivel-1"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "Los composites se clasifican principalmente según:",
+    "options": ["El tamaño de las partículas de relleno inorgánico", "El color de la matriz resinosa", "El tipo de iniciador de la polimerización", "La cantidad de matriz orgánica"],
+    "correctIndex": 0,
+    "explanation": "La clasificación más utilizada de las resinas compuestas se basa en el tamaño de las partículas de relleno (macropartículas, micropartículas, nanométricas o híbridas), que determina propiedades como el pulido, la resistencia al desgaste y la translucidez. El color, el iniciador o la cantidad de matriz no definen la clasificación convencional.",
+    "hint": "Es el criterio que explica por qué existen composites 'nanohíbridos' o 'microrelleno'.",
+    "tags": ["composite", "clasificacion", "materiales", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "En un sistema adhesivo, la función principal del primer es:",
+    "options": ["Penetrar en la dentina desmineralizada y estabilizar la red de colágeno", "Grabar el esmalte para crear microretenciones", "Fotopolimerizar la capa de adhesivo", "Pulir la superficie cavitaria"],
+    "correctIndex": 0,
+    "explanation": "El primer es un monómero hidrófilo que penetra en la dentina desmineralizada por el grabado, rodea las fibras de colágeno y favorece la penetración posterior del adhesivo hidrófobo, formando la capa híbrida. No graba el esmalte ni polimeriza por sí mismo la capa adhesiva.",
+    "hint": "Su función es 'preparar el camino' hacia la dentina recién grabada.",
+    "tags": ["adhesivo", "primer", "dentina", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "El principio de forma de resistencia en una preparación cavitaria busca:",
+    "options": ["Evitar la fractura del diente y de la restauración bajo las fuerzas masticatorias", "Facilitar la limpieza del campo operatorio", "Mejorar la estética del margen", "Reducir el tiempo de trabajo clínico"],
+    "correctIndex": 0,
+    "explanation": "La forma de resistencia es uno de los principios clásicos de la preparación cavitaria y tiene por objetivo que tanto el diente como la restauración soporten las cargas funcionales sin fracturarse. Para ello se conserva esmalte soportado y un grosor mínimo de material. Los demás objetivos pertenecen a otros principios, como la forma de conveniencia o de contorno.",
+    "hint": "Se relaciona con 'resistir' la masticación, no con la estética.",
+    "tags": ["preparacion-cavitaria", "forma-de-resistencia", "operatoria", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "En las restauraciones adhesivas con resina compuesta, la retención se obtiene principalmente por:",
+    "options": ["Unión micromecánica a través del sistema adhesivo", "Fricción mecánica de paredes paralelas", "Espigas metálicas de retención", "Forma de cola de milano"],
+    "correctIndex": 0,
+    "explanation": "La resina compuesta se retiene por la unión micromecánica que se establece entre el adhesivo y el sustrato dental grabado, a diferencia de materiales como la amalgama que requieren retención mecánica por forma. Por eso las preparaciones adhesivas pueden ser más conservadoras en la eliminación de tejido sano.",
+    "hint": "Piensa en el mecanismo que permite 'pegar' el composite sin fresar retenciones.",
+    "tags": ["adhesion", "retencion", "composite", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "En una lesión proximal en un diente anterior, el acceso que mejor preserva la estética facial es:",
+    "options": ["Lingual", "Facial", "Incisal", "Cervical"],
+    "correctIndex": 0,
+    "explanation": "El acceso lingual permite alcanzar la lesión proximal sin comprometer la cara vestibular, que es la zona más visible y estética del diente anterior. Un abordaje facial o incisal dejaría un defecto visible en una zona de alto valor estético.",
+    "hint": "Imagina por qué lado del diente el paciente 'no vería' la restauración al sonreír.",
+    "tags": ["lesion-proximal", "acceso", "estetica", "operatoria", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "Los composites fluidos (flow) se caracterizan por:",
+    "options": ["Menor viscosidad y menor contenido de relleno que los convencionales", "Mayor contenido de relleno inorgánico que los convencionales", "No requerir fotopolimerización", "Estar indicados únicamente en dientes anteriores"],
+    "correctIndex": 0,
+    "explanation": "Los composites fluidos tienen un menor porcentaje de relleno inorgánico, lo que les confiere mayor fluidez y capacidad de penetrar en zonas de difícil acceso, a costa de una menor resistencia mecánica y mayor desgaste. Se usan como liner o en defectos pequeños, no en zonas de gran carga.",
+    "hint": "Su nombre ('flow') ya describe su comportamiento al fluir.",
+    "tags": ["composite", "fluido", "materiales", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "La matriz orgánica de una resina compuesta está constituida por:",
+    "options": ["Monómeros de resina como el Bis-GMA", "Partículas de vidrio de bario", "Agentes de acoplamiento silano", "Pigmentos inorgánicos"],
+    "correctIndex": 0,
+    "explanation": "La matriz orgánica es la fase polimérica del composite, formada por monómeros como el Bis-GMA o el UDMA, que se polimerizan al fotocurar. Las partículas de vidrio constituyen la fase inorgánica y el silano es el agente que las une a la matriz, por lo que no forman parte de la matriz misma.",
+    "hint": "Es la parte que 'se cura' con la luz y forma el polímero.",
+    "tags": ["composite", "matriz-organica", "materiales", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "Las lámparas de fotopolimerización modernas emiten luz visible de longitud de onda de aproximadamente:",
+    "options": ["450-480 nm (luz azul)", "620-700 nm (luz roja)", "200-300 nm (luz ultravioleta)", "520-550 nm (luz verde)"],
+    "correctIndex": 0,
+    "explanation": "Los fotoiniciadores usados en los composites, como la canforquinona, absorben en la región del azul, alrededor de 450-480 nm. Por ello las lámparas de curado emiten luz azul visible y no radiación ultravioleta ni roja, que no activaría eficazmente la polimerización.",
+    "hint": "Si alguna vez viste una lámpara de fotocurado, recuerda el color de su luz.",
+    "tags": ["fotopolimerizacion", "lampara", "materiales", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "true_false",
+    "question": "El biselado del margen de esmalte en una preparación adhesiva mejora el sellado de la restauración.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "El bisel expone los prismas del esmalte en corte, aumenta la superficie de esmalte disponible para la adhesión y reduce el ángulo del margen, lo que mejora el sellado y la estética en las restauraciones adhesivas. Por esta razón es una maniobra habitual en la preparación de márgenes para resina compuesta.",
+    "hint": "Relaciona 'más superficie de esmalte' con 'mejor adhesión'.",
+    "tags": ["biselado", "margen", "adhesion", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "true_false",
+    "question": "La adhesión del composite al esmalte es más predecible y duradera que la adhesión a la dentina.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "El esmalte es un sustrato homogéneo y altamente mineralizado que, tras el grabado, ofrece microretenciones muy reproducibles. La dentina, en cambio, es más húmeda, contiene menos mineral y presenta colágeno, por lo que su adhesión es técnicamente más exigente y menos predecible. Por eso el fracaso adhesivo suele iniciarse en dentina.",
+    "hint": "Piensa en cuál de los dos tejidos es más 'seco y uniforme' para adherirse.",
+    "tags": ["adhesion", "esmalte", "dentina", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "true_false",
+    "question": "La matriz de acero, al ser transparente, permite la fotopolimerización del composite a través de ella.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "La matriz de acero es opaca y bloquea el paso de la luz, por lo que no permite curar el composite a través de ella. Para restauraciones de resina compuesta se emplean matrices de poliéster transparentes; las matrices de acero se reservan para materiales que no requieren fotopolimerización.",
+    "hint": "Piensa en el color y la transparencia de cada tipo de matriz.",
+    "tags": ["matriz", "composite", "aislamiento", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "El ____ es el agente de acoplamiento que une las partículas de relleno inorgánico a la matriz orgánica del composite.",
+    "options": ["silano", "fotoiniciador", "primer", "pigmento"],
+    "correctIndex": 0,
+    "explanation": "El silano es una molécula bifuncional que establece el puente químico entre la superficie de las partículas de vidrio y la matriz resinosa, mejorando la cohesión del composite. Sin ese acoplamiento, el relleno no se integraría a la matriz y el material perdería propiedades mecánicas.",
+    "hint": "Es la molécula 'puente' entre el vidrio y la resina.",
+    "tags": ["silano", "composite", "materiales", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "En una restauración proximal posterior, la ____ de madera separa los dientes y comprime la matriz para restablecer el punto de contacto.",
+    "options": ["cuña", "matriz", "arco", "clamp"],
+    "correctIndex": 0,
+    "explanation": "La cuña de madera o plástica se inserta en el espacio interproximal para separar ligeramente los dientes y adaptar la matriz contra el margen gingival de la preparación, evitando excesos y ayudando a restablecer el contacto. La matriz es la banda que se ajusta con la cuña, no la cuña misma.",
+    "hint": "Se introduce en el espacio entre los dientes, por debajo de la matriz.",
+    "tags": ["restauracion-proximal", "matriz", "contacto-proximal", "operatoria", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué funciones cumple el relleno inorgánico en un composite?",
+    "options": ["Incrementar la resistencia mecánica", "Reducir el coeficiente de expansión térmica", "Mejorar la resistencia al desgaste", "Volver el material más elástico y gomoso", "Eliminar la necesidad de fotopolimerización"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "El relleno inorgánico es la fase que aporta dureza y resistencia mecánica, reduce la expansión térmica del material y mejora su comportamiento frente al desgaste. No aumenta la elasticidad ni sustituye la fotopolimerización: esas opciones describen efectos opuestos o ajenos a su función.",
+    "hint": "Fíjate en qué propiedades 'mejoran' con un material más duro y relleno.",
+    "tags": ["composite", "relleno", "materiales", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué condiciones favorecen una correcta adhesión a la dentina?",
+    "options": ["Superficie libre de restos de caries", "Ausencia de contaminación por saliva", "Humedad controlada, sin sobresecar el tejido", "Presencia de una capa gruesa de barro dentinario", "Dentina completamente deshidratada"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "Para lograr una buena adhesión, la dentina debe estar limpia de caries, sin contaminación salival y con una humedad controlada, ya que la sobredesecación colapsa la red de colágeno e impide la penetración del adhesivo. El barro dentinario grueso y la deshidratación interfieren con la unión.",
+    "hint": "La dentina ideal para adherirse es 'limpia, aislada y ligeramente húmeda'.",
+    "tags": ["adhesion", "dentina", "tecnicas-adhesivas", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "match",
+    "question": "Empareja cada instrumento con su función clínica en operatoria dental.",
+    "pairs": [
+      {"left": "Dique de goma", "right": "Mantiene el campo seco y libre de saliva"},
+      {"left": "Fresa de fisura", "right": "Configura y alisa las paredes de la preparación"},
+      {"left": "Explorador", "right": "Detecta caries y evalúa los márgenes"},
+      {"left": "Gomas de pulido", "right": "Alisan y dan brillo a la superficie restaurada"}
+    ],
+    "explanation": "Cada instrumento tiene una función específica: el dique garantiza el aislamiento, la fresa de fisura conforma las paredes, el explorador permite detectar caries y valorar márgenes, y las gomas de pulido terminan la superficie. Elegir el instrumento adecuado en cada paso es clave para el resultado clínico.",
+    "hint": "Relaciona cada instrumento con la etapa del procedimiento en que se usa.",
+    "tags": ["instrumental", "operatoria", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 2,
+    "type": "order",
+    "question": "Ordena los pasos del acabado y pulido de una restauración de composite.",
+    "orderItems": [
+      {"text": "Eliminar los excesos groseros con una fresa de grano grueso", "position": 1},
+      {"text": "Refinar los márgenes con fresas o discos de grano fino", "position": 2},
+      {"text": "Pulir la superficie con gomas de silicona o discos flexibles", "position": 3},
+      {"text": "Aplicar pasta de pulir con cepillo y dar el brillo final", "position": 4}
+    ],
+    "explanation": "El acabado y pulido se realiza de mayor a menor abrasividad: primero se eliminan excesos con instrumentos gruesos, luego se refina con granos finos, se pulen las superficies con gomas o discos y finalmente se aplica pasta de pulir. Saltarse pasos o usar granos gruesos al final deja superficies ásperas que retienen placa.",
+    "hint": "La regla es 'de grueso a fino'.",
+    "tags": ["pulido", "acabado", "composite", "nivel-2"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "En un paciente joven se observan opacidades blanco-amarillentas asimétricas en primeros molares e incisivos permanentes, sin historia de traumatismo. El diagnóstico más probable es:",
+    "options": ["Hipomineralización de incisivos y molares (HMI)", "Fluorosis dental", "Caries incipiente", "Amelogénesis imperfecta"],
+    "correctIndex": 0,
+    "explanation": "La hipomineralización de incisivos y molares (HMI) se caracteriza por opacidades demarcadas y asimétricas que afectan a los primeros molares permanentes y a los incisivos, con esmalte frágil que puede fracturarse. La fluorosis produce opacidades difusas y simétricas y la amelogénesis imperfecta compromete toda la dentición, no solo molares e incisivos.",
+    "hint": "Fíjate en qué dientes se afectan: primeros molares e incisivos permanentes.",
+    "tags": ["manchas-blancas", "diagnostico-diferencial", "hipomineralizacion", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "Durante la preparación cavitaria se identifica esmalte sin soporte dentinario. La conducta correcta es:",
+    "options": ["Eliminarlo, porque es frágil y se fracturará bajo las cargas", "Conservarlo siempre para no ampliar la preparación", "Recubrirlo con base y restaurar encima", "Grabarlo durante más tiempo para reforzarlo"],
+    "correctIndex": 0,
+    "explanation": "El esmalte sin soporte dentinario carece de la base que le aporta resistencia y tiende a fracturarse bajo la masticación, dejando márgenes defectuosos y favoreciendo la caries recurrente. Por eso debe eliminarse durante la preparación. El grabado prolongado no refuerza el esmalte y la base no restituye el soporte estructural.",
+    "hint": "Piensa en lo que ocurrirá con ese 'techo de esmalte' al masticar.",
+    "tags": ["esmalte-sin-soporte", "preparacion-cavitaria", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "La microfiltración en el margen de una restauración de composite se manifiesta clínicamente por:",
+    "options": ["Pigmentación o sombra en el margen, con sensibilidad ocasional", "Superficie brillante y lisa", "Cambio de color del cuerpo sin defecto marginal", "Presencia de cálculo supragingival"],
+    "correctIndex": 0,
+    "explanation": "La microfiltración permite la entrada de fluidos, pigmentos y bacterias por la interfaz diente-restauración, lo que se manifiesta como una línea o sombra pigmentada en el margen y, en ocasiones, sensibilidad. Una superficie lisa o un cambio de color del cuerpo del composite sin defecto marginal no indican microfiltración.",
+    "hint": "Es el 'escape' entre el diente y la restauración, visible como línea oscura en el margen.",
+    "tags": ["microfiltracion", "margen", "restauracion", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "Para la detección de caries proximales y recurrentes bajo restauraciones, la técnica radiográfica más indicada es:",
+    "options": ["Radiografía interproximal (bitewing)", "Radiografía oclusal", "Radiografía panorámica", "Tomografía de haz cónico de toda la arcada"],
+    "correctIndex": 0,
+    "explanation": "La radiografía interproximal (bitewing) proyecta las coronas y la zona de contacto de las superficies proximales sin superposición, permitiendo detectar caries proximales y recurrentes en estadios precoces. La panorámica y la oclusal tienen menor definición de esas zonas y no son de elección para este propósito.",
+    "hint": "Es la radiografía que 'abre' el contacto entre las coronas de los molares.",
+    "tags": ["radiografia", "diagnostico", "caries-proximal", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "En una abfracción sintomática en la cara vestibular de un premolar, sin caries y con buena higiene, el tratamiento inicial más apropiado es:",
+    "options": ["Restauración adhesiva que cubra y selle la lesión", "Extracción del diente afectado", "Ajuste oclusal exclusivo, sin restaurar", "Corona de recubrimiento total de inmediato"],
+    "correctIndex": 0,
+    "explanation": "La restauración adhesiva sella la lesión cervical, protege la dentina expuesta y elimina la hipersensibilidad. La extracción y la corona total son sobretratamientos para una lesión cervical limitada, y el ajuste oclusal por sí solo, aunque puede ser parte del manejo de la causa, no cubre la dentina expuesta.",
+    "hint": "Piensa en el objetivo de 'cubrir' la dentina expuesta que causa la sensibilidad.",
+    "tags": ["abfraccion", "lesion-cervical", "tratamiento", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "true_false",
+    "question": "En los dientes jóvenes, los cuernos pulpares altos aumentan el riesgo de exposición pulpar durante la preparación cavitaria.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "En los dientes permanentes jóvenes la cámara pulpar es amplia y los cuernos pulpares se extienden cerca de la superficie oclusal, por lo que una preparación profunda puede exponer la pulpa fácilmente. Con la edad, la dentina secundaria reduce el tamaño de la cámara y disminuye ese riesgo. Por eso en pacientes jóvenes las preparaciones deben ser especialmente conservadoras.",
+    "hint": "Relaciona 'diente joven' con 'cámara pulpar grande'.",
+    "tags": ["pulpa", "preparacion-cavitaria", "paciente-joven", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "true_false",
+    "question": "La caries recurrente bajo una restauración siempre produce dolor espontáneo antes de ser detectable.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "La caries recurrente suele ser asintomática en sus primeras etapas y se detecta por la exploración del margen y la radiografía, antes de que aparezca dolor. El dolor espontáneo indica compromiso pulpar avanzado, por lo que esperar a que duela retrasa el diagnóstico y aumenta la destrucción de tejido.",
+    "hint": "Piensa si el dolor es un signo temprano o tardío de la caries.",
+    "tags": ["caries-recurrente", "diagnostico", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "La caries que se localiza en el cemento y la dentina radicular expuesta se denomina caries ____.",
+    "options": ["radicular", "coronal", "de fosas y fisuras", "interproximal"],
+    "correctIndex": 0,
+    "explanation": "La caries radicular afecta al cemento y la dentina de la raíz, que quedan expuestos por recesión gingival. Suele presentarse en adultos mayores o en pacientes con baja secreción salival y se localiza cerca del margen gingival. Recibe su nombre por la superficie que compromete.",
+    "hint": "Lleva el nombre de la parte del diente que afecta.",
+    "tags": ["caries-radicular", "raiz", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "Una restauración con un defecto marginal pequeño y localizado, sin caries subyacente, puede ____ en lugar de reemplazarse por completo.",
+    "options": ["repararse", "extraerse", "descementarse", "pulirse"],
+    "correctIndex": 0,
+    "explanation": "La odontología actual es conservadora: un defecto localizado, como una fractura marginal pequeña o un defecto puntual, puede repararse eliminando solo el material defectuoso y adicionando composite nuevo, evitando la pérdida innecesaria de tejido sano. El reemplazo total se reserva para fallas extensas o caries recurrentes amplias.",
+    "hint": "Es el enfoque 'mínimamente invasivo' frente a un defecto puntual.",
+    "tags": ["reparacion", "reemplazo", "restauracion", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles son causas de sensibilidad postoperatoria en restauraciones adhesivas?",
+    "options": ["Contaminación de la dentina con saliva durante la adhesión", "Fotopolimerización insuficiente del composite", "Sobregrabado de la dentina con desecación posterior", "Uso de anestesia local", "Eliminación de todos los márgenes de esmalte"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "La sensibilidad postoperatoria suele originarse en una adhesión deficiente: la contaminación salival, la fotopolimerización insuficiente o un sobregrabado con desecación dejan el complejo dentina-adhesivo desprotegido y permiten la microfiltración. La anestesia y la eliminación de esmalte, por sí solas, no generan sensibilidad.",
+    "hint": "Busca las opciones que describen fallas en la técnica adhesiva.",
+    "tags": ["sensibilidad-postoperatoria", "adhesion", "complicaciones", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué hallazgos indican una restauración fallida que requiere intervención?",
+    "options": ["Defecto marginal donde el explorador se atrapa", "Fractura de un segmento de la restauración", "Caries recurrente visible en el margen", "Ligero cambio de color sin defecto ni filtración", "Superficie oclusal pulida e intacta"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "Un margen defectuoso, una fractura de material o la caries recurrente son signos objetivos de fallo que exigen intervención. El simple cambio de color del composite sin defecto ni filtración es un problema estético que puede aceptarse o pulirse, y una superficie intacta no es indicación de tratamiento.",
+    "hint": "Descarta las opciones que describen un diente 'sano' o solo un cambio cosmético.",
+    "tags": ["restauracion-fallida", "margen", "evaluacion", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué factores aumentan el riesgo de caries radicular?",
+    "options": ["Recesión gingival con exposición de la raíz", "Xerostomía o disminución del flujo salival", "Higiene deficiente en las superficies radiculares", "Esmalte grueso en la corona", "Uso diario de hilo dental"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "La caries radicular aparece cuando la raíz queda expuesta y las condiciones favorecen la placa: la recesión gingival expone el cemento, la xerostomía reduce la protección salival y la higiene deficiente acumula biofilm sobre esas superficies. El esmalte grueso y el uso de hilo dental son, por el contrario, factores protectores o irrelevantes.",
+    "hint": "Piensa en qué condiciones dejan la raíz 'desprotegida'.",
+    "tags": ["caries-radicular", "factores-de-riesgo", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "match",
+    "question": "Empareja cada lesión cervical no cariosa con su mecanismo de producción.",
+    "pairs": [
+      {"left": "Abfracción", "right": "Lesión en cuña en el límite amelocementario, asociada a fuerzas de flexión oclusal"},
+      {"left": "Abrasión", "right": "Desgaste por fricción externa, frecuente por cepillado horizontal intenso"},
+      {"left": "Erosión", "right": "Pérdida química de estructura por ácidos, con superficie lisa y cóncava"},
+      {"left": "Atrición", "right": "Desgaste por contacto diente contra diente, habitual en bruxismo"}
+    ],
+    "explanation": "Las lesiones cervicales no cariosas se distinguen por su etiología: la abfracción se asocia a fuerzas de flexión en el cuello del diente, la abrasión a fricción externa como el cepillado, la erosión a ácidos y la atrición al desgaste oclusal por contacto dentario. Identificar la causa es el primer paso del manejo, pues la restauración sola no detiene la progresión si el factor etiológico persiste.",
+    "hint": "Piensa en el origen de cada lesión: fuerza, fricción, ácido o contacto dentario.",
+    "tags": ["lesiones-cervicales", "abfraccion", "abrasion", "erosion", "atricion", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "order",
+    "question": "Ordena los pasos del manejo de una lesión cervical no cariosa con hipersensibilidad.",
+    "orderItems": [
+      {"text": "Identificar y controlar el factor etiológico (hábitos, dieta u oclusión)", "position": 1},
+      {"text": "Evaluar la profundidad de la lesión y la sensibilidad del diente", "position": 2},
+      {"text": "Restaurar la lesión con técnica adhesiva si persiste la hipersensibilidad", "position": 3},
+      {"text": "Realizar el control periódico y reforzar las medidas preventivas", "position": 4}
+    ],
+    "explanation": "El manejo de una lesión cervical no cariosa comienza por identificar y controlar la causa (cepillado traumático, ácidos o fuerzas oclusales), porque sin ello la lesión progresa aunque se restaure. Luego se evalúa la lesión y, si hay sensibilidad, se restaura con técnica adhesiva; el seguimiento verifica la estabilidad.",
+    "hint": "Lo primero nunca es restaurar: primero hay que detener la causa.",
+    "tags": ["lesion-cervical", "manejo", "tratamiento", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "case",
+    "caseId": "op-case-caries-recurrente",
+    "caseText": "Paciente de 42 años acude por molestia ocasional al masticar en el primer molar inferior derecho. El diente presenta una restauración de composite oclusal colocada hace 5 años. En el margen distal se observa pigmentación marrón y el explorador se atrapa levemente; la radiografía interproximal muestra una radiolucidez limitada a dentina superficial bajo el margen distal de la restauración.",
+    "question": "Según el cuadro, el diagnóstico más probable es:",
+    "options": ["Caries recurrente bajo la restauración", "Fractura cuspídea", "Lesión cervical por erosión", "Atrición fisiológica"],
+    "correctIndex": 0,
+    "explanation": "La pigmentación en el margen, el atrapamiento del explorador y la radiolucidez bajo la restauración son los signos clásicos de la caries recurrente. Una fractura cuspídea se manifestaría como un trazo o fragmento móvil, y la erosión o la atrición no producen radiolucidez bajo el margen oclusal.",
+    "hint": "Relaciona los tres hallazgos: margen pigmentado, explorador atrapado y radiolucidez.",
+    "tags": ["caries-recurrente", "caso-clinico", "diagnostico", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "case",
+    "caseId": "op-case-caries-recurrente",
+    "caseText": "Paciente de 42 años acude por molestia ocasional al masticar en el primer molar inferior derecho. El diente presenta una restauración de composite oclusal colocada hace 5 años. En el margen distal se observa pigmentación marrón y el explorador se atrapa levemente; la radiografía interproximal muestra una radiolucidez limitada a dentina superficial bajo el margen distal de la restauración.",
+    "question": "Dado que la lesión es pequeña y limitada a dentina superficial, el tratamiento más conservador es:",
+    "options": ["Remover la restauración, eliminar la caries y restaurar con técnica adhesiva", "Extraer el molar", "Realizar endodoncia sin remover la caries", "Colocar una corona de acero sobre la restauración"],
+    "correctIndex": 0,
+    "explanation": "Una caries recurrente pequeña y limitada a dentina superficial permite un manejo conservador: retirar la restauración, eliminar el tejido cariado y restaurar nuevamente con técnica adhesiva, preservando el tejido sano. La extracción, la endodoncia o la corona sin eliminar la caries son sobretratamientos o conductas incorrectas en este caso.",
+    "hint": "Elige la opción que elimina la caries y restaura, sin tratamientos radicales.",
+    "tags": ["caries-recurrente", "caso-clinico", "tratamiento", "nivel-3"]
+  },
+  {
+    "specialty_slug": "operatoria-dental",
+    "level": 3,
+    "type": "case",
+    "caseId": "op-case-caries-recurrente",
+    "caseText": "Paciente de 42 años acude por molestia ocasional al masticar en el primer molar inferior derecho. El diente presenta una restauración de composite oclusal colocada hace 5 años. En el margen distal se observa pigmentación marrón y el explorador se atrapa levemente; la radiografía interproximal muestra una radiolucidez limitada a dentina superficial bajo el margen distal de la restauración.",
+    "question": "¿Qué medida contribuye a prevenir nuevas lesiones recurrentes en este paciente?",
+    "options": ["Mejorar la higiene interproximal y controlar la frecuencia de azúcares", "Aumentar el consumo de azúcares entre comidas", "Evitar el uso de hilo dental", "No acudir a controles periódicos"],
+    "correctIndex": 0,
+    "explanation": "La caries recurrente se previene controlando los factores de riesgo: una higiene interproximal adecuada (hilo dental) y la reducción de la frecuencia de azúcares disminuyen la acumulación de biofilm en los márgenes. Aumentar el azúcar, omitir el hilo o abandonar los controles favorecen la aparición de nuevas lesiones.",
+    "hint": "Piensa en qué hábito reduce el biofilm en el margen de la restauración.",
+    "tags": ["caries-recurrente", "caso-clinico", "prevencion", "nivel-3"]
+  }
+]

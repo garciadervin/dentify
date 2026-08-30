@@ -1,9 +1,9 @@
 /**
- * DashboardScreen — Inicio (boceto dentify.pen).
+ * DashboardScreen — Home.
  *
- * Saludo, métricas reales (racha desde profiles, XP derivado de niveles
- * completados), botón Continuar, ruta de aprendizaje e insignias.
- * Sin datos de muestra: si no hay progreso se muestra un empty state honesto.
+ * Greeting, real metrics (streak from profiles, XP derived from completed
+ * levels), Continue button, learning path and badges. No mock data: an honest
+ * empty state is shown when there is no progress.
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -29,7 +29,7 @@ export default function DashboardScreen() {
 
   const [streak, setStreak] = useState(profile?.streak_count ?? 0);
 
-  // Registra actividad del día y otorga el badge de racha cuando corresponde.
+  // Log daily study activity and award the streak badge when applicable.
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
@@ -78,7 +78,7 @@ export default function DashboardScreen() {
           <Text style={styles.greetSub}>Continúa tu ruta de aprendizaje</Text>
         </View>
 
-        {/* Métricas */}
+        {/* Metrics */}
         <View style={styles.metricsRow}>
           <View testID="metric-streak" style={styles.metricCard}>
             <View style={styles.metricTop}>
@@ -128,7 +128,7 @@ export default function DashboardScreen() {
           </View>
         ) : (
           <>
-            {/* Botón Continuar */}
+            {/* Continue button */}
             {continueRoute && (
               <TouchableOpacity
                 testID="next-level"

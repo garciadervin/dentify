@@ -1,23 +1,97 @@
 /**
- * MessageBubble — burbuja de mensaje (boceto dentify.pen).
+ * MessageBubble — message bubble.
  *
- * Asistente: avatar azul + burbuja blanca (esquina inferior izquierda) con
- * fuente opcional. Usuario: burbuja azul alineada a la derecha.
+ * Assistant: blue avatar + white bubble (bottom-left corner) with
+ * optional source. User: right-aligned blue bubble.
  */
 
 import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, Pressable, Linking } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import Markdown from 'react-native-markdown-display';
 import { Colors } from '@/constants/theme';
+import type { AgentSource } from '@/src/services/agent';
 
 export interface MessageBubbleProps {
   text: string;
   role: 'user' | 'assistant';
   timestamp?: string;
   isLoading?: boolean;
-  /** Fuente del manual (solo asistente). */
+  /** Manual source (assistant only). */
   source?: string;
+  /** Sources used by the agent (manuals, web, progress). */
+  sources?: AgentSource[];
+  /** Attached image URI (user only). */
+  imageUri?: string;
+  /** Etiqueta de archivo adjunto (p. ej. "documento.txt"). */
+  attachmentLabel?: string;
 }
+
+const SOURCE_ICONS: Record<AgentSource['type'], keyof typeof MaterialCommunityIcons.glyphMap> = {
+  manual: 'book-open-variant',
+  web: 'web',
+  progress: 'chart-line',
+};
+
+const markdownStyles = {
+  body: {
+    fontFamily: 'Inter',
+    fontSize: 14,
+    lineHeight: 21,
+    color: Colors.deepSlate,
+  },
+  paragraph: {
+    marginTop: 0,
+    marginBottom: 8,
+  },
+  heading1: { fontFamily: 'Manrope-Bold', fontSize: 20, lineHeight: 26, color: Colors.deepSlate, marginBottom: 8 },
+  heading2: { fontFamily: 'Manrope-Bold', fontSize: 17, lineHeight: 23, color: Colors.deepSlate, marginBottom: 6 },
+  heading3: { fontFamily: 'Manrope-Bold', fontSize: 15, lineHeight: 21, color: Colors.deepSlate, marginBottom: 6 },
+  strong: { fontFamily: 'Inter-Bold', color: Colors.deepSlate },
+  em: { fontStyle: 'italic' },
+  link: { color: Colors.clinicalBlue },
+  blockquote: {
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.clinicalBlue,
+    paddingLeft: 10,
+    marginVertical: 8,
+    backgroundColor: Colors.sourceFill,
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingRight: 8,
+  },
+  code_inline: {
+    fontFamily: 'monospace',
+    backgroundColor: Colors.sourceFill,
+    borderRadius: 4,
+    paddingHorizontal: 4,
+    color: Colors.deepSlate,
+    fontSize: 13,
+  },
+  code_block: {
+    fontFamily: 'monospace',
+    backgroundColor: Colors.sourceFill,
+    borderRadius: 8,
+    padding: 10,
+    color: Colors.deepSlate,
+    fontSize: 12.5,
+    lineHeight: 18,
+  },
+  fence: {
+    fontFamily: 'monospace',
+    backgroundColor: Colors.sourceFill,
+    borderRadius: 8,
+    padding: 10,
+    color: Colors.deepSlate,
+    fontSize: 12.5,
+    lineHeight: 18,
+  },
+  bullet_list: { marginVertical: 4 },
+  ordered_list: { marginVertical: 4 },
+  list_item: { marginBottom: 3, flexDirection: 'row' },
+  hr: { backgroundColor: Colors.borderLight, height: 1, marginVertical: 10 },
+} as any;
 
 export default function MessageBubble({
   text,
@@ -25,6 +99,9 @@ export default function MessageBubble({
   timestamp,
   isLoading = false,
   source,
+  sources,
+  imageUri,
+  attachmentLabel,
 }: MessageBubbleProps) {
   const isUser = role === 'user';
 
@@ -39,7 +116,25 @@ export default function MessageBubble({
             {isLoading ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
-              <Text style={styles.textUser}>{text}</Text>
+              <>
+                {imageUri ? (
+                  <Image
+                    source={{ uri: imageUri }}
+                    style={styles.attachedImage}
+                    contentFit="cover"
+                    transition={150}
+                  />
+                ) : null}
+                {attachmentLabel ? (
+                  <View style={styles.attachedFileRow}>
+                    <MaterialCommunityIcons name="file-document-outline" size={13} color="#FFFFFF" />
+                    <Text style={styles.attachedFileText} numberOfLines={1}>
+                      {attachmentLabel}
+                    </Text>
+                  </View>
+                ) : null}
+                {text ? <Text style={styles.textUser}>{text}</Text> : null}
+              </>
             )}
           </View>
           {timestamp && !isLoading && <Text style={styles.timestamp}>{timestamp}</Text>}
@@ -61,10 +156,40 @@ export default function MessageBubble({
               <Text style={styles.loadingText}>Pensando...</Text>
             </View>
           ) : (
-            <Text style={styles.textAssistant}>{text}</Text>
+            <Markdown style={markdownStyles}>{text}</Markdown>
           )}
         </View>
-        {source ? (
+        {sources && sources.length > 0 ? (
+          <View style={styles.sourceRow}>
+            {sources.slice(0, 3).map((s, i) => {
+              const Chip = (
+                <View style={styles.source} key={`${s.type}-${i}`}>
+                  <MaterialCommunityIcons
+                    name={SOURCE_ICONS[s.type] ?? 'book-open-variant'}
+                    size={12}
+                    color={Colors.neutral}
+                  />
+                  <Text style={styles.sourceText} numberOfLines={1}>
+                    {s.title}
+                  </Text>
+                </View>
+              );
+              return s.type === 'web' && s.url ? (
+                <Pressable
+                  key={`${s.type}-${i}`}
+                  accessibilityRole="link"
+                  onPress={() => {
+                    if (s.url) void Linking.openURL(s.url);
+                  }}
+                >
+                  {Chip}
+                </Pressable>
+              ) : (
+                Chip
+              );
+            })}
+          </View>
+        ) : source ? (
           <View style={styles.source}>
             <MaterialCommunityIcons name="book-open-variant" size={12} color={Colors.neutral} />
             <Text style={styles.sourceText} numberOfLines={1}>
@@ -131,12 +256,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 6,
   },
-  textAssistant: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    lineHeight: 21,
-    color: Colors.deepSlate,
-  },
   textUser: {
     fontFamily: 'Inter',
     fontSize: 14,
@@ -152,6 +271,31 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontSize: 13,
     color: Colors.neutral,
+  },
+  sourceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginTop: 2,
+  },
+  attachedImage: {
+    width: 180,
+    height: 140,
+    borderRadius: 10,
+    marginBottom: 8,
+  },
+  attachedFileRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 6,
+  },
+  attachedFileText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 12,
+    color: '#FFFFFF',
+    flexShrink: 1,
   },
   source: {
     flexDirection: 'row',

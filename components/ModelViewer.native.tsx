@@ -17,6 +17,7 @@ import {
 import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
 import { useGLTF, useProgress, OrbitControls } from '@react-three/drei/native';
 import * as THREE from 'three';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface ModelViewerProps {
   modelUri: string;
@@ -123,34 +124,36 @@ export default function ModelViewer({
 
   return (
     <View style={styles.container} testID="model-viewer">
-      <Canvas
-        testID="model-canvas"
-        style={styles.canvas}
-        onCreated={() => setCanvasReady(true)}
-        camera={{ position: [0, 0, 5], fov: 45 }}
-        gl={{ antialias: true }}
-      >
-        {/* Orbit controls for pan / rotate / zoom */}
-        <OrbitControls
-          enablePan
-          enableZoom
-          enableRotate
-          minDistance={2}
-          maxDistance={10}
-          dampingFactor={0.1}
-          enableDamping
-        />
-
-        <Suspense fallback={null}>
-          <ModelScene
-            modelUri={modelUri}
-            autoRotate={autoRotate}
-            onStructureSelect={onStructureSelect}
+      <ErrorBoundary testID="model-error">
+        <Canvas
+          testID="model-canvas"
+          style={styles.canvas}
+          onCreated={() => setCanvasReady(true)}
+          camera={{ position: [0, 0, 5], fov: 45 }}
+          gl={{ antialias: true }}
+        >
+          {/* Orbit controls for pan / rotate / zoom */}
+          <OrbitControls
+            enablePan
+            enableZoom
+            enableRotate
+            minDistance={2}
+            maxDistance={10}
+            dampingFactor={0.1}
+            enableDamping
           />
-        </Suspense>
 
-        <LoadingOverlay />
-      </Canvas>
+          <Suspense fallback={null}>
+            <ModelScene
+              modelUri={modelUri}
+              autoRotate={autoRotate}
+              onStructureSelect={onStructureSelect}
+            />
+          </Suspense>
+
+          <LoadingOverlay />
+        </Canvas>
+      </ErrorBoundary>
 
       {/* Loading indicator outside Canvas */}
       {isLoading && (

@@ -17,7 +17,7 @@ Aplicación en español, con arquitectura **Edge-First**: visión (YOLO) y rende
 
 - **Frontend**: Expo SDK 54 · React Native 0.81 · TypeScript · NativeWind (Tailwind) · expo-router · three.js / React Three Fiber
 - **Backend**: Supabase (Auth, PostgreSQL + pgvector, Storage, Edge Functions)
-- **IA**: Groq (`qwen/qwen3.6-27b` para chat, `whisper-large-v3` para voz) · OpenAI (`text-embedding-3-small`) · YOLO26n-seg en dispositivo
+- **IA**: Groq (`qwen/qwen3.8-27b` para chat y visión, `whisper-large-v3` para voz) · OpenAI (`text-embedding-3-small`) · YOLO26n-seg en dispositivo
 - **Tests**: Jest + React Native Testing Library
 
 ## Arquitectura (Edge-First)
@@ -32,7 +32,7 @@ Dispositivo (Edge)                      Nube
 └────────────┬───────────────┘          └──────────┬───────────────────┘
              │                                     │
              │                          ┌──────────▼──────────┐
-             │                          │ Groq  qwen3.6-27b ·  │
+             │                          │ Groq  qwen3.8-27b ·  │
              │                          │       whisper-large-v3│
              │                          └──────────┬──────────┘
              │                          ┌──────────▼──────────┐
@@ -65,11 +65,18 @@ cp .env.example .env
 ```bash
 supabase link --project-ref <ref>   # ya vinculado en este repo
 supabase db push                    # aplica migraciones: esquema + pgvector + storage + seed
-                                    # (especialidades, niveles y banco de preguntas en BD)
+                                    # (especialidades, niveles y banco de ~409 preguntas en BD,
+                                    #  con 7 tipos: mcq, true_false, fill_blank, multi_select,
+                                    #  match, order y case)
 supabase secrets set GROQ_API_KEY=<key>
 supabase secrets set OPENAI_API_KEY=<key>
+supabase secrets set TAVILY_API_KEY=<key>   # opcional: búsqueda web del chatbot (sin ella usa DuckDuckGo)
 supabase functions deploy groq-proxy
+supabase functions deploy denty-agent
 ```
+
+> El banco de preguntas se genera desde `scripts/question-bank/*.json` (anexo de tesis):
+> `npm run seed:questions` regenera la migración SQL a partir de esos JSON.
 
 ### 3. Cargar los manuales clínicos (RAG)
 
@@ -102,15 +109,16 @@ npm test                  # suite de pruebas
 | `npm run lint` | ESLint |
 | `npm run optimize:models` | Optimiza los modelos 3D (quantize + JPEG) |
 | `npm run optimize:models:restore` | Restaura los `.glb` originales |
+| `npm run seed:questions` | Regenera la migración SQL del banco desde `scripts/question-bank/*.json` |
 
 ## Estructura
 
 ```
 app/            Rutas (tabs, auth, quiz, teacher) — expo-router
-components/     UI (AppHeader, ChatInput, ModelViewer, DetectionOverlay, …)
+components/     UI (AppHeader, ChatInput, ModelViewer, DetectionOverlay, quiz/*, …)
 src/
-  services/     rag, groq, embeddings, yolo, conversations, modelCache, …
-  hooks/        useAuth, useProgress, useBadges
+  services/     agent, rag, groq, quiz, attachments, notifications, yolo, conversations, …
+  hooks/        useAuth, useProgress, useBadges, useSettings
   lib/          cliente Supabase
   data/         structures (estructuras anatómicas del simulador 3D)
   types/        tipos de la BD (Database)
@@ -118,9 +126,11 @@ assets/
   models/       16 modelos GLB optimizados (KHR_mesh_quantization + JPEG)
   ml/           modelo YOLO26n-seg (TFLite) + runtime de inferencia
 supabase/
-  migrations/   esquema + pgvector + storage
-  functions/    groq-proxy (Edge Function)
-scripts/        ingest-rag.mjs, optimize-models.mjs
+  migrations/   esquema + pgvector + storage + banco de preguntas
+  functions/    groq-proxy y denty-agent (Edge Functions)
+scripts/
+  ingest-rag.mjs, optimize-models.mjs, build-question-seed.mjs
+  question-bank/   banco de preguntas en JSON (anexo de tesis)
 docs/           manuales clínicos (locales, fuera de git)
 ```
 
@@ -130,6 +140,22 @@ docs/           manuales clínicos (locales, fuera de git)
 - Búsqueda semántica: `match_manuals` (pgvector HNSW, coseno) con `text-embedding-3-small` (1536 dim).
 - Fallback léxico: `match_manuals_by_text` (`pg_trgm`) que matchea cualquier término.
 - La consulta se embebe vía el Edge Function (clave de OpenAI server-side); si no está disponible, el RAG degrada a búsqueda léxica — nunca mezcla espacios vectoriales.
+
+## Denty-AI (asistente agente)
+
+- Edge Function **`denty-agent`** sobre `qwen/qwen3.8-27b` (multimodal: texto + imágenes).
+- **Loop de agente** con herramientas: `retrieve_manuals` (RAG server-side), `web_search` (Tavily si `TAVILY_API_KEY`, si no DuckDuckGo), `get_my_profile` y `get_my_progress` (solo los datos del propio usuario, vía RLS).
+- **Adjuntos tipo ChatGPT**: imágenes (visión del modelo) y archivos PDF, DOCX, txt, md, csv, json, rtf y html (el servidor extrae el texto).
+- **Respuestas con Markdown** (encabezados, listas, negritas, código, citas) renderizadas limpias en la burbuja.
+- **Sesiones administrables**: nueva conversación, historial, y borrado individual — estilo ChatGPT.
+- System prompt acotado al dominio odontológico, con disclaimer clínico y cita de fuentes.
+- El JWT de sesión se verifica en el servidor; nunca se exponen credenciales ni datos de otros usuarios.
+
+## Ruta académica
+
+- Banco de ~409 preguntas con **7 tipos** (mcq, verdadero/falso, completar, selección múltiple, emparejar, ordenar y casos clínicos) en 5 especialidades × 3 niveles temáticos.
+- Sesiones **sorteadas del pool** (rejugables), gamificación sin vidas: **XP por pregunta con combo** (racha de aciertos), racha diaria, insignias y **"Repasar errores"** (registro en `answer_history`).
+- El banco se genera por IA desde `scripts/question-bank/*.json`; se recomienda una revisión clínica por el tutor antes de uso docente formal.
 
 ## Documentación
 

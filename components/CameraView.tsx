@@ -19,7 +19,7 @@ export interface CameraViewProps {
   /** Optional callback for real-time frame processing */
   onFrame?: (tensor: any) => void;
   isProcessing: boolean;
-  /** Modo enmarcado: oculta el botón de captura interno (se usa un disparador externo vía ref). */
+  /** Framed mode: hides the internal capture button (an external shutter is used via ref). */
   framed?: boolean;
 }
 

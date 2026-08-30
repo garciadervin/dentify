@@ -11,30 +11,46 @@ jest.mock('expo-router', () => {
   };
 });
 
-jest.mock('@/src/services/quiz', () => ({
-  fetchQuizQuestions: jest.fn(() =>
-    Promise.resolve([
-      {
-        id: 'q1',
-        question: '¿Cuál es la definición de caries dental según la OMS?',
-        options: ['Opción A', 'Opción B', 'Opción C', 'Opción D'],
-        correctIndex: 1,
-        explanation: 'Explicación de la respuesta correcta.',
-        specialty: 'Operatoria Dental',
-        level: 1,
-      },
-      {
-        id: 'q2',
-        question: '¿Qué estructura del diente es la más dura?',
-        options: ['Dentina', 'Cemento', 'Esmalte', 'Pulpa'],
-        correctIndex: 2,
-        explanation: 'El esmalte es el tejido más duro.',
-        specialty: 'Operatoria Dental',
-        level: 1,
-      },
-    ])
-  ),
-}));
+jest.mock('@/src/services/quiz', () => {
+  const base = {
+    type: 'mcq',
+    correctIndexes: null,
+    pairs: null,
+    orderItems: null,
+    caseId: null,
+    caseText: null,
+    hint: null,
+    points: 10,
+    difficulty: 1,
+    specialty: 'Operatoria Dental',
+    level: 1,
+  };
+  return {
+    fetchQuizSession: jest.fn(() =>
+      Promise.resolve([
+        {
+          ...base,
+          id: 'q1',
+          question: '¿Cuál es la definición de caries dental según la OMS?',
+          options: ['Opción A', 'Opción B', 'Opción C', 'Opción D'],
+          correctIndex: 1,
+          explanation: 'Explicación de la respuesta correcta.',
+        },
+        {
+          ...base,
+          id: 'q2',
+          question: '¿Qué estructura del diente es la más dura?',
+          options: ['Dentina', 'Cemento', 'Esmalte', 'Pulpa'],
+          correctIndex: 2,
+          explanation: 'El esmalte es el tejido más duro.',
+        },
+      ])
+    ),
+    fetchQuizQuestions: jest.fn(() => Promise.resolve([])),
+    fetchMistakes: jest.fn(() => Promise.resolve([])),
+    recordAnswer: jest.fn(() => Promise.resolve()),
+  };
+});
 
 describe('QuizScreen', () => {
   it('should render the question text with testID "question-text"', async () => {
@@ -61,8 +77,9 @@ describe('QuizScreen', () => {
     });
     const option = screen.getByTestId('option-0');
     fireEvent.press(option);
-    expect(screen.getByTestId('option-1')).toHaveStyle({ backgroundColor: '#006B5F' });
-    expect(screen.getByTestId('option-0')).toHaveStyle({ backgroundColor: '#C0392B' });
+    expect(screen.getByTestId('option-1')).toHaveStyle({ backgroundColor: '#E8F5F3' });
+    expect(screen.getByTestId('option-0')).toHaveStyle({ backgroundColor: '#FDE8E7' });
+    expect(screen.getByTestId('quiz-feedback')).toBeTruthy();
   });
 
   it('should render the next-question button', async () => {

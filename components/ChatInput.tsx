@@ -1,9 +1,9 @@
 /**
- * ChatInput — barra de entrada (boceto dentify.pen).
+ * ChatInput — input bar.
  *
- * Píldora blanca con micrófono (grabar → transcribir), campo de texto y botón
- * de enviar circular azul. La voz se transcribe con Groq Whisper y soporta
- * comandos de navegación por voz.
+ * White pill with microphone (record → transcribe), text field and
+ * circular blue send button. Voice is transcribed with Groq Whisper and
+ * supports voice navigation commands.
  */
 
 import React, { useState, useRef, useCallback } from 'react';
@@ -32,10 +32,12 @@ if (Platform.OS !== 'web') {
 
 export interface ChatInputProps {
   onSend: (text: string) => void;
+  /** Opens the attachment menu (image or file). */
+  onAttach?: () => void;
   disabled?: boolean;
 }
 
-export default function ChatInput({ onSend, disabled = false }: ChatInputProps) {
+export default function ChatInput({ onSend, onAttach, disabled = false }: ChatInputProps) {
   const router = useRouter();
   const [text, setText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -52,7 +54,7 @@ export default function ChatInput({ onSend, disabled = false }: ChatInputProps) 
   const canSend = text.trim().length > 0 && !disabled;
 
   /**
-   * Start audio recording (native only; web muestra una nota de plataforma).
+   * Start audio recording (native only; on web show a platform note).
    */
   const startRecording = useCallback(async () => {
     if (Platform.OS === 'web') {
@@ -122,7 +124,22 @@ export default function ChatInput({ onSend, disabled = false }: ChatInputProps) 
 
   return (
     <View style={styles.pill}>
-      {/* Micrófono — mantener para grabar, soltar para transcribir */}
+      {/* Attach image or file */}
+      {onAttach ? (
+        <TouchableOpacity
+          testID="attach-button"
+          onPress={onAttach}
+          disabled={disabled}
+          style={styles.attachButton}
+          activeOpacity={0.6}
+          accessibilityLabel="Adjuntar imagen o archivo"
+          accessibilityRole="button"
+        >
+          <MaterialCommunityIcons name="paperclip" size={20} color={Colors.neutral} />
+        </TouchableOpacity>
+      ) : null}
+
+      {/* Mic — hold to record, release to transcribe */}
       <TouchableOpacity
         testID="voice-button"
         onPressIn={startRecording}
@@ -189,6 +206,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   micButton: {
+    width: 34,
+    height: 40,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  attachButton: {
     width: 34,
     height: 40,
     borderRadius: 17,

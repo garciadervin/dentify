@@ -12,8 +12,8 @@ interface ModelControlsProps {
 }
 
 /**
- * Controles flotantes sobre el viewer 3D.
- * Posicionados abajo-centro del viewer para el pulgar.
+ * Floating controls over the 3D viewer.
+ * Positioned bottom-center of the viewer for the thumb.
  */
 export default function ModelControls({
   onZoomIn,

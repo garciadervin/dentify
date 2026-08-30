@@ -1,18 +1,19 @@
 /**
- * SettingsScreen — Configuración (funcional).
+ * SettingsScreen — Settings (functional).
  *
- * Preferencias persistidas en profiles.settings; cada toggle cambia el
- * comportamiento real de la app (auto-rotate 3D, hápticos, descarga con
- * datos móviles, recordatorios de estudio).
+ * Preferences persisted in profiles.settings; each toggle changes
+ * real app behavior (3D auto-rotate, haptics, downloads over
+ * mobile data, study reminders).
  */
 
-import React from 'react';
-import { View, Text, Switch, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
+import { View, Text, Switch, StyleSheet, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ScreenContainer from '@/components/ScreenContainer';
 import AppHeader from '@/components/AppHeader';
 import { Colors } from '@/constants/theme';
 import { useSettings } from '@/src/hooks/useSettings';
+import { scheduleStudyReminder, configureNotifications } from '@/src/services/notifications';
 
 function SettingRow({
   icon,
@@ -50,6 +51,29 @@ function SettingRow({
 export default function SettingsScreen() {
   const { settings, loaded, updateSetting } = useSettings();
 
+  // Configure the handler and re-schedule the reminder if it was active.
+  useEffect(() => {
+    configureNotifications();
+    if (settings.studyReminders) void scheduleStudyReminder(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleRemindersToggle = useCallback(
+    async (value: boolean) => {
+      updateSetting('studyReminders', value);
+      const result = await scheduleStudyReminder(value);
+      if (!result.ok) {
+        // Revert the toggle if scheduling failed (e.g. permission denied).
+        updateSetting('studyReminders', false);
+        Alert.alert(
+          'Recordatorios',
+          result.message ?? 'No se pudo programar el recordatorio.'
+        );
+      }
+    },
+    [updateSetting]
+  );
+
   return (
     <ScreenContainer scroll edges={['top']}>
       <AppHeader variant="back" title="Configuración" />
@@ -84,9 +108,9 @@ export default function SettingsScreen() {
           <SettingRow
             icon="bell-outline"
             title="Recordatorios de estudio"
-            description="Preferencia persistida para futuros recordatorios de estudio."
+            description="Notificación diaria a las 19:00 para no perder tu racha."
             value={settings.studyReminders}
-            onValueChange={(v) => updateSetting('studyReminders', v)}
+            onValueChange={handleRemindersToggle}
           />
         </View>
 

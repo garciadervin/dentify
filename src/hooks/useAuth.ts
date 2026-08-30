@@ -15,10 +15,14 @@ export interface UseAuthReturn {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  /** Indica si ya se resolvió la consulta del perfil (para guards de ruta). */
+  /** Whether the profile lookup has resolved (for route guards). */
   profileLoaded: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: string | null; needsConfirmation?: boolean }>;
+  signUp: (
+    email: string,
+    password: string,
+    role?: 'student' | 'teacher'
+  ) => Promise<{ error: string | null; needsConfirmation?: boolean }>;
   signOut: () => Promise<void>;
   refreshProfile: (userId?: string) => Promise<void>;
 }
@@ -126,7 +130,11 @@ export function useAuth(): UseAuthReturn {
   );
 
   const signUp = useCallback(
-    async (email: string, password: string): Promise<{ error: string | null; needsConfirmation?: boolean }> => {
+    async (
+      email: string,
+      password: string,
+      role: 'student' | 'teacher' = 'student'
+    ): Promise<{ error: string | null; needsConfirmation?: boolean }> => {
       const supabase = getSupabase();
       if (!supabase) {
         return { error: 'Supabase no está configurado' };
@@ -137,7 +145,7 @@ export function useAuth(): UseAuthReturn {
         password,
         // Role lives in auth user_metadata so route guards can read it; the
         // profiles table row is created separately on profile setup.
-        options: { data: { role: 'student' } },
+        options: { data: { role } },
       });
 
       const needsConfirmation = Boolean(data?.user) && !data?.session;

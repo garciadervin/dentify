@@ -1,8 +1,8 @@
 /**
- * ScreenContainer — contenedor responsive de pantallas.
+ * ScreenContainer — responsive screen container.
  *
- * Centra el contenido con un ancho máximo (tablet/PC) manteniendo
- * mobile-first en pantallas pequeñas. Usa la paleta Clinical Clarity.
+ * Centers content with a max width (tablet/PC) while keeping
+ * mobile-first on small screens. Uses the Clinical Clarity palette.
  */
 
 import React from 'react';
@@ -10,7 +10,7 @@ import { View, ScrollView, StyleSheet, type ViewStyle } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/theme';
 
-/** Ancho máximo del contenido centrado en pantallas grandes. */
+/** Max width of the centered content on large screens. */
 export const CONTENT_MAX_WIDTH = 640;
 
 interface ScreenContainerProps {
@@ -18,7 +18,7 @@ interface ScreenContainerProps {
   scroll?: boolean;
   edges?: Edge[];
   backgroundColor?: string;
-  /** Estilos aplicados al wrapper interior (contenido). */
+  /** Styles applied to the inner wrapper (content). */
   contentContainerStyle?: ViewStyle | ViewStyle[];
   style?: ViewStyle | ViewStyle[];
   testID?: string;

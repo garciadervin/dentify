@@ -9,7 +9,7 @@ export interface Specialty {
   currentLevel: number;
   totalLevels: number;
   status: 'locked' | 'active' | 'completed';
-  /** Porcentaje de niveles completados de la especialidad (0–100). */
+  /** Percentage of completed levels for the specialty (0–100). */
   progress: number;
 }
 
@@ -137,9 +137,9 @@ export function useProgress(): UseProgressReturn {
   }, []);
 
   /**
-   * Marca un nivel como completado: hace UPSERT del progreso, activa el nivel
-   * siguiente (o la siguiente especialidad) y refresca el estado local.
-   * Devuelve true si persistió correctamente.
+   * Marks a level as completed: UPSERTs progress, activates the next level (or
+   * the next specialty) and refreshes local state.
+   * Returns true when persisted.
    */
   const completeLevel = useCallback(async (specialty: string, level: number): Promise<boolean> => {
     const supabase = getSupabase();
@@ -175,7 +175,7 @@ export function useProgress(): UseProgressReturn {
     const ok = await upsertRow(specialty, level, 'completed', now);
     if (!ok) return false;
 
-    // Activa el siguiente nivel o la siguiente especialidad.
+    // Activate the next level or the next specialty.
     const def = defsRef.current.find((d) => d.name === specialty);
     if (def && level < def.levels_count) {
       await upsertRow(specialty, level + 1, 'active');
@@ -185,7 +185,7 @@ export function useProgress(): UseProgressReturn {
       if (next) await upsertRow(next.name, 1, 'active');
     }
 
-    // Refresca estado local a partir de la última vista de filas.
+    // Refresh local state from the last view of rows.
     const target = rowsRef.current.find(
       (r) => r.specialty === specialty && r.level === level
     );

@@ -57,7 +57,7 @@ The system follows an **Edge-First** architecture: vision and 3D processing run 
 | **GLB / KHR_mesh_quantization** | 3D file format and quantization extension used to compress polygonal meshes (supported natively by three.js, no runtime decoder) |
 | **Expo** | Development framework for React Native |
 | **NativeWind** | Tailwind CSS-based styling library for React Native |
-| **Groq** | Cloud inference provider serving the chat (Qwen 3.6 27B) and Whisper (STT) models |
+| **Groq** | Cloud inference provider serving the chat (Qwen 3.8 27B) and Whisper (STT) models |
 | **STT / TTS** | Speech-to-Text / Text-to-Speech |
 
 ### 1.4 References
@@ -80,7 +80,7 @@ Section 2 gives a high-level product description. Section 3 details the function
 Dentify is a standalone system that runs on students' mobile devices. It integrates with the following external services:
 
 - **Supabase**: authentication, relational database (PostgreSQL), vector storage (pgvector) for RAG, and Edge Functions.
-- **Groq API**: inference for the chat model (**Qwen 3.6 27B**, multimodal) and **Whisper Large V3** (speech-to-text).
+- **Groq API**: inference for the chat model (**Qwen 3.8 27B**, multimodal) and **Whisper Large V3** (speech-to-text).
 - **OpenAI Embeddings API**: `text-embedding-3-small` (1536 dimensions) to embed RAG queries and manual fragments.
 - **3D Model CDN**: distribution of `.glb` models optimized with `KHR_mesh_quantization` and JPEG textures (bundled assets, no runtime decoder).
 
@@ -127,7 +127,7 @@ Vision processing (YOLO26n-seg) runs **locally** via TensorFlow Lite inside a We
 | --- | --- | --- |
 | **FR-01** | The system shall allow the user to ask clinical questions via text input. | High |
 | **FR-02** | The system shall allow the user to ask questions via voice, transcribing audio with Whisper Large V3. | High |
-| **FR-03** | Responses shall be generated using RAG: the query is embedded with `text-embedding-3-small`, the most relevant manual fragments are retrieved from `clinical_manuals` via pgvector cosine similarity, and the fragments are passed as context to the chat model (**Qwen 3.6 27B**). | High |
+| **FR-03** | Responses shall be generated using RAG: the query is embedded with `text-embedding-3-small`, the most relevant manual fragments are retrieved from `clinical_manuals` via pgvector cosine similarity, and the fragments are passed as context to the chat model (**Qwen 3.8 27B**). | High |
 | **FR-04** | The assistant shall recognize voice navigation commands (e.g., "abrir simulador", "mostrar escáner") and navigate accordingly. | Medium |
 | **FR-05** | Conversation history shall persist locally (SQLite) and sync with Supabase when connectivity is available. | Medium |
 
@@ -187,7 +187,7 @@ Aligned with **ISO/IEC 25010**.
 
 - Native mobile application with Expo SDK 54 / React Native.
 - Styling via **NativeWind** (Tailwind CSS).
-- Light/dark mode based on system preference.
+- Light-only mode (design system *Clinical Clarity*; dark mode deliberately omitted).
 
 ### 5.2 Hardware Interfaces
 
@@ -200,7 +200,7 @@ Aligned with **ISO/IEC 25010**.
 | External Component | Protocol / Format | Purpose |
 | --- | --- | --- |
 | **Supabase** | REST / PostgreSQL | Auth, relational + vector storage, Edge Functions. |
-| **Groq API** | HTTPS / JSON | Chat (Qwen 3.6 27B) and Whisper (STT) inference. |
+| **Groq API** | HTTPS / JSON | Chat (Qwen 3.8 27B) and Whisper (STT) inference. |
 | **OpenAI Embeddings API** | HTTPS / JSON | `text-embedding-3-small` for RAG. |
 | **3D Model CDN** | HTTPS / GLB (optimized) | Download of anatomical models. |
 
@@ -232,7 +232,7 @@ graph TD
         D2["PostgreSQL + pgvector (HNSW)"]
         D3[Edge Functions - groq-proxy]
         E[Groq API]
-        E1[Qwen 3.6 27B]
+        E1[Qwen 3.8 27B]
         E2[Whisper Large V3]
         F[OpenAI Embeddings]
     end
@@ -250,7 +250,7 @@ graph TD
 **Edge-First Description:**
 
 - Vision (YOLO26n-seg) and 3D rendering run **on device** (offline-capable).
-- The chat assistant routes through the `groq-proxy` Edge Function: the client sends the query, the function retrieves the semantic embedding (OpenAI), the client queries `match_manuals` (pgvector), and the function completes the answer with Qwen 3.6 27B. API keys live only in Supabase Secrets.
+- The chat assistant routes through the `groq-proxy` Edge Function: the client sends the query, the function retrieves the semantic embedding (OpenAI), the client queries `match_manuals` (pgvector), and the function completes the answer with Qwen 3.8 27B. API keys live only in Supabase Secrets.
 - Supabase acts as the unified backend: auth, relational + vector storage, and Edge Functions.
 
 ---
@@ -307,7 +307,7 @@ sequenceDiagram
     MobileApp->>Supabase: match_manuals(query_embedding)
     Supabase-->>MobileApp: top fragments
     MobileApp->>Edge: chat/completions { prompt + RAG context }
-    Edge->>Groq: Qwen 3.6 27B
+    Edge->>Groq: Qwen 3.8 27B
     Groq-->>Edge: answer (reasoning disabled)
     MobileApp->>User: Display answer (text) / TTS
     opt Save
@@ -378,7 +378,7 @@ sequenceDiagram
 
 | Use | Provider | Model |
 | --- | --- | --- |
-| Clinical chat | Groq | `qwen/qwen3.6-27b` (reasoning disabled) |
+| Clinical chat | Groq | `qwen/qwen3.8-27b` (reasoning disabled) |
 | Speech-to-text | Groq | `whisper-large-v3` |
 | Embeddings | OpenAI | `text-embedding-3-small` (1536) |
 

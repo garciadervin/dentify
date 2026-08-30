@@ -1,8 +1,8 @@
 /**
- * useSettings — preferencias del usuario persistidas en profiles.settings (jsonb).
+ * useSettings — user preferences persisted in profiles.settings (jsonb).
  *
- * Devuelve defaults si no hay sesión/BD; cada toggle afecta comportamiento real
- * (auto-rotate 3D, hápticos, descarga con datos móviles, recordatorios).
+ * Returns defaults without a session/DB; each toggle affects real behavior
+ * (3D auto-rotate, haptics, mobile-data downloads, reminders).
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -10,13 +10,13 @@ import { getSupabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/hooks/useAuth';
 
 export interface AppSettings {
-  /** Rotación automática del modelo 3D al cargar. */
+  /** Auto-rotate the 3D model on load. */
   autoRotate: boolean;
-  /** Vibración táctil al tocar elementos (HapticTab). */
+  /** Haptic feedback when tapping elements (HapticTab). */
   haptics: boolean;
-  /** Permitir descargar los modelos 3D con datos móviles. */
+  /** Allow downloading the 3D models over mobile data. */
   cellularDownloads: boolean;
-  /** Recordatorios de estudio (preferencia persistida). */
+  /** Study reminders (persisted preference). */
   studyReminders: boolean;
 }
 
@@ -71,7 +71,7 @@ export function useSettings() {
           .from('profiles')
           .upsert({ id: user.id, settings: next }, { onConflict: 'id' });
       } catch {
-        // Silencioso: el setting local prevalece hasta la próxima sync.
+        // Silent: local setting wins until the next sync.
       }
     },
     [settings, user]

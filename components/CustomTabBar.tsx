@@ -1,8 +1,8 @@
 /**
- * CustomTabBar — barra de navegación flotante (boceto dentify.pen).
+ * CustomTabBar — floating navigation bar.
  *
- * Píldora blanca 90%, esquinas 32, sombra azul; 4 pestañas con icono.
- * La activa usa fondo tonal azul + icono azul. Centrada con ancho máximo.
+ * White pill at 90% opacity, radius 32, blue shadow; 4 icon tabs.
+ * The active tab uses a tonal blue background + blue icon. Centered with max width.
  */
 
 import React from 'react';
@@ -36,7 +36,7 @@ export default function CustomTabBar({
       try {
         void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       } catch {
-        // silencioso
+        // silent
       }
     }
   };

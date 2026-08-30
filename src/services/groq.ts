@@ -35,7 +35,7 @@ const DEFAULT_SYSTEM_PROMPT =
   'Si no tienes suficiente información en los fragmentos proporcionados, indícalo claramente al usuario. ' +
   'Puedes analizar archivos adjuntos (imágenes, PDFs) cuando el usuario los proporcione.';
 
-const CHAT_MODEL = 'qwen/qwen3.6-27b';
+const CHAT_MODEL = 'qwen/qwen3.8-27b';
 const WHISPER_MODEL = 'whisper-large-v3';
 const EMBEDDING_MODEL = 'text-embedding-3-small';
 

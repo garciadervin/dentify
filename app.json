@@ -53,7 +53,14 @@
         }
       ],
       "expo-asset",
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-notifications",
+        {
+          "color": "#0077B6",
+          "defaultChannel": "study-reminders"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

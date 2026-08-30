@@ -1,11 +1,11 @@
 /**
- * AppHeader — barra superior de Dentify (boceto dentify.pen).
+ * AppHeader — Dentify top bar.
  *
- * Variantes:
+ * Variants:
  * - `home` (default): logo Dentify + avatar → /profile
- * - `title`: título alineado a la izquierda (pantallas de pestaña)
- * - `back`: botón volver + título (pantallas apiladas)
- * - `bot`: avatar de bot + "Denty-AI" + estado "En línea"
+ * - `title`: left-aligned title (tab screens)
+ * - `back`: back button + title (stacked screens)
+ * - `bot`: bot avatar + "Denty-AI" + "Online" status
  */
 
 import React, { type ReactNode } from 'react';
@@ -20,10 +20,10 @@ interface AppHeaderProps {
   variant?: 'home' | 'title' | 'back' | 'bot';
   title?: string;
   subtitle?: string;
-  /** Estado que acompaña al título (p.ej. "En línea · Basado en manuales UNERG"). */
+  /** Status that accompanies the title (e.g. "Online · Based on UNERG manuals"). */
   status?: string;
   onBack?: () => void;
-  /** Slot derecho opcional (p.ej. botón de descarga en el simulador). */
+  /** Optional right slot (e.g. download button in the simulator). */
   right?: ReactNode;
 }
 
@@ -125,6 +125,7 @@ export default function AppHeader({
                 {status ?? 'En línea · Basado en manuales UNERG'}
               </Text>
             </View>
+            {right}
             <TouchableOpacity
               testID="user-avatar"
               style={styles.avatar}

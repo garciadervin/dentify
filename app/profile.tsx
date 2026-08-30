@@ -1,8 +1,8 @@
 /**
- * ProfileScreen — Perfil del estudiante (pantalla apilada, vía avatar).
+ * ProfileScreen — Student profile (stacked screen, via avatar).
  *
- * Datos reales: nombre desde profiles, estadísticas desde progreso/badges,
- * menú funcional (Editar perfil, Configuración, Cerrar sesión).
+ * Real data: name from profiles, stats from progress/badges,
+ * functional menu (Edit profile, Settings, Sign out).
  */
 
 import React, { useCallback, useMemo, useState } from 'react';
@@ -82,7 +82,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Estadísticas */}
+        {/* Stats */}
         <Text style={styles.sectionTitle}>Estadísticas</Text>
         <View style={styles.statsGrid}>
           <StatItem icon="fire" label="Activas" value={String(activeCount)} color="#F4A261" />
@@ -91,7 +91,7 @@ export default function ProfileScreen() {
           <StatItem icon="medal" label="Logros" value={`${earnedBadges}/${badges.length}`} color="#9B59B6" />
         </View>
 
-        {/* Progreso por especialidad */}
+        {/* Progress by specialty */}
         {specialties.length > 0 && (
           <>
             <Text style={styles.sectionTitle}>Progreso por especialidad</Text>
@@ -144,7 +144,7 @@ export default function ProfileScreen() {
           </>
         )}
 
-        {/* Menú */}
+        {/* Menu */}
         <Text style={styles.sectionTitle}>Cuenta</Text>
         <View style={styles.card}>
           <TouchableOpacity
@@ -174,7 +174,7 @@ export default function ProfileScreen() {
         <Text style={styles.version}>Dentify v1.0.0</Text>
       </View>
 
-      {/* Modal de confirmación de cierre de sesión */}
+      {/* Sign-out confirmation modal */}
       <Modal
         visible={showLogoutModal}
         transparent

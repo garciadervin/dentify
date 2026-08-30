@@ -10,9 +10,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '@/src/hooks/useAuth';
+import { getSupabase } from '@/src/lib/supabase';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+
+type Role = 'student' | 'teacher';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -23,8 +27,11 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState<Role>('student');
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [resending, setResending] = useState(false);
 
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
@@ -44,18 +51,82 @@ export default function RegisterScreen() {
     }
 
     setSubmitting(true);
-    const { error: signUpError, needsConfirmation } = await signUp(email.trim(), password);
+    const { error: signUpError, needsConfirmation } = await signUp(email.trim(), password, role);
     setSubmitting(false);
 
     if (signUpError) {
       setError(signUpError);
     } else if (needsConfirmation) {
-      // Email confirmation enabled: no session yet — guide the user.
-      setError('Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.');
+      // Email confirmation enabled: no session yet — show the confirm view.
+      setRegisteredEmail(email.trim());
     } else {
       router.push('/auth/profile-setup');
     }
   };
+
+  const handleResend = async () => {
+    if (!registeredEmail || resending) return;
+    setResending(true);
+    setError(null);
+    try {
+      const supabase = getSupabase();
+      const { error: resendError } = supabase
+        ? await supabase.auth.resend({ type: 'signup', email: registeredEmail })
+        : { error: { message: 'Supabase no está configurado' } };
+      if (resendError) {
+        setError(resendError.message);
+      } else {
+        setError(null);
+      }
+    } finally {
+      setResending(false);
+    }
+  };
+
+  if (registeredEmail) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.skyLight }} edges={['top', 'bottom']}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 32, gap: 16 }}>
+          <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: '#0077B614', alignItems: 'center', justifyContent: 'center' }}>
+            <MaterialCommunityIcons name="email-check-outline" size={40} color={colors.clinicalBlue} />
+          </View>
+          <Text style={{ fontFamily: 'Manrope-Bold', fontSize: 26, color: colors.deepSlate, textAlign: 'center' }}>
+            Revisa tu correo
+          </Text>
+          <Text style={{ fontFamily: 'Inter', fontSize: 15, color: colors.neutral, textAlign: 'center', lineHeight: 22 }}>
+            Te enviamos un enlace de confirmación a{' '}
+            <Text style={{ fontFamily: 'Inter-Bold', color: colors.deepSlate }}>{registeredEmail}</Text>.
+            {'\n'}Confirma tu cuenta y luego inicia sesión.
+          </Text>
+          {error && (
+            <Text style={{ fontFamily: 'Inter', fontSize: 13, color: '#DC2626', textAlign: 'center' }}>{error}</Text>
+          )}
+          <TouchableOpacity
+            testID="resend-email"
+            onPress={handleResend}
+            disabled={resending}
+            style={{
+              backgroundColor: colors.clinicalBlue,
+              borderRadius: 14,
+              paddingVertical: 14,
+              alignItems: 'center',
+              alignSelf: 'stretch',
+              marginTop: 8,
+            }}
+          >
+            <Text style={{ fontFamily: 'Inter-SemiBold', fontSize: 15, color: '#FFFFFF' }}>
+              {resending ? 'Enviando...' : 'Reenviar correo de confirmación'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.replace('/auth/login')} style={{ paddingVertical: 10 }}>
+            <Text style={{ fontFamily: 'Inter-SemiBold', fontSize: 14, color: colors.clinicalBlue }}>
+              Iniciar sesión
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.skyLight }} edges={['top', 'bottom']}>
@@ -218,6 +289,57 @@ export default function RegisterScreen() {
                 borderBottomWidth: 4.5,
               }}
             />
+          </View>
+
+          {/* Rol */}
+          <View style={{ marginBottom: 24 }}>
+            <Text
+              style={{
+                fontFamily: 'Inter-SemiBold',
+                fontSize: 13,
+                color: colors.deepSlate,
+                marginBottom: 8,
+              }}
+            >
+              Me registro como
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              {(['student', 'teacher'] as Role[]).map((r) => {
+                const selected = role === r;
+                return (
+                  <TouchableOpacity
+                    key={r}
+                    testID={`role-${r}`}
+                    onPress={() => setRole(r)}
+                    style={{
+                      flex: 1,
+                      alignItems: 'center',
+                      paddingVertical: 12,
+                      borderRadius: 14,
+                      borderWidth: 2,
+                      backgroundColor: selected ? colors.clinicalBlue : colors.surface,
+                      borderColor: selected ? '#005C8A' : colors.borderLight,
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name={r === 'student' ? 'school-outline' : 'account-tie'}
+                      size={20}
+                      color={selected ? '#FFFFFF' : colors.neutral}
+                    />
+                    <Text
+                      style={{
+                        fontFamily: 'Inter-SemiBold',
+                        fontSize: 13,
+                        color: selected ? '#FFFFFF' : colors.deepSlate,
+                        marginTop: 4,
+                      }}
+                    >
+                      {r === 'student' ? 'Estudiante' : 'Docente'}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
 
           {/* Register button */}

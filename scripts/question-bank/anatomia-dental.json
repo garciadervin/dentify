@@ -1,0 +1,735 @@
+[
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "En el sistema de nomenclatura universal (ADA), el diente número 1 corresponde a:",
+    "options": [
+      "Tercer molar superior izquierdo",
+      "Incisivo central superior derecho",
+      "Tercer molar superior derecho",
+      "Primer molar inferior derecho"
+    ],
+    "correctIndex": 2,
+    "explanation": "La numeración universal comienza en el tercer molar superior derecho (1) y recorre el maxilar superior de derecha a izquierda hasta el 16, luego baja al tercer molar inferior izquierdo (17) y termina en el 32. Por eso el diente número 1 es el tercer molar superior derecho.",
+    "hint": "La secuencia comienza en el cuadrante superior derecho, en el diente más posterior.",
+    "tags": ["nomenclatura universal", "numeración dental"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "La superficie del diente orientada hacia la línea media del arco dentario se denomina:",
+    "options": [
+      "Distal",
+      "Mesial",
+      "Vestibular",
+      "Oclusal"
+    ],
+    "correctIndex": 1,
+    "explanation": "La cara mesial es la que mira hacia la línea media, es decir, hacia el diente contiguo anterior. La cara distal es la opuesta y la vestibular es la que mira hacia los labios o las mejillas.",
+    "hint": "Significa 'hacia el centro del arco'.",
+    "tags": ["superficies dentarias", "terminología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Cuál es el primer diente de la dentición temporal en erupcionar en la cavidad bucal?",
+    "options": [
+      "Incisivo central superior",
+      "Primer molar temporal",
+      "Canino temporal",
+      "Incisivo central inferior"
+    ],
+    "correctIndex": 3,
+    "explanation": "El incisivo central inferior suele erupcionar alrededor de los 6 meses de edad, seguido del central superior y de los laterales. La erupción de la dentición temporal sigue un patrón ordenado que comienza por los incisivos inferiores.",
+    "hint": "Comienza por los dientes anteriores del maxilar inferior.",
+    "tags": ["cronología de erupción", "dentición temporal"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Qué tejido constituye la mayor parte del volumen de la estructura del diente?",
+    "options": [
+      "Esmalte",
+      "Cemento",
+      "Dentina",
+      "Pulpa"
+    ],
+    "correctIndex": 2,
+    "explanation": "La dentina forma el cuerpo del diente, tanto en la corona como en la raíz. El esmalte solo cubre la corona, el cemento recubre la raíz y la pulpa ocupa la cavidad central.",
+    "hint": "Es el tejido que queda por debajo del esmalte y del cemento.",
+    "tags": ["tejidos del diente", "dentina"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "En los dientes anteriores, la cámara pulpar se continúa con:",
+    "options": [
+      "un solo conducto radicular",
+      "dos conductos radiculares",
+      "tres conductos radiculares",
+      "ningún conducto"
+    ],
+    "correctIndex": 0,
+    "explanation": "Los dientes anteriores (incisivos y caninos) presentan típicamente una cámara pulpar única que continúa en un solo conducto radicular. Los incisivos inferiores pueden mostrar ocasionalmente dos conductos, pero lo habitual es uno.",
+    "hint": "Es la configuración más simple de la cavidad pulpar.",
+    "tags": ["cámara pulpar", "anatomía de conductos", "dientes anteriores"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "La corona anatómica de un diente es la porción:",
+    "options": [
+      "que se observa en la boca",
+      "localizada por encima de la encía",
+      "cubierta por cemento",
+      "cubierta por esmalte"
+    ],
+    "correctIndex": 3,
+    "explanation": "La corona anatómica es toda la porción del diente recubierta por esmalte, esté o no visible en boca. La corona clínica, en cambio, es la parte que se observa por encima de la encía y varía con la edad.",
+    "hint": "No depende de la encía, sino del tejido que la recubre.",
+    "tags": ["corona anatómica", "corona clínica"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "Los espacios en forma de triángulo o de 'V' que se forman entre las superficies proximales de dos dientes contiguos se denominan:",
+    "options": [
+      "Embrasures",
+      "Fóveas",
+      "Surcos de desarrollo",
+      "Bordes marginales"
+    ],
+    "correctIndex": 0,
+    "explanation": "Las embrasures son los espacios triangulares que se crean entre las caras proximales de dientes adyacentes y se clasifican en vestibular, lingual, oclusal e incisal. Favorecen el autocepillado y el paso de los alimentos.",
+    "hint": "Son espacios de separación entre dientes vecinos, alrededor del punto de contacto.",
+    "tags": ["embrasures", "espacios interproximales"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "mcq",
+    "question": "Respecto al incisivo central superior, el incisivo lateral superior se caracteriza por presentar:",
+    "options": [
+      "corona más ancha y raíz más larga",
+      "corona más estrecha y raíz más corta",
+      "mayor número de cúspides",
+      "dos raíces"
+    ],
+    "correctIndex": 1,
+    "explanation": "El incisivo lateral superior es más pequeño que el central: corona más estrecha, borde incisal más redondeado y raíz más corta. Ambos pertenecen al grupo anterior, son unirradiculares y no presentan cúspides.",
+    "hint": "Es el diente 'más pequeño' del grupo anterior superior.",
+    "tags": ["morfología", "incisivo lateral superior"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "El primer premolar inferior se caracteriza por presentar:",
+    "options": [
+      "dos cúspides de igual tamaño",
+      "tres cúspides vestibulares",
+      "una única cúspide prominente",
+      "una cúspide vestibular grande y una cúspide lingual pequeña"
+    ],
+    "correctIndex": 3,
+    "explanation": "El primer premolar inferior tiene dos cúspides: la vestibular es grande y prominente, semejante a la de un canino, y la lingual es muy pequeña. Esta asimetría es una de sus principales claves de identificación.",
+    "hint": "La cúspide lingual es casi vestigial.",
+    "tags": ["morfología", "premolar inferior"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Dónde alcanza el esmalte su mayor grosor en los dientes permanentes?",
+    "options": [
+      "En el tercio cervical de la corona",
+      "En las cúspides de los molares (hasta unos 2,5 mm)",
+      "En la unión amelodentinaria",
+      "En los surcos de la cara oclusal"
+    ],
+    "correctIndex": 1,
+    "explanation": "El esmalte es más grueso en las zonas de mayor actividad masticatoria, como las cúspides de los molares, donde puede alcanzar aproximadamente 2,5 mm. Hacia el cuello del diente se vuelve muy delgado.",
+    "hint": "Su grosor está relacionado con el desgaste funcional.",
+    "tags": ["esmalte", "histología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "El cemento celular se encuentra principalmente:",
+    "options": [
+      "en la corona del diente",
+      "en la superficie oclusal",
+      "en el tercio apical de la raíz",
+      "en el tercio cervical de la raíz"
+    ],
+    "correctIndex": 2,
+    "explanation": "El cemento celular, que contiene cementocitos alojados en lagunas, predomina en el tercio apical de la raíz. El cemento acelular, sin células, se localiza preferentemente en los tercios cervical y medio.",
+    "hint": "Se asocia con el crecimiento radicular en el extremo apical.",
+    "tags": ["cemento", "histología", "anatomía radicular"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "En los dientes permanentes jóvenes, los cuernos pulpares tienden a ser:",
+    "options": [
+      "altos y cercanos a la superficie oclusal",
+      "ausentes",
+      "cortos y alejados de la superficie",
+      "iguales a los del adulto"
+    ],
+    "correctIndex": 0,
+    "explanation": "En dientes jóvenes la cámara pulpar es amplia y los cuernos pulpares llegan cerca de la superficie oclusal, lo que aumenta el riesgo de exposición pulpar en las preparaciones cavitarias. Con la edad se deposita dentina y la cámara se reduce.",
+    "hint": "Riesgo de exposición durante la preparación de cavidades.",
+    "tags": ["cámara pulpar", "cuernos pulpares", "cavidades"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "El contorno oclusal de la corona del primer molar inferior tiene forma aproximadamente:",
+    "options": [
+      "circular",
+      "triangular con el vértice hacia distal",
+      "romboide",
+      "de pera"
+    ],
+    "correctIndex": 2,
+    "explanation": "La corona del primer molar inferior tiene un contorno romboide, más ancho en sentido vestibulolingual que mesiodistal. Presenta cinco cúspides: tres vestibulares y dos linguales.",
+    "hint": "Es un cuadrilátero que se aprecia al mirar la cara oclusal.",
+    "tags": ["morfología", "primer molar inferior", "cúspides"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "El segundo molar superior se diferencia del primer molar superior porque:",
+    "options": [
+      "siempre presenta cinco cúspides",
+      "suele presentar la cúspide distopalatina menor o ausente",
+      "presenta una raíz única",
+      "carece de cámara pulpar"
+    ],
+    "correctIndex": 1,
+    "explanation": "El segundo molar superior frecuentemente tiene la cúspide distopalatina reducida o ausente, por lo que suele observarse con tres o cuatro cúspides. El primer molar superior es el más grande y constante del grupo.",
+    "hint": "Compara el número de cúspides en el lado palatino.",
+    "tags": ["morfología", "segundo molar superior"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "En endodoncia, la raíz mesiovestibular del primer molar superior es relevante porque:",
+    "options": [
+      "siempre tiene un único conducto",
+      "nunca presenta conductos accesorios",
+      "su conducto es siempre de sección circular",
+      "frecuentemente presenta dos conductos (MV1 y MV2)"
+    ],
+    "correctIndex": 3,
+    "explanation": "La raíz mesiovestibular del primer molar superior aloja con frecuencia un segundo conducto (mesiovestibular 2), cuya omisión es causa de fracaso endodóntico. Por eso la búsqueda activa del MV2 forma parte del acceso convencional.",
+    "hint": "Busca el 'segundo conducto' de esta raíz.",
+    "tags": ["endodoncia", "primer molar superior", "conducto mesiovestibular"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "El dens invaginatus (diente en diente) es una variación anatómica que consiste en:",
+    "options": [
+      "una invaginación de esmalte hacia el interior de la corona, con frecuencia en la fosa palatina de los incisivos laterales superiores",
+      "una cámara pulpar alargada con la furca desplazada hacia apical",
+      "la unión de dos gérmenes dentarios por el cemento",
+      "una curvatura anormal del eje de la raíz"
+    ],
+    "correctIndex": 0,
+    "explanation": "El dens invaginatus es una invaginación del esmalte hacia la cámara pulpar, típica de la fosa palatina del incisivo lateral superior. Al crear un espacio profundo y retentivo, favorece la caries y la necrosis pulpar temprana.",
+    "hint": "Compromete con frecuencia a los incisivos laterales superiores.",
+    "tags": ["variaciones anatómicas", "dens invaginatus", "endodoncia"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "El taurodontismo es una anomalía dental caracterizada por:",
+    "options": [
+      "la ausencia congénita de un diente",
+      "una cámara pulpar alargada en sentido oclusoapical, con raíces cortas",
+      "la invaginación del esmalte",
+      "la fusión de la corona con el hueso alveolar"
+    ],
+    "correctIndex": 1,
+    "explanation": "En el taurodontismo la cámara pulpar es anormalmente grande y se extiende en sentido oclusoapical, mientras que la furcación y las raíces están desplazadas hacia apical y son más cortas. Puede complicar el acceso endodóntico por la dificultad para localizar los conductos.",
+    "hint": "Piensa en una cámara pulpar 'alargada'.",
+    "tags": ["variaciones anatómicas", "taurodontismo", "cámara pulpar"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "El foramen mentoniano se localiza con mayor frecuencia:",
+    "options": [
+      "a nivel del segundo premolar inferior (o entre ambos premolares)",
+      "por delante del canino inferior",
+      "a nivel del primer molar inferior",
+      "en la zona del tercer molar inferior"
+    ],
+    "correctIndex": 0,
+    "explanation": "El foramen mentoniano se sitúa habitualmente a la altura del ápice del segundo premolar inferior, o entre el primer y el segundo premolar. Su relación con los ápices de los premolares es clave para la anestesia y para evitar lesionar el nervio mentoniano.",
+    "hint": "Busca en la zona de los premolares inferiores.",
+    "tags": ["anatomía aplicada", "cirugía", "foramen mentoniano"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "mcq",
+    "question": "El conducto radicular en forma de 'C' se observa con mayor frecuencia en:",
+    "options": [
+      "el incisivo central superior",
+      "el canino superior",
+      "el segundo molar inferior con raíces fusionadas por lingual",
+      "el primer premolar superior"
+    ],
+    "correctIndex": 2,
+    "explanation": "El conducto en C es característico del segundo molar inferior, donde las raíces se fusionan por la cara lingual y dejan un conducto único de sección en 'C'. Su morfología dificulta la limpieza y la obturación en endodoncia.",
+    "hint": "Se asocia a la fusión radicular en molares inferiores.",
+    "tags": ["endodoncia", "conducto en C", "segundo molar inferior"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Por qué los ápices de los molares superiores tienen una relación clínica importante con el seno maxilar?",
+    "options": [
+      "El piso del seno maxilar puede estar muy cercano o en contacto con sus ápices",
+      "El seno maxilar recubre las raíces de los dientes anteriores",
+      "El seno maxilar se encuentra por debajo de la mandíbula",
+      "No existe relación entre ambos"
+    ],
+    "correctIndex": 0,
+    "explanation": "El piso del seno maxilar está estrechamente relacionado con los ápices de los molares y premolares superiores. Una infección periapical puede extenderse al seno (sinusitis odontogénica) y las exodoncias pueden comunicar la boca con el seno.",
+    "hint": "Piensa en las complicaciones de una infección o exodoncia de un molar superior.",
+    "tags": ["anatomía aplicada", "seno maxilar", "molares superiores"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "true_false",
+    "question": "Los dientes anteriores (incisivos y caninos) presentan típicamente una sola raíz.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "Todos los dientes anteriores son unirradiculares, con un solo conducto en la mayoría de los casos (los incisivos inferiores pueden tener dos). La raíz única es una característica distintiva del grupo anterior.",
+    "tags": ["morfología", "raíces", "dientes anteriores"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "true_false",
+    "question": "La cara oclusal está presente únicamente en los dientes posteriores.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "La cara oclusal es la superficie masticatoria de premolares y molares. Los dientes anteriores presentan en su lugar un borde incisal, por lo que no se habla de cara oclusal en incisivos ni caninos.",
+    "tags": ["morfología", "superficies dentarias"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "true_false",
+    "question": "La dentina es un tejido más duro que el esmalte.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "Es falso: el esmalte es el tejido más duro del cuerpo humano. La dentina es dura, pero en menor grado que el esmalte; aun así, es más dura que el cemento y que el hueso.",
+    "tags": ["esmalte", "dentina", "histología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "true_false",
+    "question": "El odontoblasto es la célula que se localiza en la periferia de la pulpa, en contacto con la dentina.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "Los odontoblastos forman una capa continua en la periferia de la pulpa, con sus prolongaciones dentro de los túbulos dentinarios. Son los responsables de formar la dentina durante toda la vida.",
+    "tags": ["pulpa", "odontoblastos", "histología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "true_false",
+    "question": "La erupción pasiva del diente consiste en el desplazamiento de la corona hacia el plano oclusal.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "Es falso: ese movimiento corresponde a la erupción activa. La erupción pasiva es el desplazamiento apical del margen gingival, que expone una mayor porción de la corona clínica sin que el diente se mueva.",
+    "hint": "Relaciona 'pasiva' con la encía, no con el diente.",
+    "tags": ["erupción dental", "erupción pasiva", "encía"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "true_false",
+    "question": "La reabsorción radicular fisiológica ocurre de manera habitual en la dentición permanente.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "Es falso: la reabsorción radicular fisiológica es un fenómeno característico de la dentición temporal, que permite la exfoliación y el recambio dentario. En la dentición permanente, la reabsorción radicular es siempre un hallazgo patológico.",
+    "tags": ["reabsorción radicular", "dentición temporal", "patología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "true_false",
+    "question": "El nervio alveolar inferior discurre por el interior del conducto mandibular, por debajo de los ápices de los dientes inferiores.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "El nervio alveolar inferior recorre el conducto mandibular junto con los vasos alveolares. Su posición, cercana a los ápices de molares y premolares, es fundamental para la anestesia y para evitar lesiones en cirugías y endodoncias.",
+    "tags": ["anatomía aplicada", "conducto mandibular", "nervio alveolar inferior"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "El esmalte está compuesto principalmente por cristales de ____.",
+    "options": [
+      "colágeno tipo I",
+      "hidroxiapatita",
+      "queratina",
+      "glucosaminoglicanos"
+    ],
+    "correctIndex": 1,
+    "explanation": "El esmalte maduro está formado en alrededor del 96% por mineral, mayoritariamente hidroxiapatita, con pequeñas cantidades de agua y materia orgánica. Es el tejido más mineralizado del organismo.",
+    "tags": ["esmalte", "composición química"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "La superficie del diente orientada hacia los labios o las mejillas se denomina cara ____.",
+    "options": [
+      "vestibular",
+      "mesial",
+      "distal",
+      "oclusal"
+    ],
+    "correctIndex": 0,
+    "explanation": "La cara vestibular (labial en los anteriores) es la que mira hacia los labios y las mejillas. La mesial mira a la línea media, la distal en sentido contrario y la oclusal es la superficie masticatoria de los posteriores.",
+    "tags": ["superficies dentarias", "terminología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "La frontera entre el esmalte y la dentina se conoce como unión ____.",
+    "options": [
+      "amelocementaria",
+      "amelodentinaria",
+      "dentinocementaria",
+      "amelopulpar"
+    ],
+    "correctIndex": 1,
+    "explanation": "La unión amelodentinaria es el límite entre esmalte y dentina y es una zona de unión firme, con proyecciones de esmalte hacia la dentina. La unión amelocementaria, en cambio, es el límite entre esmalte y cemento en el cuello del diente.",
+    "tags": ["esmalte", "dentina", "unión amelodentinaria"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "La dentina que rodea cada túbulo dentinario y es más mineralizada se denomina dentina ____.",
+    "options": [
+      "intertubular",
+      "primaria",
+      "peritubular",
+      "esclerótica"
+    ],
+    "correctIndex": 2,
+    "explanation": "La dentina peritubular forma un anillo altamente mineralizado alrededor de cada túbulo, mientras que la intertubular, situada entre los túbulos, está menos mineralizada. El balance entre ambas se altera con la esclerosis.",
+    "tags": ["dentina", "dentina peritubular", "histología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "La capa de dentina sin mineralizar que se encuentra entre la pulpa y la dentina madura se denomina ____.",
+    "options": [
+      "esclerótica",
+      "predentina",
+      "peritubular",
+      "circumpulpar"
+    ],
+    "correctIndex": 1,
+    "explanation": "La predentina es la porción más interna de la dentina, aún sin mineralizar, producida por los odontoblastos. A medida que se mineraliza se convierte en dentina madura, lo que explica el crecimiento interno del diente.",
+    "tags": ["dentina", "predentina", "histología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "La terminación del conducto radicular en múltiples ramas y forámenes cerca del ápice se denomina ____.",
+    "options": [
+      "istmo",
+      "conducto lateral",
+      "delta apical",
+      "conducto colateral"
+    ],
+    "correctIndex": 2,
+    "explanation": "El delta apical es la ramificación del conducto en múltiples conductillos que terminan en varios forámenes cerca del ápice. Su presencia dificulta la limpieza y la obturación completa en endodoncia.",
+    "tags": ["anatomía de conductos", "delta apical", "endodoncia"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "La anomalía en la que dos gérmenes dentarios se unen y forman una pieza con dos coronas se denomina ____.",
+    "options": [
+      "fusión",
+      "gemación",
+      "concrescencia",
+      "dilaceración"
+    ],
+    "correctIndex": 0,
+    "explanation": "La fusión es la unión de dos gérmenes dentarios que forman una pieza con dos coronas y una o dos raíces. La gemación es la división incompleta de un solo germen y la concrescencia es la unión de dos dientes ya formados por el cemento.",
+    "hint": "No confundir con gemación, que parte de un solo germen.",
+    "tags": ["anomalías del desarrollo", "fusión", "morfología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de los siguientes grupos dentarios forman parte de la dentición anterior?",
+    "options": [
+      "Incisivos",
+      "Caninos",
+      "Premolares",
+      "Molares"
+    ],
+    "correctIndexes": [0, 1],
+    "explanation": "La dentición anterior está formada por los incisivos (corte) y los caninos (desgarro). Los premolares y molares pertenecen al grupo posterior y cumplen funciones de trituración y molienda.",
+    "tags": ["grupos dentarios", "dentición anterior"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de las siguientes son las caras proximales (de contacto) del diente?",
+    "options": [
+      "Vestibular",
+      "Mesial",
+      "Palatina",
+      "Distal"
+    ],
+    "correctIndexes": [1, 3],
+    "explanation": "Las caras proximales son la mesial (hacia la línea media) y la distal (en dirección contraria), es decir, las que contactan con los dientes vecinos. La vestibular y la palatina no son proximales.",
+    "tags": ["superficies dentarias", "terminología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de las siguientes son funciones de la pulpa dental?",
+    "options": [
+      "Mineralización del esmalte",
+      "Formación de dentina",
+      "Sensibilidad (nocicepción)",
+      "Nutrición del tejido dentinario"
+    ],
+    "correctIndexes": [1, 2, 3],
+    "explanation": "La pulpa forma dentina mediante los odontoblastos, aporta sensibilidad dolorosa y nutre a la dentina. No mineraliza el esmalte: ese tejido es producido por los ameloblastos durante la odontogénesis y no recibe aporte de la pulpa.",
+    "tags": ["pulpa dental", "funciones", "histología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de las siguientes son características del cemento radicular?",
+    "options": [
+      "Es más duro que el esmalte",
+      "Es un tejido avascular",
+      "Contiene odontoblastos en su interior",
+      "Es más blando que la dentina"
+    ],
+    "correctIndexes": [1, 3],
+    "explanation": "El cemento es avascular y está más calcificado que el hueso pero menos que la dentina; su función principal es anclar las fibras del ligamento periodontal. No contiene odontoblastos: sus células son los cementoblastos y los cementocitos.",
+    "tags": ["cemento", "histología", "raíz"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles de los siguientes hallazgos anatómicos pueden complicar el tratamiento de conductos?",
+    "options": [
+      "Curvaturas radiculares pronunciadas",
+      "Conductos accesorios",
+      "Coronas sin caries ni restauraciones",
+      "Istmos entre conductos"
+    ],
+    "correctIndexes": [0, 1, 3],
+    "explanation": "Los conductos accesorios, los istmos y las curvaturas pronunciadas dificultan la limpieza, la conformación y la obturación del sistema de conductos. La presencia de caries o restauraciones no es un hallazgo anatómico que complique la mecánica endodóntica.",
+    "tags": ["endodoncia", "anatomía de conductos", "complejidad"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué células participan en la formación de los tejidos duros del diente?",
+    "options": [
+      "Ameloblastos (esmalte)",
+      "Osteoclastos (reabsorción ósea)",
+      "Odontoblastos (dentina)",
+      "Cementoblastos (cemento)"
+    ],
+    "correctIndexes": [0, 2, 3],
+    "explanation": "Los ameloblastos, derivados del órgano del esmalte, forman el esmalte; los odontoblastos de la papila dental forman la dentina; y los cementoblastos del folículo forman el cemento. Los osteoclastos no forman tejido, sino que reabsorben hueso.",
+    "tags": ["histología", "odontogénesis", "células"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "match",
+    "question": "Empareja cada grupo dentario con su función principal.",
+    "pairs": [
+      { "left": "Incisivos", "right": "Corte de los alimentos" },
+      { "left": "Caninos", "right": "Desgarro o prensión" },
+      { "left": "Premolares", "right": "Trituración" },
+      { "left": "Molares", "right": "Molienda" }
+    ],
+    "explanation": "Los incisivos cortan, los caninos desgarran o prensan, y los premolares y molares trituran y muelen el alimento. Esta división funcional orienta la morfología de cada grupo dentario.",
+    "tags": ["grupos dentarios", "función"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "match",
+    "question": "Empareja cada porción de la cavidad pulpar con su descripción.",
+    "pairs": [
+      { "left": "Cámara pulpar", "right": "Porción de la cavidad pulpar situada en la corona" },
+      { "left": "Piso de la cámara pulpar", "right": "Pared cervical donde se abren los orificios de los conductos" },
+      { "left": "Conducto radicular", "right": "Porción de la cavidad pulpar situada en la raíz" },
+      { "left": "Conducto lateral", "right": "Rama del conducto que desemboca en el periodonto lateral" }
+    ],
+    "explanation": "La cavidad pulpar tiene una porción coronaria (cámara) y una radicular (conductos). El piso de la cámara aloja los orificios de entrada de los conductos, y estos pueden emitir ramas laterales hacia el periodonto.",
+    "tags": ["cavidad pulpar", "anatomía de conductos"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "match",
+    "question": "Empareja cada anomalía del desarrollo dental con su característica.",
+    "pairs": [
+      { "left": "Dens evaginatus", "right": "Proyección de esmalte sobre el surco oclusal de los premolares" },
+      { "left": "Dilaceración", "right": "Curvatura anormal del eje de la corona o de la raíz" },
+      { "left": "Concrescencia", "right": "Unión de dos dientes a través del cemento" },
+      { "left": "Gemación", "right": "División incompleta de un germen que forma una sola raíz" }
+    ],
+    "explanation": "El dens evaginatus proyecta esmalte en la cara oclusal de los premolares, la dilaceración curva el eje dentario, la concrescencia une dos dientes por cemento y la gemación divide de forma incompleta un solo germen.",
+    "tags": ["anomalías del desarrollo", "variaciones anatómicas"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "match",
+    "question": "Empareja cada tejido dentario con su origen embriológico.",
+    "pairs": [
+      { "left": "Esmalte", "right": "Órgano del esmalte (ectodermo)" },
+      { "left": "Dentina y pulpa", "right": "Papila dental (ectomesénquima)" },
+      { "left": "Cemento, ligamento periodontal y hueso alveolar", "right": "Saco o folículo dental (ectomesénquima)" }
+    ],
+    "explanation": "El esmalte deriva del órgano del esmalte (ectodermo), mientras que la dentina y la pulpa provienen de la papila dental y el cemento con el periodonto, del folículo dental, ambos de origen ectomesenquimático.",
+    "tags": ["embriología", "histología", "origen de tejidos"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 1,
+    "type": "order",
+    "question": "Ordena las capas del diente en la corona, desde la superficie externa hacia la pulpa.",
+    "orderItems": [
+      { "text": "Esmalte", "position": 1 },
+      { "text": "Dentina", "position": 2 },
+      { "text": "Pulpa", "position": 3 }
+    ],
+    "explanation": "En la corona, la capa más externa es el esmalte; por debajo se encuentra la dentina y en el centro está la pulpa. En la raíz, el esmalte se sustituye por el cemento.",
+    "tags": ["estructura del diente", "corona"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 2,
+    "type": "order",
+    "question": "Ordena cronológicamente las fases de la erupción dental.",
+    "orderItems": [
+      { "text": "Fase preeruptiva", "position": 1 },
+      { "text": "Fase prefuncional (erupción activa)", "position": 2 },
+      { "text": "Fase funcional (erupción compensatoria)", "position": 3 }
+    ],
+    "explanation": "En la fase preeruptiva el diente se desplaza dentro de los maxilares sin emerger; en la prefuncional atraviesa la encía hasta alcanzar el plano oclusal; y en la funcional continúa erupcionando de forma compensatoria ante el desgaste.",
+    "tags": ["erupción dental", "cronología"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "order",
+    "question": "Ordena los pasos para localizar y tratar el sistema de conductos de un molar inferior en el acceso endodóntico.",
+    "orderItems": [
+      { "text": "Realizar la apertura coronaria", "position": 1 },
+      { "text": "Localizar los orificios de los conductos", "position": 2 },
+      { "text": "Identificar el istmo entre los conductos mesiales", "position": 3 },
+      { "text": "Comprobar la permeabilidad con una lima fina", "position": 4 }
+    ],
+    "explanation": "El acceso endodóntico comienza con la apertura coronaria; luego se localizan los orificios de los conductos, se identifica el istmo, frecuente en la raíz mesial del molar inferior, y finalmente se comprueba la permeabilidad de cada conducto.",
+    "tags": ["endodoncia", "molar inferior", "procedimiento"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "case",
+    "caseId": "an-case-1",
+    "caseText": "Un paciente de 19 años sufre un traumatismo y acude a consulta. En el incisivo central superior derecho se observa una fractura de la corona con exposición de dentina, sin exposición pulpar visible. La radiografía muestra la cámara pulpar de tamaño normal, ápices completamente formados y sin lesión periapical. El paciente refiere sensibilidad al frío.",
+    "question": "Según el caso, ¿qué tejidos del diente están comprometidos por la fractura?",
+    "options": [
+      "Esmalte, dentina y pulpa",
+      "Esmalte y dentina",
+      "Solo esmalte",
+      "Cemento y dentina"
+    ],
+    "correctIndex": 1,
+    "explanation": "Si hay dentina expuesta, el esmalte que la cubría también se perdió. La pulpa no está expuesta, ya que el caso no describe exposición visible, sangrado ni signos de afectación pulpar directa.",
+    "tags": ["trauma dental", "tejidos del diente", "fractura coronaria"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "case",
+    "caseId": "an-case-1",
+    "caseText": "Un paciente de 19 años sufre un traumatismo y acude a consulta. En el incisivo central superior derecho se observa una fractura de la corona con exposición de dentina, sin exposición pulpar visible. La radiografía muestra la cámara pulpar de tamaño normal, ápices completamente formados y sin lesión periapical. El paciente refiere sensibilidad al frío.",
+    "question": "La sensibilidad al frío que refiere el paciente se explica principalmente por la estimulación de:",
+    "options": [
+      "los ameloblastos del esmalte",
+      "las prolongaciones de los odontoblastos y el movimiento del líquido tubular",
+      "las fibras de Sharpey del ligamento periodontal",
+      "los cementocitos del cemento radicular"
+    ],
+    "correctIndex": 1,
+    "explanation": "Según la teoría hidrodinámica, el frío produce un movimiento rápido del líquido dentro de los túbulos dentinarios, que estimula las terminaciones nerviosas y los procesos odontoblásticos y genera dolor. Esta respuesta confirma que la pulpa mantiene su vitalidad.",
+    "tags": ["sensibilidad dentinaria", "túbulos dentinarios", "odontoblastos"]
+  },
+  {
+    "specialty_slug": "anatomia-dental",
+    "level": 3,
+    "type": "case",
+    "caseId": "an-case-1",
+    "caseText": "Un paciente de 19 años sufre un traumatismo y acude a consulta. En el incisivo central superior derecho se observa una fractura de la corona con exposición de dentina, sin exposición pulpar visible. La radiografía muestra la cámara pulpar de tamaño normal, ápices completamente formados y sin lesión periapical. El paciente refiere sensibilidad al frío.",
+    "question": "Si en el seguimiento el diente desarrolla necrosis pulpar y se indica tratamiento de conducto, ¿qué característica anatómica de este diente facilita la instrumentación?",
+    "options": [
+      "Presenta un único conducto, con frecuencia de sección oval",
+      "Presenta siempre dos conductos separados",
+      "Presenta un conducto en forma de C",
+      "Presenta tres conductos independientes"
+    ],
+    "correctIndex": 0,
+    "explanation": "El incisivo central superior presenta típicamente un solo conducto radicular, a menudo oval en sentido labiopalatino, lo que simplifica la instrumentación. El conducto en C es propio de los segundos molares inferiores, no de los incisivos.",
+    "tags": ["endodoncia", "incisivo central superior", "anatomía de conductos"]
+  }
+]

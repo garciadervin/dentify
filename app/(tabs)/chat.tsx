@@ -1,8 +1,8 @@
 /**
- * ChatScreen — Denty-AI Clinical Assistant (boceto dentify.pen).
+ * ChatScreen — Denty-AI Clinical Assistant.
  *
- * Chat RAG con historial local (SQLite) sincronizado a ai_conversations,
- * sugerencias rápidas, burbujas con avatar y entrada en píldora.
+ * Agent chat with local history (SQLite) synced to ai_conversations, quick
+ * suggestions, avatar bubbles and a pill input.
  */
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
@@ -19,15 +19,25 @@ import {
   StyleSheet,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import ScreenContainer from '@/components/ScreenContainer';
 import AppHeader from '@/components/AppHeader';
 import MessageBubble from '@/components/MessageBubble';
 import ChatInput from '@/components/ChatInput';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/src/hooks/useAuth';
-import { chatWithContext } from '@/src/services/rag';
-import type { GroqMessage } from '@/src/services/groq';
+import {
+  sendAgentMessage,
+  type AgentMessage,
+  type AgentSource,
+  type AgentAttachment,
+} from '@/src/services/agent';
 import { getOfflineMessage } from '@/src/services/groq';
+import {
+  pickImageAttachment,
+  pickFileAttachment,
+  type Attachment,
+} from '@/src/services/attachments';
 import {
   initLocalDB,
   saveConversationLocal,
@@ -45,6 +55,9 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   timestamp: string;
   isLoading?: boolean;
+  sources?: AgentSource[];
+  imageUri?: string;
+  attachmentLabel?: string;
 }
 
 let messageCounter = 0;
@@ -68,7 +81,7 @@ const WELCOME_MESSAGE: ChatMessage = {
 };
 
 function generateConversationId(): string {
-  // ai_conversations.id es UUID en Supabase.
+  // ai_conversations.id is a UUID in Supabase.
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
@@ -90,6 +103,8 @@ export default function ChatScreen() {
   const [showConversations, setShowConversations] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
+  const [attachment, setAttachment] = useState<Attachment | null>(null);
+  const [showAttachMenu, setShowAttachMenu] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -137,7 +152,7 @@ export default function ChatScreen() {
 
       await saveConversationLocal(conv);
       await loadConversations();
-      // Sincroniza a Supabase (ai_conversations) si hay sesión.
+      // Sync to Supabase (ai_conversations) when signed in.
       if (user) {
         void syncToSupabase(user.id);
       }
@@ -145,15 +160,39 @@ export default function ChatScreen() {
     [messages, currentConvId, conversations, loadConversations, user]
   );
 
+  const handlePickAttachment = useCallback(async (kind: 'image' | 'file') => {
+    setShowAttachMenu(false);
+    try {
+      const picked = kind === 'image' ? await pickImageAttachment() : await pickFileAttachment();
+      if (picked) setAttachment(picked);
+    } catch (err: any) {
+      Alert.alert('Adjuntar', err?.message ?? 'No se pudo adjuntar el archivo.');
+    }
+  }, []);
+
+  const handleRemoveAttachment = useCallback(() => {
+    setAttachment(null);
+  }, []);
+
+  const handleNewConversation = useCallback(() => {
+    setMessages([WELCOME_MESSAGE]);
+    setCurrentConvId(null);
+    setAttachment(null);
+    setShowConversations(false);
+  }, []);
+
   const handleSend = useCallback(
     async (text: string) => {
       if (isLoading) return;
+      const currentAttachment = attachment;
 
       const userMessage: ChatMessage = {
         id: generateId(),
         text,
         role: 'user',
         timestamp: formatTimestamp(),
+        imageUri: currentAttachment?.type === 'image' ? currentAttachment.uri : undefined,
+        attachmentLabel: currentAttachment && currentAttachment.type !== 'image' ? currentAttachment.name : undefined,
       };
 
       const loadingMessage: ChatMessage = {
@@ -174,33 +213,52 @@ export default function ChatScreen() {
         setMessages(finalMessages);
         setIsLoading(false);
         void saveCurrentConversation(finalMessages);
+        if (currentAttachment) setAttachment(null);
       };
 
-      try {
-        const history: GroqMessage[] = nextMessages
-          .filter((m) => m.id !== 'welcome' && !m.isLoading)
-          .map((m) => ({ role: m.role, content: m.text }));
+      // Build the text-only history for the agent.
+      const history: AgentMessage[] = nextMessages
+        .filter((m) => m.id !== 'welcome' && !m.isLoading)
+        .map((m) => ({ role: m.role, content: m.text }));
 
-        const response = await chatWithContext(history);
+      // Attachments (image or file) are sent separately; the Edge Function
+      // processes them: vision for images, text extraction for the rest.
+      const attachments: AgentAttachment[] | undefined = currentAttachment
+        ? [{ name: currentAttachment.name, mime: currentAttachment.mime, base64: currentAttachment.base64 }]
+        : undefined;
+
+      try {
+        const response = await sendAgentMessage(history, attachments);
 
         applyReply({
           id: generateId(),
           text: response.content,
           role: 'assistant',
           timestamp: formatTimestamp(),
+          sources: response.sources,
         });
       } catch (err: any) {
         const errorText = err?.message ?? '';
-        const isBackendError =
+        let fallbackText: string;
+
+        if (/Rate limit|429|muy solicitado/.test(errorText)) {
+          fallbackText =
+            'El asistente está muy solicitado en este momento. Espera unos segundos y vuelve a intentarlo.';
+        } else if (errorText.includes('tardando') || errorText.includes('El asistente')) {
+          fallbackText = 'El asistente tardó en responder. Intenta de nuevo en unos segundos.';
+        } else if (
+          errorText.includes('no configurada') ||
           errorText.includes('Groq proxy error') ||
           errorText.includes('Groq API error') ||
-          errorText.includes('no configurada') ||
           errorText.includes('fetch failed') ||
-          errorText.includes('Network request failed');
-
-        const fallbackText = isBackendError
-          ? getOfflineMessage()
-          : 'Lo siento, ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.';
+          errorText.includes('Network request failed')
+        ) {
+          fallbackText = getOfflineMessage();
+        } else {
+          fallbackText =
+            errorText ||
+            'Lo siento, ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.';
+        }
 
         applyReply({
           id: generateId(),
@@ -210,7 +268,7 @@ export default function ChatScreen() {
         });
       }
     },
-    [isLoading, messages, saveCurrentConversation]
+    [isLoading, messages, attachment, saveCurrentConversation]
   );
 
   const loadConversation = useCallback((conv: Conversation) => {
@@ -268,18 +326,29 @@ export default function ChatScreen() {
       <AppHeader
         variant="bot"
         right={
-          <TouchableOpacity
-            testID="conversations-button"
-            onPress={() => {
-              loadConversations();
-              setShowConversations(true);
-            }}
-            style={styles.historyButton}
-            accessibilityLabel="Historial de conversaciones"
-            accessibilityRole="button"
-          >
-            <MaterialCommunityIcons name="history" size={20} color={Colors.neutral} />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              testID="new-conversation"
+              onPress={handleNewConversation}
+              style={styles.historyButton}
+              accessibilityLabel="Nueva conversación"
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons name="plus" size={20} color={Colors.neutral} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              testID="conversations-button"
+              onPress={() => {
+                loadConversations();
+                setShowConversations(true);
+              }}
+              style={styles.historyButton}
+              accessibilityLabel="Historial de conversaciones"
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons name="history" size={20} color={Colors.neutral} />
+            </TouchableOpacity>
+          </View>
         }
       />
 
@@ -298,6 +367,9 @@ export default function ChatScreen() {
               role={item.role}
               timestamp={item.timestamp}
               isLoading={item.isLoading}
+              sources={item.sources}
+              imageUri={item.imageUri}
+              attachmentLabel={item.attachmentLabel}
             />
           )}
           contentContainerStyle={styles.listContent}
@@ -334,8 +406,76 @@ export default function ChatScreen() {
           </View>
         )}
 
-        <ChatInput onSend={handleSend} disabled={isLoading} />
+        {attachment && (
+          <View style={styles.attachmentPreview} testID="attachment-preview">
+            {attachment.type === 'image' ? (
+              <Image
+                source={{ uri: attachment.uri }}
+                style={styles.attachmentImage}
+                contentFit="cover"
+                transition={150}
+              />
+            ) : (
+              <View style={styles.attachmentFileIcon}>
+                <MaterialCommunityIcons name="file-document-outline" size={18} color={Colors.clinicalBlue} />
+              </View>
+            )}
+            <Text style={styles.attachmentName} numberOfLines={1}>
+              {attachment.name}
+            </Text>
+            <TouchableOpacity
+              testID="remove-attachment"
+              onPress={handleRemoveAttachment}
+              style={styles.attachmentRemove}
+              accessibilityLabel="Quitar adjunto"
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons name="close" size={16} color={Colors.neutral} />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <ChatInput onSend={handleSend} onAttach={() => setShowAttachMenu(true)} disabled={isLoading} />
       </KeyboardAvoidingView>
+
+      {/* Attachments modal */}
+      <Modal
+        visible={showAttachMenu}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setShowAttachMenu(false)}
+      >
+        <TouchableOpacity
+          style={styles.attachBackdrop}
+          activeOpacity={1}
+          onPress={() => setShowAttachMenu(false)}
+        >
+          <View style={styles.attachSheet}>
+            <Text style={styles.attachTitle}>Adjuntar a la conversación</Text>
+            <TouchableOpacity
+              testID="attach-image"
+              style={styles.attachOption}
+              onPress={() => handlePickAttachment('image')}
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons name="image-outline" size={20} color={Colors.clinicalBlue} />
+              <Text style={styles.attachOptionText}>Imagen de la galería</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              testID="attach-text"
+              style={styles.attachOption}
+              onPress={() => handlePickAttachment('file')}
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons name="file-document-outline" size={20} color={Colors.clinicalBlue} />
+              <Text style={styles.attachOptionText}>Archivo (PDF, DOCX, txt…)</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.attachCancel} onPress={() => setShowAttachMenu(false)}>
+              <Text style={styles.attachCancelText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       {/* Modal de conversaciones */}
       <Modal
@@ -349,6 +489,16 @@ export default function ChatScreen() {
             <View style={styles.modalHandle} />
             <Text style={styles.modalTitle}>Conversaciones</Text>
 
+            <TouchableOpacity
+              testID="modal-new-conversation"
+              onPress={handleNewConversation}
+              style={styles.newConversationButton}
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons name="plus" size={18} color="#FFFFFF" />
+              <Text style={styles.newConversationText}>Nueva conversación</Text>
+            </TouchableOpacity>
+
             {conversations.length === 0 ? (
               <Text style={styles.modalEmpty}>No hay conversaciones guardadas</Text>
             ) : (
@@ -359,15 +509,26 @@ export default function ChatScreen() {
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => loadConversation(item)}
-                    onLongPress={() => handleDeleteConversation(item)}
                     style={styles.convRow}
+                    accessibilityRole="button"
                   >
-                    <Text style={styles.convTitle} numberOfLines={1}>
-                      {item.title}
-                    </Text>
-                    <Text style={styles.convMeta}>
-                      {formatDate(item.last_updated)} · {item.messages.length} mensajes
-                    </Text>
+                    <View style={styles.convRowInfo}>
+                      <Text style={styles.convTitle} numberOfLines={1}>
+                        {item.title}
+                      </Text>
+                      <Text style={styles.convMeta}>
+                        {formatDate(item.last_updated)} · {item.messages.length} mensajes
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      testID={`delete-conversation-${item.id}`}
+                      onPress={() => handleDeleteConversation(item)}
+                      style={styles.convDelete}
+                      accessibilityLabel="Eliminar conversación"
+                      accessibilityRole="button"
+                    >
+                      <MaterialCommunityIcons name="trash-can-outline" size={18} color="#C0392B" />
+                    </TouchableOpacity>
                   </TouchableOpacity>
                 )}
               />
@@ -400,6 +561,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
   listContent: {
     paddingTop: 12,
     paddingBottom: 12,
@@ -429,6 +594,88 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
     fontSize: 12,
     color: Colors.deepSlate,
+  },
+  attachmentPreview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginHorizontal: 24,
+    marginBottom: 8,
+    padding: 10,
+    borderRadius: 14,
+    backgroundColor: Colors.skyLight,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  attachmentImage: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+  },
+  attachmentFileIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  attachmentName: {
+    flex: 1,
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 13,
+    color: Colors.deepSlate,
+  },
+  attachmentRemove: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  attachBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+  },
+  attachSheet: {
+    backgroundColor: Colors.surface,
+    borderRadius: 20,
+    padding: 16,
+    gap: 8,
+  },
+  attachTitle: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 16,
+    color: Colors.deepSlate,
+    marginBottom: 4,
+  },
+  attachOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: Colors.skyLight,
+  },
+  attachOptionText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    color: Colors.deepSlate,
+  },
+  attachCancel: {
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  attachCancelText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    color: Colors.neutral,
   },
   modalBackdrop: {
     flex: 1,
@@ -468,12 +715,42 @@ const styles = StyleSheet.create({
   modalList: {
     paddingHorizontal: 16,
   },
+  newConversationButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginHorizontal: 24,
+    marginBottom: 12,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: Colors.clinicalBlue,
+  },
+  newConversationText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    color: '#FFFFFF',
+  },
   convRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 12,
     backgroundColor: Colors.skyLight,
     marginBottom: 8,
+  },
+  convRowInfo: {
+    flex: 1,
+  },
+  convDelete: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   convTitle: {
     fontFamily: 'Inter-SemiBold',

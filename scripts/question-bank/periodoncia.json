@@ -1,0 +1,1047 @@
+[
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "La película adquirida o cutícula que se forma sobre la superficie dental tiene su origen principal en:",
+    "options": [
+      "Proteínas de la saliva",
+      "Células del epitelio descamado",
+      "Bacterias del surco gingival",
+      "Azúcares de la dieta"
+    ],
+    "correctIndex": 0,
+    "explanation": "La película adquirida se forma por la adsorción de glicoproteínas y proteínas salivales sobre el esmalte, en cuestión de minutos tras la limpieza. No está formada por bacterias, pero sirve de superficie de adhesión para los primeros colonizadores microbianos.",
+    "hint": "Piensa en qué sustancia baña constantemente los dientes desde el inicio.",
+    "tags": [
+      "película adquirida",
+      "placa dental"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "Las primeras bacterias que colonizan la superficie dental limpia pertenecen principalmente a:",
+    "options": [
+      "Cocos grampositivos (estreptococos)",
+      "Bacilos gramnegativos anaerobios",
+      "Espiroquetas",
+      "Bacterias pigmentadas negras"
+    ],
+    "correctIndex": 0,
+    "explanation": "La colonización inicial está dominada por cocos grampositivos como los estreptococos y Actinomyces, que se adhieren a la película adquirida. Los gramnegativos anaerobios y las espiroquetas aparecen en etapas más tardías de maduración de la biopelícula.",
+    "hint": "¿Qué grupo bacteriano actúa como colonizador pionero sobre la superficie limpia?",
+    "tags": [
+      "placa dental",
+      "colonización bacteriana"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "El cálculo dental contribuye a la enfermedad periodontal principalmente porque:",
+    "options": [
+      "Su superficie rugosa retiene placa y dificulta la higiene",
+      "Es tóxico de forma directa para las células epiteliales",
+      "Altera el pH salival en pocas horas",
+      "Es de origen genético y no requiere placa"
+    ],
+    "correctIndex": 0,
+    "explanation": "El cálculo es placa mineralizada y, aunque no es el agente causal directo, actúa como retentivo: su superficie rugosa y porosa favorece la acumulación bacteriana y dificulta el cepillado. Por eso debe eliminarse mediante instrumentación profesional.",
+    "hint": "Piensa en el papel del cálculo como superficie de retención de nueva placa.",
+    "tags": [
+      "cálculo dental",
+      "etiología"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "El índice gingival de Löe-Silness evalúa:",
+    "options": [
+      "El grado de inflamación gingival",
+      "La profundidad de las bolsas periodontales",
+      "La pérdida ósea radiográfica",
+      "La movilidad dental"
+    ],
+    "correctIndex": 0,
+    "explanation": "El índice gingival de Löe-Silness valora la inflamación de la encía (cambios de color, consistencia y sangrado) en una escala de 0 a 3, sin necesidad de sondaje. Es un índice de severidad de la gingivitis, distinto de la medición de la profundidad de bolsa.",
+    "hint": "Es un índice que observa la encía y sus cambios, no la bolsa.",
+    "tags": [
+      "índices periodontales",
+      "índice gingival"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "La estructura que marca el límite entre la encía y la mucosa alveolar se denomina:",
+    "options": [
+      "Línea (unión) mucogingival",
+      "Surco gingival",
+      "Línea de la sonrisa",
+      "Papila interdental"
+    ],
+    "correctIndex": 0,
+    "explanation": "La unión mucogingival es la línea que separa la encía queratinizada, firme y de color rosado, de la mucosa alveolar, más roja y móvil. Su posición es clínicamente relevante al planificar procedimientos periodontales.",
+    "hint": "Busca el límite entre dos tejidos de color y movilidad distintos.",
+    "tags": [
+      "anatomía",
+      "unión mucogingival"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "La halitosis de origen bucal se asocia principalmente con:",
+    "options": [
+      "Compuestos sulfurados volátiles producidos por bacterias",
+      "Deficiencia de vitamina C",
+      "Infecciones de las vías respiratorias superiores",
+      "Consumo elevado de azúcares"
+    ],
+    "correctIndex": 0,
+    "explanation": "El olor bucal desagradable de origen oral se relaciona con la degradación bacteriana de proteínas, que libera compuestos sulfurados volátiles como el sulfuro de hidrógeno. El control de placa y de la enfermedad periodontal contribuye a reducirla.",
+    "hint": "¿Qué producen las bacterias al degradar proteínas y que huele mal?",
+    "tags": [
+      "halitosis",
+      "placa dental"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "La placa bacteriana dental es una biopelícula (biofilm) que:",
+    "options": [
+      "Se adhiere firmemente a las superficies y resiste los enjuagues",
+      "Se elimina por completo con un solo cepillado",
+      "Es inofensiva mientras no sea visible a simple vista",
+      "Es exclusivamente de origen alimentario, sin bacterias"
+    ],
+    "correctIndex": 0,
+    "explanation": "La placa es una comunidad microbiana organizada dentro de una matriz extracelular, firmemente adherida a las superficies dentarias. Esa organización le confiere resistencia a los agentes físicos y químicos, por lo que requiere el cepillado mecánico para eliminarse.",
+    "hint": "¿Por qué los enjuagues solos no eliminan la placa?",
+    "tags": [
+      "placa dental",
+      "biopelícula"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "La zona dentaria más propensa a la acumulación de placa y al desarrollo de enfermedad periodontal es:",
+    "options": [
+      "La zona interproximal (espacios interdentales)",
+      "La fosa oclusal",
+      "El borde incisal",
+      "La cara labial media"
+    ],
+    "correctIndex": 0,
+    "explanation": "Las superficies interproximales son las más difíciles de limpiar y las que más acumulan biopelícula, por lo que suelen ser las primeras afectadas por gingivitis y periodontitis. Por ello se recomienda complementar el cepillado con hilo o cepillos interdentales.",
+    "hint": "Es la zona que el cepillo no alcanza fácilmente.",
+    "tags": [
+      "placa dental",
+      "higiene interdental"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "En la evaluación periodontal completa, la profundidad de sondaje de cada diente se registra en:",
+    "options": [
+      "6 sitios: 3 por vestibular y 3 por lingual/palatino",
+      "4 sitios: mesial, distal, vestibular y lingual",
+      "3 sitios: vestibular, lingual y oclusal",
+      "2 sitios: mesial y distal"
+    ],
+    "correctIndex": 0,
+    "explanation": "El sondaje de seis sitios por diente (mesiovestibular, vestibular, distovestibular y sus homólogos linguales o palatinos) permite detectar bolsas que un sondaje de solo cuatro caras podría pasar por alto. Es la base del registro periodontal y del seguimiento.",
+    "hint": "Cuenta cuántas caras se exploran por cada lado del diente.",
+    "tags": [
+      "evaluación periodontal",
+      "sondaje"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "Según la clasificación de Miller, la movilidad dental de grado 2 corresponde a un desplazamiento horizontal de:",
+    "options": [
+      "Entre 1 y 2 mm",
+      "Menos de 1 mm",
+      "Más de 2 mm o en sentido vertical",
+      "Cualquier movimiento solo con percusión"
+    ],
+    "correctIndex": 0,
+    "explanation": "La movilidad grado 1 es menor de 1 mm de desplazamiento horizontal, el grado 2 oscila entre 1 y 2 mm y el grado 3 supera los 2 mm o presenta desplazamiento vertical. Registrar la movilidad ayuda a valorar el soporte periodontal y el pronóstico.",
+    "hint": "Recuerda los tres grados: menor de 1, entre 1 y 2, y mayor de 2.",
+    "tags": [
+      "movilidad dental",
+      "evaluación"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "Una ventaja de la instrumentación ultrasónica frente a la manual es:",
+    "options": [
+      "Reducir el tiempo de trabajo en superficies con cálculo abundante",
+      "Eliminar la necesidad de alisar la raíz",
+      "No requerir irrigación durante su uso",
+      "No generar aerosoles durante el procedimiento"
+    ],
+    "correctIndex": 0,
+    "explanation": "El raspado ultrasónico fragmenta placa y cálculo con rapidez, lo que reduce el tiempo operatorio en pacientes con depósitos abundantes. Sin embargo, no sustituye al acabado manual: el alisado radicular fino se logra mejor con instrumentos manuales.",
+    "hint": "Piensa en la eficiencia sobre depósitos grandes.",
+    "tags": [
+      "instrumentación ultrasónica",
+      "raspado"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "Al afilar una cureta periodontal, el objetivo principal es:",
+    "options": [
+      "Restaurar el filo conservando la angulación de la hoja",
+      "Aumentar el ángulo de la hoja para volverla más agresiva",
+      "Reducir la longitud de la hoja",
+      "Enderezar la curva de la hoja"
+    ],
+    "correctIndex": 0,
+    "explanation": "El afilado busca recuperar la angulación y el filo correctos de la hoja, que se pierden con el uso. Mantener el ángulo de diseño permite raspar eficazmente sin dañar el tejido ni dejar la superficie radicular áspera.",
+    "hint": "¿Qué se pierde con el uso y se recupera al afilar?",
+    "tags": [
+      "afilado",
+      "instrumentos periodontales"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "El objetivo principal de la terapia de mantenimiento periodontal es:",
+    "options": [
+      "Prevenir la recurrencia y la progresión de la enfermedad",
+      "Reemplazar todas las restauraciones defectuosas",
+      "Sustituir el cepillado por enjuagues antisépticos",
+      "Realizar cirugía en cada cita de control"
+    ],
+    "correctIndex": 0,
+    "explanation": "La terapia de mantenimiento (soporte) busca preservar los resultados de la fase activa, controlando la biopelícula y detectando a tiempo las recidivas. Su periodicidad se adapta al riesgo individual de cada paciente.",
+    "hint": "¿Qué fase del tratamiento evita que la enfermedad vuelva?",
+    "tags": [
+      "mantenimiento periodontal",
+      "terapia de soporte"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "El colgajo periodontal de Widman modificado se caracteriza por:",
+    "options": [
+      "Conservar las papilas interdentales",
+      "Eliminar toda la encía queratinizada",
+      "Realizar incisiones horizontales en el hueso",
+      "Desplazar el margen gingival hacia apical"
+    ],
+    "correctIndex": 0,
+    "explanation": "La técnica de Widman modificado emplea incisiones en bisel interno y preserva el tejido papilar para lograr una buena adaptación y estética. Su objetivo es el acceso al raspado radicular con el mínimo sacrificio de tejido gingival.",
+    "hint": "Piensa en una cirugía que busca acceso y conservación del tejido.",
+    "tags": [
+      "cirugía periodontal",
+      "colgajo de Widman"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "El alargamiento coronario quirúrgico se indica principalmente para:",
+    "options": [
+      "Exponer mayor corona clínica respetando el espacio biológico",
+      "Eliminar cálculo subgingival profundo",
+      "Regenerar hueso perdido",
+      "Aumentar la encía queratinizada"
+    ],
+    "correctIndex": 0,
+    "explanation": "El alargamiento coronario remodela encía y hueso para aumentar la corona clínica visible, por ejemplo antes de restaurar un diente muy destruido o con caries subgingival. Debe respetar el espacio biológico (unión epitelial e inserción de tejido conectivo) para evitar problemas posteriores.",
+    "hint": "Se indica antes de restaurar dientes con poca corona clínica.",
+    "tags": [
+      "alargamiento coronario",
+      "cirugía"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "El agrandamiento gingival inducido por medicamentos se asocia clásicamente con el uso de:",
+    "options": [
+      "Fenitoína, ciclosporina y nifedipino",
+      "Penicilina, amoxicilina y metronidazol",
+      "Paracetamol, ibuprofeno y naproxeno",
+      "Insulina, metformina y glibenclamida"
+    ],
+    "correctIndex": 0,
+    "explanation": "La fenitoína (antiepiléptico), la ciclosporina (inmunosupresor) y el nifedipino (antihipertensivo) producen agrandamiento gingival como efecto adverso, favorecido además por la placa. El manejo incluye mejorar la higiene y, según el caso, coordinar el ajuste del fármaco.",
+    "hint": "Son fármacos de grupos muy distintos: un antiepiléptico, un inmunosupresor y un bloqueador de canales de calcio.",
+    "tags": [
+      "agrandamiento gingival",
+      "medicamentos"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "En un diente con fístula en la encía insertada y periodonto clínicamente sano en el resto de la boca, la causa más probable es:",
+    "options": [
+      "Una lesión de origen endodóntico",
+      "Una periodontitis generalizada",
+      "Una lesión de furca aislada",
+      "Un trauma oclusal crónico"
+    ],
+    "correctIndex": 0,
+    "explanation": "Una fístula localizada sobre la encía insertada, sin enfermedad periodontal generalizada, orienta casi siempre hacia una infección de origen pulpar que drena a través del periodonto. La lesión de origen endodóntico suele resolverse con el tratamiento de conducto.",
+    "hint": "¿Qué origen explica un drenaje localizado sin bolsas en el resto de la boca?",
+    "tags": [
+      "endo-perio",
+      "diagnóstico"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "Durante la reevaluación tras la fase inicial, un sitio que persiste con bolsa de 6 mm y sangrado al sondaje indica:",
+    "options": [
+      "Que la terapia debe continuarse en ese sitio",
+      "El éxito definitivo del tratamiento",
+      "Inflamación fisiológica normal",
+      "Sobretratamiento del sitio"
+    ],
+    "correctIndex": 0,
+    "explanation": "La persistencia de bolsas profundas con sangrado tras la fase higiénica señala que ese sitio no ha respondido adecuadamente y requiere terapia adicional (reinstrumentación o cirugía). El sangrado al sondaje refleja inflamación activa persistente.",
+    "hint": "¿Qué te dice que la inflamación sigue activa en el sitio?",
+    "tags": [
+      "reevaluación",
+      "bolsa residual"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "La osteoporosis se ha asociado con:",
+    "options": [
+      "Mayor pérdida ósea e inserción en pacientes con periodontitis",
+      "Menor formación de cálculo dental",
+      "Aumento de la encía queratinizada",
+      "Menor respuesta inflamatoria gingival"
+    ],
+    "correctIndex": 0,
+    "explanation": "La osteoporosis reduce la masa ósea y puede favorecer una mayor pérdida ósea alveolar ante la periodontitis, por lo que se considera un factor modificador. En estos pacientes debe reforzarse la prevención y el control periodontal.",
+    "hint": "Relaciona una enfermedad de baja masa ósea con el soporte del diente.",
+    "tags": [
+      "osteoporosis",
+      "factores sistémicos"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "El injerto óseo en cirugía periodontal se indica principalmente en defectos:",
+    "options": [
+      "Intraóseos con paredes óseas que contengan el material",
+      "Supraóseos sin paredes óseas",
+      "Solo en recesiones gingivales aisladas",
+      "Sitios con movilidad grado 3 no controlada"
+    ],
+    "correctIndex": 0,
+    "explanation": "Los defectos intraóseos con paredes (de tres y dos paredes) retienen el injerto y permiten la regeneración, por lo que son los candidatos ideales. Los defectos supraóseos, con pérdida horizontal, tienen menor capacidad de contención del material.",
+    "hint": "¿Qué tipo de defecto ofrece paredes para sostener el material injertado?",
+    "tags": [
+      "injertos óseos",
+      "regeneración"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "true_false",
+    "question": "La pigmentación melánica de la encía en personas de piel oscura debe tratarse siempre como una lesión patológica.",
+    "options": [
+      "Verdadero",
+      "Falso"
+    ],
+    "correctIndex": 1,
+    "explanation": "La pigmentación melánica es una variación fisiológica normal, frecuente en personas con piel oscura, y no requiere tratamiento. Solo debe evaluarse si cambia de forma, tamaño o color, ya que podría orientar hacia una lesión distinta.",
+    "hint": "¿Es la pigmentación oscura algo normal en ciertos pacientes?",
+    "tags": [
+      "encía sana",
+      "pigmentación"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "true_false",
+    "question": "El cálculo supragingival suele tener un color blanco amarillento, mientras que el subgingival tiende a presentar una coloración más oscura.",
+    "options": [
+      "Verdadero",
+      "Falso"
+    ],
+    "correctIndex": 0,
+    "explanation": "El cálculo supragingival, expuesto a la saliva, es típicamente blanco amarillento y más blando; el subgingival incorpora productos sanguíneos y suele ser más oscuro y de consistencia más dura. Su distinción ayuda a localizar depósitos durante la instrumentación.",
+    "hint": "Compara dónde se forma cada tipo y qué lo tiñe.",
+    "tags": [
+      "cálculo dental",
+      "cálculo subgingival"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "true_false",
+    "question": "El raspado ultrasónico debe reemplazar siempre al raspado manual en el alisado radicular.",
+    "options": [
+      "Verdadero",
+      "Falso"
+    ],
+    "correctIndex": 1,
+    "explanation": "El ultrasonido es eficaz para eliminar placa y cálculo en gran volumen, pero el alisado radicular fino se consigue mejor con instrumentos manuales. Ambas técnicas se complementan según el caso y la experiencia del operador.",
+    "hint": "¿Puede el ultrasonido lograr siempre el acabado fino de la raíz?",
+    "tags": [
+      "instrumentación ultrasónica",
+      "raspado"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "true_false",
+    "question": "El colgajo periodontal de espesor total (mucoperióstico) incluye el periostio junto con la encía.",
+    "options": [
+      "Verdadero",
+      "Falso"
+    ],
+    "correctIndex": 0,
+    "explanation": "En el colgajo de espesor total se levantan juntos la encía y el periostio, exponiendo la superficie ósea. A diferencia del colgajo de espesor parcial, esta técnica preserva la irrigación del hueso a través del periostio adherido.",
+    "hint": "¿Qué capa profunda acompaña al colgajo en esta técnica?",
+    "tags": [
+      "cirugía periodontal",
+      "colgajo"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "true_false",
+    "question": "La cirugía periodontal de colgajo debe indicarse antes de completar la fase higiénica del tratamiento.",
+    "options": [
+      "Verdadero",
+      "Falso"
+    ],
+    "correctIndex": 1,
+    "explanation": "La secuencia correcta exige primero la fase higiénica (control de placa y raspado) y la reevaluación; solo los sitios que persisten con bolsas profundas y sangrado se someten a cirugía. Operar sin controlar la inflamación previa empeora el resultado.",
+    "hint": "¿En qué momento del tratamiento se decide la cirugía?",
+    "tags": [
+      "cirugía periodontal",
+      "secuencia de tratamiento"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "true_false",
+    "question": "La férula periodontal está indicada para estabilizar dientes con movilidad grado 3 en un paciente con enfermedad activa sin tratar.",
+    "options": [
+      "Verdadero",
+      "Falso"
+    ],
+    "correctIndex": 1,
+    "explanation": "Ferulizar dientes con movilidad grado 3 mientras existe inflamación activa y sin tratamiento tiene mal pronóstico, pues la férula no controla la enfermedad. Primero debe tratarse y estabilizarse el periodonto; la férula se reserva para casos seleccionados y estables.",
+    "hint": "¿Una férula resuelve la inflamación subyacente?",
+    "tags": [
+      "ferulización",
+      "movilidad"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "true_false",
+    "question": "En la periimplantitis, la cirugía de descontaminación de la superficie del implante es el tratamiento de elección de primera línea en todos los casos.",
+    "options": [
+      "Verdadero",
+      "Falso"
+    ],
+    "correctIndex": 1,
+    "explanation": "El manejo inicial de la periimplantitis es no quirúrgico: desbridamiento mecánico, control de la higiene y, según el caso, antibióticos. La cirugía de descontaminación se reserva para lesiones avanzadas o que no responden al tratamiento conservador.",
+    "hint": "¿Siempre se necesita cirugía para tratar la periimplantitis?",
+    "tags": [
+      "periimplantitis",
+      "manejo"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "Para visualizar la placa bacteriana en la consulta se emplean comprimidos reveladores que contienen ____.",
+    "options": [
+      "eritrosina",
+      "melanina",
+      "peróxido",
+      "queratina"
+    ],
+    "correctIndex": 0,
+    "explanation": "Los reveladores de placa contienen colorantes como la eritrosina, que tiñen la biopelícula y la hacen visible para la instrucción de higiene. Permiten al paciente y al clínico identificar las zonas donde el cepillado es deficiente.",
+    "hint": "Es un colorante rojo utilizado como revelador de placa.",
+    "tags": [
+      "índices de placa",
+      "revelador de placa"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "El cálculo dental se origina cuando la placa bacteriana se ____ sobre la superficie dentaria.",
+    "options": [
+      "mineraliza",
+      "desorganiza",
+      "queratiniza",
+      "fermenta"
+    ],
+    "correctIndex": 0,
+    "explanation": "El cálculo es placa dental que se mineraliza por la precipitación de sales de calcio y fosfato. Una vez formado, su superficie rugosa retiene nueva placa, perpetuando la inflamación.",
+    "hint": "¿Qué proceso transforma la placa blanda en cálculo duro?",
+    "tags": [
+      "cálculo dental",
+      "placa dental"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "El índice de placa de Silness-Löe puntúa la cantidad de placa en una escala de 0 a ____.",
+    "options": [
+      "3",
+      "2",
+      "4",
+      "5"
+    ],
+    "correctIndex": 0,
+    "explanation": "El índice de placa de Silness-Löe valora la placa en cuatro sitios por diente con puntuaciones de 0 a 3 (desde ausencia hasta placa abundante). A diferencia del índice de O'Leary, no requiere revelador y evalúa el grosor de la placa.",
+    "hint": "Es la misma escala 0-3 que usa el índice gingival.",
+    "tags": [
+      "índices de placa",
+      "Silness-Löe"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "En la instrumentación ultrasónica, la punta activa del instrumento vibra a alta ____ para fragmentar la placa y el cálculo.",
+    "options": [
+      "frecuencia",
+      "presión",
+      "temperatura",
+      "densidad"
+    ],
+    "correctIndex": 0,
+    "explanation": "El inserto ultrasónico vibra a frecuencias elevadas (del orden de miles de ciclos por segundo) y, junto con la irrigación, desorganiza y desprende los depósitos. La refrigeración con agua es esencial para evitar el calentamiento de los tejidos.",
+    "hint": "¿Qué propiedad de la onda permite el efecto mecánico del ultrasonido?",
+    "tags": [
+      "instrumentación ultrasónica",
+      "ultrasonido"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "Para explorar la movilidad dental se aplica una fuerza con los mangos de dos instrumentos en sentido ____.",
+    "options": [
+      "vestibulolingual",
+      "mesiodistal",
+      "vertical",
+      "apical"
+    ],
+    "correctIndex": 0,
+    "explanation": "La movilidad se evalúa ejerciendo presión alternada en sentido vestibulolingual, que es donde se detecta el desplazamiento horizontal característico. El resultado se clasifica en grados según la magnitud del desplazamiento.",
+    "hint": "¿En qué dirección se mueve normalmente un diente al presionarlo?",
+    "tags": [
+      "movilidad dental",
+      "evaluación"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "En la paciente gestante, los procedimientos periodontales electivos se prefieren durante el ____ trimestre.",
+    "options": [
+      "segundo",
+      "primer",
+      "tercer",
+      "cuarto"
+    ],
+    "correctIndex": 0,
+    "explanation": "Durante el primer trimestre se evita el tratamiento electivo por el período de organogénesis, y en el tercero por el riesgo de molestias al mantenerse en decúbito. El segundo trimestre se considera la ventana más segura para la atención periodontal electiva.",
+    "hint": "Ni muy temprano ni muy tarde en la gestación.",
+    "tags": [
+      "embarazo",
+      "factores sistémicos"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "En la terapia de mantenimiento periodontal, el intervalo entre citas se establece según el ____ individual de recidiva del paciente.",
+    "options": [
+      "riesgo",
+      "color",
+      "sexo",
+      "turno"
+    ],
+    "correctIndex": 0,
+    "explanation": "La periodicidad del mantenimiento se individualiza según el riesgo de recurrencia, que considera bolsas residuales, sangrado, higiene y condiciones sistémicas. Un paciente de alto riesgo requiere controles más frecuentes que uno estable.",
+    "hint": "¿Qué evaluación guía la frecuencia de los controles?",
+    "tags": [
+      "mantenimiento periodontal",
+      "riesgo de recidiva"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles son características clínicas de la encía sana?",
+    "options": [
+      "Color rosado coral",
+      "Contorno festoneado",
+      "Sangrado espontáneo",
+      "Puntilleo presente",
+      "Recesión generalizada"
+    ],
+    "correctIndexes": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "La encía sana es de color rosado coral, firme, con contorno festoneado y, en muchos adultos, presenta puntilleo. El sangrado espontáneo y la recesión generalizada indican enfermedad o pérdida de tejido.",
+    "hint": "Descarta todo lo que sugiera inflamación o pérdida de tejido.",
+    "tags": [
+      "encía sana",
+      "anatomía"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles son signos clínicos de inflamación gingival?",
+    "options": [
+      "Enrojecimiento (eritema)",
+      "Pérdida del puntilleo",
+      "Color rosado coral",
+      "Edema o tumefacción",
+      "Ausencia total de sangrado"
+    ],
+    "correctIndexes": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "La inflamación gingival se manifiesta con enrojecimiento, edema, pérdida del puntilleo y, frecuentemente, sangrado. El color rosado coral y la ausencia de sangrado son características del tejido sano, no inflamado.",
+    "hint": "Busca cambios que reflejen aumento del riego sanguíneo y del líquido en el tejido.",
+    "tags": [
+      "inflamación",
+      "signos clínicos"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles son instrumentos de la instrumentación periodontal manual?",
+    "options": [
+      "Escalador (hoc)",
+      "Curetas",
+      "Bisturí",
+      "Azada (hoe)",
+      "Fresa quirúrgica"
+    ],
+    "correctIndexes": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Los escaladores, las azadas y las curetas son instrumentos manuales diseñados para eliminar placa y cálculo. El bisturí se emplea en cirugía y la fresa en odontología restauradora o quirúrgica, no en el raspado periodontal manual.",
+    "hint": "Piensa en instrumentos de hoja diseñados para raspar, no para cortar o fresar.",
+    "tags": [
+      "instrumentos manuales",
+      "instrumentación"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles son medidas de control mecánico de placa recomendadas al paciente?",
+    "options": [
+      "Cepillado dental",
+      "Uso de hilo (seda) dental",
+      "Uso de cepillos interdentales",
+      "Evitar el cepillado para no lastimar la encía",
+      "Reemplazar el cepillado solo por enjuagues"
+    ],
+    "correctIndexes": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "El control mecánico de placa se basa en el cepillado y en la limpieza interdental (hilo y cepillos interdentales), que llega a zonas que el cepillo no alcanza. Evitar el cepillado o sustituirlo por enjuagues favorece la acumulación de biopelícula.",
+    "hint": "Selecciona métodos físicos que remuevan la placa de las superficies.",
+    "tags": [
+      "control de placa",
+      "higiene"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles condiciones sistémicas pueden modificar la presentación de la enfermedad periodontal?",
+    "options": [
+      "Embarazo",
+      "Osteoporosis",
+      "Infección por VIH",
+      "Fractura de clavícula",
+      "Otitis externa"
+    ],
+    "correctIndexes": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "El embarazo, la osteoporosis y la infección por VIH son condiciones que pueden modificar la respuesta de los tejidos periodontales ante la biopelícula. Una fractura de clavícula o una otitis externa no tienen relación directa con el periodonto.",
+    "hint": "Descarta afecciones que no involucran el sistema de soporte dental.",
+    "tags": [
+      "factores sistémicos",
+      "modificadores"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles son signos de alarma que obligan a manejar con urgencia al paciente periodontal?",
+    "options": [
+      "Fiebre y malestar general asociados a supuración",
+      "Tumefacción fluctuante y dolorosa de inicio súbito",
+      "Movilidad marcada de aparición brusca en varios dientes",
+      "Pérdida leve de encía queratinizada sin inflamación",
+      "Cálculo supragingival visible sin síntomas"
+    ],
+    "correctIndexes": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "La fiebre con supuración, la tumefacción fluctuante dolorosa (absceso) y la movilidad marcada de inicio brusco indican procesos agudos que requieren atención oportuna. Los hallazgos sin inflamación ni síntomas no constituyen urgencia.",
+    "hint": "Piensa en cuadros agudos con compromiso local o general.",
+    "tags": [
+      "urgencias",
+      "signos de alarma"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "match",
+    "question": "Relaciona cada parte de la encía con su descripción.",
+    "pairs": [
+      {
+        "left": "Encía marginal",
+        "right": "Borde libre de encía que rodea el cuello del diente"
+      },
+      {
+        "left": "Encía insertada",
+        "right": "Encía firme y queratinizada adherida al hueso y a la raíz"
+      },
+      {
+        "left": "Papila interdental",
+        "right": "Encía que ocupa el espacio entre dos dientes adyacentes"
+      },
+      {
+        "left": "Mucosa alveolar",
+        "right": "Mucosa móvil, no queratinizada, que se continúa con el vestíbulo"
+      }
+    ],
+    "tags": [
+      "anatomía",
+      "encía"
+    ],
+    "explanation": "La encía marginal bordea el cuello del diente; la insertada es firme y queratinizada y se adhiere a hueso y raíz; la papila interdental ocupa los espacios interdentales; la mucosa alveolar es móvil, no queratinizada y se continúa con el vestíbulo."
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "match",
+    "question": "Relaciona cada instrumento periodontal manual con su función.",
+    "pairs": [
+      {
+        "left": "Escalador (hoc)",
+        "right": "Eliminar cálculo supragingival en zonas accesibles"
+      },
+      {
+        "left": "Azada (hoe)",
+        "right": "Alisar superficies radiculares planas y amplias"
+      },
+      {
+        "left": "Cincel",
+        "right": "Eliminar cálculo en zonas interdentales estrechas"
+      },
+      {
+        "left": "Cureta universal",
+        "right": "Raspado supragingival y subgingival con filo redondeado"
+      }
+    ],
+    "tags": [
+      "instrumentos manuales",
+      "función"
+    ],
+    "explanation": "El escalador (hoc) elimina cálculo supragingival en zonas accesibles; la azada alisa superficies radiculares planas y amplias; el cincel llega a zonas interdentales estrechas; la cureta universal, con filo redondeado, se usa tanto supra como subgingival."
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "match",
+    "question": "Relaciona cada hallazgo clínico con su significado.",
+    "pairs": [
+      {
+        "left": "Supuración al sondaje",
+        "right": "Actividad inflamatoria aguda en la bolsa"
+      },
+      {
+        "left": "Movilidad grado 3",
+        "right": "Desplazamiento mayor a 2 mm o en sentido vertical"
+      },
+      {
+        "left": "Recesión gingival",
+        "right": "Desplazamiento apical del margen gingival"
+      },
+      {
+        "left": "Bolsa periodontal",
+        "right": "Surco profundizado con pérdida de inserción"
+      }
+    ],
+    "tags": [
+      "signos clínicos",
+      "evaluación"
+    ],
+    "explanation": "La supuración al sondaje indica actividad inflamatoria aguda; la movilidad grado 3 implica desplazamiento mayor a 2 mm o en sentido vertical; la recesión gingival es el desplazamiento apical del margen; la bolsa periodontal es un surco profundizado con pérdida de inserción."
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "match",
+    "question": "Relaciona cada tipo de lesión endoperiodontal con su origen.",
+    "pairs": [
+      {
+        "left": "Lesión primariamente endodóntica",
+        "right": "Infección pulpar que drena a través del periodonto"
+      },
+      {
+        "left": "Lesión primariamente periodontal",
+        "right": "Enfermedad periodontal que produce afectación pulpar"
+      },
+      {
+        "left": "Lesión endoperiodontal verdadera",
+        "right": "Coexistencia de enfermedad pulpar y periodontal que confluyen"
+      },
+      {
+        "left": "Lesión endodóntica con compromiso periodontal",
+        "right": "Lesión pulpar que se extiende a la furca o al margen gingival"
+      }
+    ],
+    "tags": [
+      "endo-perio",
+      "clasificación"
+    ],
+    "explanation": "En la lesión primariamente endodóntica la infección pulpar drena a través del periodonto; en la primariamente periodontal la enfermedad periodontal afecta la pulpa; la lesión verdadera combina ambas enfermedades; la endodóntica con compromiso periodontal se extiende a la furca o al margen."
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 1,
+    "type": "order",
+    "question": "Ordena las etapas de la formación de la placa dental sobre una superficie limpia.",
+    "orderItems": [
+      {
+        "text": "Formación de la película adquirida",
+        "position": 1
+      },
+      {
+        "text": "Adhesión de las primeras bacterias a la superficie",
+        "position": 2
+      },
+      {
+        "text": "Crecimiento y agregación de microcolonias",
+        "position": 3
+      },
+      {
+        "text": "Maduración y aumento de la biopelícula",
+        "position": 4
+      }
+    ],
+    "tags": [
+      "placa dental",
+      "formación de placa"
+    ],
+    "explanation": "La placa se forma en etapas: primero la película adquirida (glicoproteínas salivales), luego la adhesión de las bacterias pioneras, después el crecimiento y la agregación en microcolonias y finalmente la maduración de la biopelícula."
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 2,
+    "type": "order",
+    "question": "Ordena la secuencia de la instrumentación ultrasónica del cálculo.",
+    "orderItems": [
+      {
+        "text": "Seleccionar la punta (inserto) adecuada",
+        "position": 1
+      },
+      {
+        "text": "Ajustar la potencia y la irrigación",
+        "position": 2
+      },
+      {
+        "text": "Colocar la punta activa en contacto con el cálculo",
+        "position": 3
+      },
+      {
+        "text": "Realizar movimientos continuos y suaves sobre la superficie",
+        "position": 4
+      }
+    ],
+    "tags": [
+      "instrumentación ultrasónica",
+      "secuencia"
+    ],
+    "explanation": "La instrumentación ultrasónica comienza eligiendo la punta (inserto) adecuada, se ajusta la potencia y la irrigación, se coloca la punta activa en contacto con el cálculo y se realizan movimientos continuos y suaves sobre la superficie."
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "order",
+    "question": "Ordena el manejo inicial de una lesión endoperiodontal combinada.",
+    "orderItems": [
+      {
+        "text": "Evaluación clínica y radiográfica del diente y el periodonto",
+        "position": 1
+      },
+      {
+        "text": "Tratamiento de conducto (endodoncia) del diente afectado",
+        "position": 2
+      },
+      {
+        "text": "Reevaluación de la respuesta del tejido periodontal",
+        "position": 3
+      },
+      {
+        "text": "Terapia periodontal del sitio si la lesión persiste",
+        "position": 4
+      }
+    ],
+    "tags": [
+      "endo-perio",
+      "plan de tratamiento"
+    ],
+    "explanation": "El manejo de una lesión endoperiodontal combinada empieza con la evaluación clínica y radiográfica, sigue con el tratamiento endodóntico del diente, luego se reevalúa la respuesta periodontal y, si la lesión persiste, se aplica la terapia periodontal del sitio."
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "pe-case-1",
+    "caseText": "Mujer de 42 años acude por dolor pulsátil e inflamación en la zona del primer molar inferior izquierdo (36) desde hace 2 días. Refiere periodontitis diagnosticada años atrás, pero lleva tiempo sin controles. Al examen presenta tumefacción ovalada y fluctuante en la encía vestibular del 36, bolsa de 9 mm con supuración al sondaje y leve movilidad; el resto de la boca muestra bolsas de 5 a 6 mm con sangrado generalizado. No hay fiebre ni compromiso sistémico.",
+    "question": "¿Cuál es el diagnóstico más probable del 36?",
+    "options": [
+      "Absceso periodontal",
+      "Absceso periapical (de origen endodóntico)",
+      "Granuloma piógeno",
+      "Fractura radicular vertical"
+    ],
+    "correctIndex": 0,
+    "explanation": "La tumefacción fluctuante sobre una bolsa profunda con supuración, en un paciente con periodontitis generalizada, corresponde a un absceso periodontal: una colección purulenta localizada en la pared de la bolsa. El origen endodóntico, sin caries ni lesión pulpar evidente, es menos probable como primera opción.",
+    "hint": "Relaciona la bolsa profunda y la supuración con la inflamación del periodonto.",
+    "tags": [
+      "absceso periodontal",
+      "urgencias",
+      "diagnóstico"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "pe-case-1",
+    "caseText": "Mujer de 42 años acude por dolor pulsátil e inflamación en la zona del primer molar inferior izquierdo (36) desde hace 2 días. Refiere periodontitis diagnosticada años atrás, pero lleva tiempo sin controles. Al examen presenta tumefacción ovalada y fluctuante en la encía vestibular del 36, bolsa de 9 mm con supuración al sondaje y leve movilidad; el resto de la boca muestra bolsas de 5 a 6 mm con sangrado generalizado. No hay fiebre ni compromiso sistémico.",
+    "question": "¿Cuál es la conducta inicial más apropiada en este momento?",
+    "options": [
+      "Establecer drenaje del absceso y raspar la zona afectada",
+      "Extraer el 36 de inmediato",
+      "Indicar únicamente antibiótico sistémico",
+      "Ferulizar el diente sin drenar"
+    ],
+    "correctIndex": 0,
+    "explanation": "El manejo del absceso periodontal comienza con el drenaje, que alivia la presión, y la instrumentación del sitio para eliminar el contenido de la bolsa. El antibiótico se reserva para casos con compromiso sistémico; la extracción y la férula no resuelven la infección aguda.",
+    "hint": "Lo prioritario es liberar la presión del material purulento.",
+    "tags": [
+      "absceso periodontal",
+      "urgencias",
+      "manejo"
+    ]
+  },
+  {
+    "specialty_slug": "periodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "pe-case-1",
+    "caseText": "Mujer de 42 años acude por dolor pulsátil e inflamación en la zona del primer molar inferior izquierdo (36) desde hace 2 días. Refiere periodontitis diagnosticada años atrás, pero lleva tiempo sin controles. Al examen presenta tumefacción ovalada y fluctuante en la encía vestibular del 36, bolsa de 9 mm con supuración al sondaje y leve movilidad; el resto de la boca muestra bolsas de 5 a 6 mm con sangrado generalizado. No hay fiebre ni compromiso sistémico.",
+    "question": "Una vez resuelta la urgencia, ¿cuál es el siguiente paso en el manejo integral de la paciente?",
+    "options": [
+      "Completar la terapia periodontal de toda la boca y reevaluar antes de decidir la cirugía o el mantenimiento",
+      "Extraer todos los dientes con bolsas de 5 a 6 mm",
+      "Iniciar regeneración tisular guiada de forma inmediata en cada sitio",
+      "Indicar solo control radiográfico anual"
+    ],
+    "correctIndex": 0,
+    "explanation": "Resuelta la urgencia, se continúa con la fase higiénica completa (raspado y alisado de toda la boca) y luego se reevalúa la respuesta. Solo los sitios que persisten con bolsas profundas se consideran para cirugía; el mantenimiento se planifica según el riesgo de la paciente.",
+    "hint": "Piensa en la secuencia general: fase inicial, reevaluación y después corrección.",
+    "tags": [
+      "plan de tratamiento",
+      "fase inicial",
+      "mantenimiento"
+    ]
+  }
+]

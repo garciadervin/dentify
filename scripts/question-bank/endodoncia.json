@@ -1,0 +1,581 @@
+[
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "En el primer molar superior, ¿cuál es el número de conductos que suele contener la raíz palatina?",
+    "options": ["1 conducto", "2 conductos", "3 conductos", "4 conductos"],
+    "correctIndex": 0,
+    "explanation": "La raíz palatina del primer molar superior suele presentar un solo conducto, a diferencia de la raíz mesio-vestibular que con frecuencia tiene dos. Reconocer estas variaciones anatómicas es clave para localizar y tratar todos los conductos.",
+    "hint": "Piensa en la raíz más recta y de mayor volumen de ese molar.",
+    "tags": ["anatomia", "numero-de-conductos", "molar-superior"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "La prueba de percusión evalúa principalmente el estado de:",
+    "options": ["la pulpa", "el ligamento periodontal periapical", "el esmalte", "la dentina coronaria"],
+    "correctIndex": 1,
+    "explanation": "La percusión transmite la energía de golpe al ligamento periodontal, por lo que una respuesta dolorosa indica compromiso periapical y no pulpar. El estado de la pulpa se valora con pruebas térmicas o eléctricas.",
+    "hint": "¿Qué tejido sostiene al diente en el alvéolo y se tensa al golpearlo?",
+    "tags": ["diagnostico", "percusión", "pruebas-diagnosticas"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Qué respuesta se espera ante la prueba de frío en un diente con necrosis pulpar total?",
+    "options": ["Ausencia de respuesta", "Dolor agudo breve", "Dolor prolongado", "Dolor pulsátil"],
+    "correctIndex": 0,
+    "explanation": "En la necrosis pulpar no quedan fibras nerviosas funcionales que respondan al estímulo, por lo que la prueba de frío es negativa. Un dolor que persiste tras retirar el estímulo orienta a inflamación, no a necrosis.",
+    "hint": "Recuerda qué le ocurre a la pulpa cuando pierde completamente su vitalidad.",
+    "tags": ["diagnostico", "necrosis", "pruebas-termicas"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Con qué instrumento se realiza habitualmente la prueba de percusión?",
+    "options": ["Con el mango del espejo dental o un instrumento metálico", "Con una lima endodóntica", "Con un explorador de punta afilada", "Con el condensador de gutapercha"],
+    "correctIndex": 0,
+    "explanation": "La percusión se ejecuta golpeando suavemente el diente con el extremo romo del mango del espejo u otro instrumento de mango metálico. Golpear con un instrumento de punta afilada lesionaría los tejidos y distorsionaría la respuesta.",
+    "hint": "El instrumento debe golpear con una superficie roma, no cortante.",
+    "tags": ["diagnostico", "percusión", "pruebas-diagnosticas"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "¿Cuál de los siguientes es un diagnóstico pulpar?",
+    "options": ["Pulpitis reversible", "Absceso periapical", "Celulitis", "Quiste radicular"],
+    "correctIndex": 0,
+    "explanation": "Los diagnósticos pulpares describen el estado de la pulpa: normal, pulpitis reversible, pulpitis irreversible y necrosis. El absceso, la celulitis y el quiste pertenecen al ámbito periapical o de los tejidos circundantes.",
+    "hint": "Busca la opción que describe el estado de la pulpa, no de los tejidos que la rodean.",
+    "tags": ["diagnostico", "clasificacion", "diagnostico-pulpar"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "La palpación en la exploración endodóntica busca detectar:",
+    "options": ["Edema, sensibilidad o fluctuación en los tejidos alrededor del ápice", "El número de conductos", "La longitud de trabajo", "La vitalidad pulpar"],
+    "correctIndex": 0,
+    "explanation": "La palpación de los tejidos blandos sobre el ápice revela inflamación, edema o fluctuación que sugieren compromiso periapical. No informa sobre la anatomía interna ni sobre el estado de la pulpa.",
+    "hint": "Es la prueba manual que presiona la encía y la mucosa sobre la zona del ápice.",
+    "tags": ["diagnostico", "palpación", "pruebas-diagnosticas"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "Una radiolucidez periapical detectada en la radiografía, sin dolor ni sensibilidad clínica, corresponde a:",
+    "options": ["Periodontitis apical asintomática", "Pulpitis irreversible", "Celulitis", "Gingivitis"],
+    "correctIndex": 0,
+    "explanation": "La periodontitis apical asintomática es una lesión periapical crónica que se detecta por radiografía sin síntomas clínicos. Si apareciera dolor a la percusión o masticación, se clasificaría como una forma sintomática.",
+    "hint": "La ausencia de síntomas es el dato decisivo del enunciado.",
+    "tags": ["diagnostico", "diagnostico-periapical", "periodontitis-asintomatica"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "mcq",
+    "question": "La transiluminación con fibra óptica es una ayuda diagnóstica útil para detectar:",
+    "options": ["Fracturas coronales no visibles a simple vista", "El número de conductos", "La longitud del conducto", "La vitalidad pulpar"],
+    "correctIndex": 0,
+    "explanation": "La transiluminación hace pasar luz a través del diente y las líneas de fractura interrumpen ese paso, revelando grietas o fracturas coronales. No aporta información sobre conductos ni vitalidad pulpar.",
+    "hint": "¿Qué defecto dental se ve mejor cuando la luz no atraviesa limpiamente el diente?",
+    "tags": ["diagnostico", "transiluminacion", "fracturas"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "true_false",
+    "question": "La percusión evalúa el estado del ligamento periodontal, no el de la pulpa.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "La percusión genera una onda de golpe que compromete el periodonto; el dolor aparece cuando hay inflamación periapical. El estado pulpar se valora con pruebas térmicas o eléctricas.",
+    "hint": "Fíjate en qué tejido recibe directamente el impacto del golpe.",
+    "tags": ["diagnostico", "percusión"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "true_false",
+    "question": "Un diente con necrosis pulpar nunca responde a la percusión.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "Un diente necrótico puede responder positivamente a la percusión si existe periodontitis apical concomitante. La ausencia de respuesta térmica no excluye dolor a la percusión, porque se evalúan tejidos diferentes.",
+    "hint": "La percusión explora el periodonto; ¿puede estar inflamado aunque la pulpa esté muerta?",
+    "tags": ["diagnostico", "necrosis", "percusión"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "true_false",
+    "question": "La respuesta positiva a la percusión es exclusiva de la patología pulpar.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "La percusión refleja inflamación del ligamento periodontal, es decir, compromiso periapical y no pulpar. Por eso un diente sano no duele a la percusión, mientras que uno con lesión periapical sí, independientemente de su estado pulpar.",
+    "hint": "Relaciona la percusión con el tejido que rodea la raíz, no con la pulpa.",
+    "tags": ["diagnostico", "percusión"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "Las entradas de los conductos radiculares se localizan sobre el suelo de la cámara ____.",
+    "options": ["pulpar", "gingival", "ósea", "dentinaria"],
+    "correctIndex": 0,
+    "explanation": "El suelo de la cámara pulpar es donde desembocan los orificios de entrada de los conductos radiculares. Reconocer esta referencia anatómica es esencial para localizar los conductos sin perforar.",
+    "hint": "Es la cámara interna de la corona donde se aloja la pulpa.",
+    "tags": ["anatomia", "camara-pulpar"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "fill_blank",
+    "question": "El diagnóstico pulpar que describe una pulpa sin síntomas y con respuesta normal a las pruebas de sensibilidad se denomina pulpa ____.",
+    "options": ["normal", "necrótica", "inflamada", "calcificada"],
+    "correctIndex": 0,
+    "explanation": "La pulpa normal no presenta síntomas, responde con normalidad a las pruebas de sensibilidad y no muestra evidencia de patología. Los demás términos describen estados patológicos o de pérdida de vitalidad.",
+    "hint": "Busca el término que se usa cuando no hay ninguna alteración pulpar.",
+    "tags": ["diagnostico", "pulpa-normal", "diagnostico-pulpar"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué pruebas forman parte de la valoración diagnóstica básica en endodoncia?",
+    "options": ["prueba de frío", "prueba de percusión", "radiografía periapical", "prueba de alergia", "espectrofotometría"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "La valoración endodóntica básica combina pruebas de sensibilidad pulpar (frío/calor), percusión para el estado periapical y radiografía periapical para la anatomía y la lesión. La prueba de alergia y la espectrofotometría no forman parte de la exploración inicial.",
+    "hint": "Son las pruebas clínicas y radiográficas que se aplican a todo paciente endodóntico.",
+    "tags": ["diagnostico", "pruebas-diagnosticas"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué estructuras forman parte del sistema de conductos radiculares?",
+    "options": ["cámara pulpar", "conducto principal", "conductos accesorios o laterales", "ligamento periodontal", "esmalte"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "El sistema de conductos comprende la cámara pulpar y los conductos radiculares, incluidos los accesorios o laterales. El ligamento periodontal y el esmalte pertenecen a otros tejidos del diente y su entorno.",
+    "hint": "Son las cavidades internas por donde discurre la pulpa.",
+    "tags": ["anatomia", "sistema-de-conductos"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 1,
+    "type": "match",
+    "question": "Empareja cada diente con su número de conductos más frecuente.",
+    "pairs": [
+      {"left": "Incisivo central superior", "right": "1 conducto"},
+      {"left": "Canino superior", "right": "1 conducto"},
+      {"left": "Primer premolar superior", "right": "2 conductos"},
+      {"left": "Primer molar superior (raíz mesio-vestibular)", "right": "2 conductos"}
+    ],
+    "explanation": "Incisivos y caninos superiores suelen tener un solo conducto, mientras que el primer premolar superior y la raíz mesio-vestibular del molar superior presentan con frecuencia dos. Estas variaciones condicionan el acceso y la búsqueda de conductos.",
+    "tags": ["anatomia", "numero-de-conductos"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Cuál es el objetivo principal del aislamiento absoluto en endodoncia?",
+    "options": ["Mantener un campo libre de saliva y microorganismos", "Mejorar la estética del paciente", "Evitar el uso de anestesia", "Reducir el tiempo de tratamiento"],
+    "correctIndex": 0,
+    "explanation": "El dique de goma aísla el diente de la saliva y los microorganismos, protege la vía aérea y mejora la visibilidad y la acción de los irrigantes. Sin aislamiento, el conducto se contamina y la irrigación pierde eficacia.",
+    "hint": "Piensa en el riesgo principal que corre el conducto durante el tratamiento.",
+    "tags": ["aislamiento-absoluto", "dique-de-goma"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "La filosofía de acceso en la apertura cameral endodóntica busca lograr un acceso:",
+    "options": ["En línea recta hacia la entrada de los conductos", "Mínimo, conservando toda la dentina", "Dirigido solo a la caries", "En ángulo agudo hacia las paredes"],
+    "correctIndex": 0,
+    "explanation": "El acceso endodóntico ideal es de línea recta hacia las entradas de los conductos, lo que facilita la instrumentación y reduce el riesgo de escalones o transporte. Un acceso inadecuado impide el trabajo correcto de los instrumentos.",
+    "hint": "Busca el concepto que facilita que los instrumentos lleguen sin doblarse.",
+    "tags": ["apertura-cameral", "acceso-endodontico"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Cuál de los siguientes es un sistema de instrumentación rotatoria?",
+    "options": ["ProTaper", "Lima tipo K", "Lima tipo H", "Espaciador digital"],
+    "correctIndex": 0,
+    "explanation": "ProTaper es un sistema rotatorio de níquel-titanio de conicidad progresiva que se utiliza a rotación continua con motor. Las limas K y H son instrumentos manuales y el espaciador digital se emplea en la condensación.",
+    "hint": "Identifica el nombre comercial que corresponde a un sistema de fresado con motor.",
+    "tags": ["instrumentacion", "sistemas-rotatorios"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "El movimiento recíproco de los instrumentos endodónticos consiste en:",
+    "options": ["Rotar en ambos sentidos con mayor amplitud de giro en un sentido", "Rotar de forma continua en 360 grados", "Un movimiento de vaivén sin rotación", "Girar solo en el sentido horario"],
+    "correctIndex": 0,
+    "explanation": "El movimiento recíproco alterna la rotación en ambos sentidos, con un ángulo mayor en el sentido de corte y menor en el de retorno. Esto reduce la tendencia al atornillamiento y al bloqueo del instrumento dentro del conducto.",
+    "hint": "El nombre 'recíproco' indica que el giro va y vuelve, no es continuo.",
+    "tags": ["instrumentacion", "movimiento-reciproco"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "En la técnica de condensación vertical con calor, la gutapercha se:",
+    "options": ["Ablanda con calor y se compacta en sentido vertical", "Introduce en frío y se condensa lateralmente", "Aplica solo en la cámara pulpar", "Compacta sin previo calentamiento"],
+    "correctIndex": 0,
+    "explanation": "La condensación vertical ablanda la gutapercha con calor y la compacta en sentido vertical, adaptándola mejor a las irregularidades del conducto. Esta técnica busca un sellado tridimensional más homogéneo.",
+    "hint": "El nombre de la técnica indica tanto el uso del calor como la dirección de compactación.",
+    "tags": ["obturacion", "condensacion-vertical", "calor"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "mcq",
+    "question": "¿Cuál es la función principal del sellador endodóntico en la obturación?",
+    "options": ["Rellenar las irregularidades y sellar entre la gutapercha y las paredes del conducto", "Sustituir por completo la gutapercha", "Proporcionar resistencia a la masticación", "Blanquear las paredes dentinarias"],
+    "correctIndex": 0,
+    "explanation": "El sellador llena los espacios entre los conos de gutapercha y las paredes del conducto, logrando un sellado más homogéneo. No sustituye a la gutapercha, que aporta el volumen principal de la obturación.",
+    "hint": "Piensa en el papel del 'cemento' entre los materiales de obturación y la dentina.",
+    "tags": ["obturacion", "selladores"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "true_false",
+    "question": "En la instrumentación rotatoria es recomendable realizar movimientos de picoteo (pecking) y salir con frecuencia del conducto.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "El movimiento de picoteo con salidas frecuentes evita que el instrumento quede atornillado, reduce la fricción y el calor generado y disminuye el riesgo de que el instrumento se atasque o se deforme.",
+    "hint": "Piensa en cómo evitar que un instrumento giratorio se 'atornille' en el conducto.",
+    "tags": ["instrumentacion", "rotatoria", "tecnicas"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "true_false",
+    "question": "El sellador endodóntico debe reabsorberse por completo después de la obturación para lograr un sellado adecuado.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "El sellador no debe reabsorberse: se busca que permanezca estable para mantener el sellado a largo plazo. Una reabsorción excesiva o un exceso de sellador extruido pueden comprometer el resultado.",
+    "hint": "Un material que desaparece con el tiempo, ¿mantiene el sellado o lo pierde?",
+    "tags": ["obturacion", "selladores"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "La activación del irrigante dentro del conducto puede lograrse con puntas de activación ____.",
+    "options": ["manual", "ultrasónica", "giratoria", "química"],
+    "correctIndex": 1,
+    "explanation": "La activación ultrasónica (o sónica) agita la solución irrigante dentro del conducto, mejorando su penetración y capacidad de limpieza en zonas inaccesibles. Una irrigación sin activación limpia peor esas áreas.",
+    "hint": "Se trata de la energía vibratoria de alta frecuencia aplicada al irrigante.",
+    "tags": ["irrigacion", "activacion-ultrasonica"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "Antes de obturar, el conducto debe secarse por completo con puntas de ____.",
+    "options": ["papel", "algodón", "gasa", "plata"],
+    "correctIndex": 0,
+    "explanation": "Las puntas de papel absorben la humedad residual del conducto tras la irrigación final. Un conducto seco permite que el sellador y la gutapercha se adapten correctamente a las paredes.",
+    "hint": "Son conos absorbentes de celulosa de diámetro estandarizado.",
+    "tags": ["obturacion", "secado", "puntas-de-papel"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "fill_blank",
+    "question": "En la técnica de instrumentación crown-down, la preparación avanza desde la porción ____ hacia el ápice.",
+    "options": ["coronaria", "apical", "media", "cervical"],
+    "correctIndex": 0,
+    "explanation": "La técnica crown-down prepara primero la porción coronaria del conducto y avanza progresivamente hacia el ápice. Este orden reduce el riesgo de transporte apical y facilita la irrigación y la remoción de detritos.",
+    "hint": "Traduce el nombre inglés 'crown-down' al español.",
+    "tags": ["instrumentacion", "tecnica-crown-down"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué elementos forman parte del aislamiento absoluto?",
+    "options": ["dique de goma", "arco o portadique", "grapas (clamps)", "brocha de polimerización", "fresas de carburo"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "El aislamiento absoluto incluye el dique de goma, el arco o portadique que lo mantiene tenso y las grapas que lo fijan al diente. La brocha de polimerización y las fresas no forman parte de este sistema.",
+    "hint": "Son las tres piezas que se montan juntas para colocar el dique.",
+    "tags": ["aislamiento-absoluto"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué ventajas ofrece la instrumentación rotatoria de níquel-titanio frente a la manual?",
+    "options": ["mayor rapidez de preparación", "menor transporte del conducto en curvaturas", "elimina la necesidad de irrigación", "permite omitir la medicación intraconducto", "permite usar siempre el mismo diámetro apical"],
+    "correctIndexes": [0, 1],
+    "explanation": "La rotatoria de níquel-titanio prepara con mayor rapidez y, por su flexibilidad, produce menos transporte en conductos curvos que las limas manuales. En ningún caso sustituye la irrigación ni la medicación del conducto.",
+    "hint": "Son las dos ventajas relacionadas con la velocidad y la flexibilidad.",
+    "tags": ["instrumentacion", "rotatoria", "ventajas"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "match",
+    "question": "Empareja cada instrumento manual con su característica de uso.",
+    "pairs": [
+      {"left": "Lima K", "right": "Se usa con movimientos de giro y tracción"},
+      {"left": "Lima H", "right": "Corta principalmente al retirarla (tracción)"},
+      {"left": "Broca Gates-Glidden", "right": "Amplía la porción coronaria del conducto"},
+      {"left": "Explorador DG-16", "right": "Localiza las entradas de los conductos"}
+    ],
+    "explanation": "La lima K se acciona con giro y tracción, la lima H corta al retirarla, la broca Gates-Glidden prepara la porción coronaria y el explorador DG-16 ayuda a encontrar los orificios de los conductos.",
+    "tags": ["instrumentacion", "instrumentos-manuales"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "match",
+    "question": "Empareja cada material o instrumento de obturación con su función.",
+    "pairs": [
+      {"left": "Gutapercha", "right": "Núcleo principal de la obturación"},
+      {"left": "Sellador", "right": "Rellena los espacios entre gutapercha y paredes"},
+      {"left": "Punta de papel", "right": "Secado del conducto previo a la obturación"},
+      {"left": "Condensador de calor", "right": "Compactación vertical de la gutapercha"}
+    ],
+    "explanation": "La gutapercha aporta el volumen principal, el sellador elimina los espacios entre materiales, la punta de papel seca el conducto y el condensador de calor ablanda y compacta la gutapercha en la técnica vertical.",
+    "tags": ["obturacion", "materiales-de-obturacion"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "order",
+    "question": "Ordena los pasos de la preparación del acceso endodóntico (apertura cameral).",
+    "orderItems": [
+      {"text": "Aislar el diente con dique de goma", "position": 1},
+      {"text": "Eliminar caries y restauraciones existentes", "position": 2},
+      {"text": "Realizar la apertura cameral con la fresa de acceso", "position": 3},
+      {"text": "Localizar y refinar las entradas de los conductos", "position": 4}
+    ],
+    "explanation": "El acceso endodóntico comienza con el aislamiento absoluto, continúa con la eliminación de caries y restauraciones, sigue con la apertura cameral y termina con la localización y el refinamiento de las entradas de los conductos.",
+    "tags": ["apertura-cameral", "procedimiento"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 2,
+    "type": "order",
+    "question": "Ordena los pasos de la obturación con condensación vertical con calor.",
+    "orderItems": [
+      {"text": "Secar el conducto con puntas de papel", "position": 1},
+      {"text": "Aplicar el sellador en las paredes del conducto", "position": 2},
+      {"text": "Introducir el cono maestro de gutapercha", "position": 3},
+      {"text": "Condensar con calor y compactar en vertical", "position": 4},
+      {"text": "Retirar el exceso coronal de gutapercha", "position": 5}
+    ],
+    "explanation": "Tras secar el conducto, se aplica el sellador, se coloca el cono maestro y se condensa la gutapercha ablandada con calor en sentido vertical, para finalmente retirar el exceso coronario.",
+    "tags": ["obturacion", "condensacion-vertical"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "En un retratamiento endodóntico, el primer paso para eliminar el material de obturación antiguo es:",
+    "options": ["Lograr el acceso y remover la gutapercha con instrumentos calientes, solventes o ultrasonido", "Obturar directamente sobre el material antiguo", "Reinstrumentar sin tocar la obturación previa", "Solo irrigar con agua destilada"],
+    "correctIndex": 0,
+    "explanation": "El retratamiento exige acceso al conducto y la remoción completa del material previo, empleando calor, solventes o ultrasonido. No es posible limpiar ni obturar correctamente sobre una obturación deficiente sin retirarla.",
+    "hint": "Para tratar el conducto de nuevo, primero hay que vaciarlo del material anterior.",
+    "tags": ["retratamiento", "remocion-de-gutapercha"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "Ante una celulitis facial de origen dental, el manejo inmediato incluye:",
+    "options": ["Solo analgésicos y reposo", "Drenaje y control del foco de infección, con antibióticos según el compromiso sistémico", "Realizar un blanqueamiento dental", "Extraer todos los dientes del sector"],
+    "correctIndex": 1,
+    "explanation": "La celulitis requiere eliminar la fuente de infección (tratamiento o extracción) y establecer drenaje; los antibióticos se indican según la extensión y el compromiso sistémico. No es una urgencia que se resuelva solo con analgésicos.",
+    "hint": "Una infección difusa necesita eliminar su causa y dar salida a la colección, no solo calmar el dolor.",
+    "tags": ["urgencias", "celulitis", "infeccion"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "La dificultad para lograr anestesia profunda en un diente con pulpitis irreversible se debe principalmente a:",
+    "options": ["La edad avanzada del paciente", "La longitud excesiva de la raíz", "La inflamación que baja el pH tisular y altera la difusión del anestésico", "El uso previo de antibióticos"],
+    "correctIndex": 2,
+    "explanation": "En la pulpitis irreversible el tejido inflamado tiene pH ácido, lo que reduce la forma no ionizada del anestésico y dificulta su difusión a las fibras nerviosas. Por eso se recurre a técnicas complementarias como la intraligamentosa o la intrapulpar.",
+    "hint": "Piensa en el ambiente químico del tejido inflamado y cómo afecta al anestésico.",
+    "tags": ["anestesia", "pulpitis-irreversible", "manejo-del-dolor"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "En una lesión endo-periodontal combinada de origen principalmente endodóntico, la conducta inicial es:",
+    "options": ["Tratar el origen endodóntico y reevaluar la respuesta periodontal", "Tratar solo el periodonto", "Extraer el diente de inmediato", "Aplicar únicamente antimicrobianos tópicos"],
+    "correctIndex": 0,
+    "explanation": "Cuando la lesión se origina en la pulpa y el daño periodontal es secundario, primero se trata la endodoncia; muchas veces la afectación periodontal mejora tras eliminar el foco pulpar. El periodonto se reevalúa y se trata después si persiste.",
+    "hint": "¿Qué factor causal conviene eliminar primero en una lesión combinada?",
+    "tags": ["lesion-endo-periodontal", "plan-de-tratamiento"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "¿Cuál de los siguientes factores aumenta el riesgo de fractura vertical de la raíz durante la endodoncia?",
+    "options": ["La irrigación con suero fisiológico", "El uso de puntas de papel para el secado", "El sellador de resina", "La remoción excesiva de dentina durante la preparación"],
+    "correctIndex": 3,
+    "explanation": "La remoción excesiva de dentina debilita la raíz y predispone a la fractura vertical, un error que compromete el pronóstico. La conservación de dentina es un principio clave de la preparación del conducto.",
+    "hint": "Identifica el error de procedimiento que más adelgaza las paredes de la raíz.",
+    "tags": ["errores-de-procedimiento", "fractura-radicular", "preparacion"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "mcq",
+    "question": "La anestesia selectiva (bloqueo del diente o cuadrante sospechoso) se utiliza en el diagnóstico para:",
+    "options": ["Confirmar la causa del dolor al observar su desaparición", "Determinar el número de conductos", "Medir la longitud de trabajo", "Evaluar la movilidad dental"],
+    "correctIndex": 0,
+    "explanation": "Al anestesiar el diente o cuadrante sospechoso y comprobar que el dolor desaparece, se confirma que ese diente es el origen del síntoma. Es una herramienta útil en dolores difusos o de difícil localización.",
+    "hint": "Su nombre indica que anestesia solo una zona para probar si allí está el origen del dolor.",
+    "tags": ["diagnostico", "anestesia-selectiva", "dolor-orofacial"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "true_false",
+    "question": "En una celulitis facial con signos de compromiso sistémico (fiebre, malestar general), el paciente puede requerir hospitalización y antibióticos parenterales.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 0,
+    "explanation": "El compromiso sistémico en una infección odontogénica difusa indica un cuadro grave que puede necesitar manejo hospitalario, drenaje quirúrgico y antibióticos parenterales para evitar la diseminación a espacios profundos.",
+    "hint": "Cuando la infección afecta al estado general, el manejo deja de ser solo ambulatorio.",
+    "tags": ["urgencias", "celulitis", "manejo-sistemico"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "true_false",
+    "question": "En la urgencia por dolor agudo de origen pulpar, el manejo correcto consiste solo en analgésicos y observación.",
+    "options": ["Verdadero", "Falso"],
+    "correctIndex": 1,
+    "explanation": "El manejo de urgencia del dolor agudo de origen pulpar incluye la apertura cameral y el alivio de la presión intrapulpar; los analgésicos son un complemento, no el tratamiento definitivo. Dejar la presión sin liberar mantiene el dolor.",
+    "hint": "La presión dentro de la cámara pulpar es la que genera el dolor; ¿qué debe hacerse con ella?",
+    "tags": ["urgencias", "apertura-cameral", "dolor-agudo"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "Para ablandar y retirar la gutapercha durante el retratamiento se pueden emplear solventes como el ____.",
+    "options": ["cloroformo", "eucaliptol", "xilol", "alcohol etílico"],
+    "correctIndex": 0,
+    "explanation": "El cloroformo es el solvente clásico de la gutapercha y facilita su remoción en el retratamiento. El eucaliptol y el xilol también disuelven gutapercha, pero el cloroformo es el de uso más extendido y eficaz.",
+    "hint": "Es el disolvente orgánico de referencia para ablandar la gutapercha.",
+    "tags": ["retratamiento", "solventes", "gutapercha"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "fill_blank",
+    "question": "La evolución de una lesión periapical se valora comparando radiografías ____.",
+    "options": ["seriadas", "aisladas", "panorámicas", "laterales"],
+    "correctIndex": 0,
+    "explanation": "La comparación de radiografías tomadas en momentos distintos (seriadas) permite determinar si la lesión aumenta, se mantiene o cicatriza, lo que orienta la indicación de retratamiento o el control del caso.",
+    "hint": "Se trata de tomar la radiografía en fechas sucesivas para comparar la lesión.",
+    "tags": ["diagnostico", "radiografia", "retratamiento"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Cuáles son indicaciones de retratamiento endodóntico?",
+    "options": ["obturación deficiente con patología periapical", "lesión periapical que no cicatriza", "dolor persistente de origen pulpar o periapical", "endodoncia correcta en diente sano", "blanqueamiento interno reciente"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "El retratamiento se indica ante una obturación deficiente con patología, una lesión que no resuelve o dolor persistente de origen pulpar o periapical. Un diente correctamente tratado y sin patología no requiere retratamiento.",
+    "hint": "Elige las situaciones en las que hay un fracaso o una insuficiencia del tratamiento previo.",
+    "tags": ["retratamiento", "indicaciones"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "multi_select",
+    "question": "Selecciona todas las que apliquen. ¿Qué hallazgos sugieren una lesión endo-periodontal combinada?",
+    "options": ["bolsa periodontal profunda", "movilidad dental", "respuesta pulpar alterada o ausente", "ausencia total de inflamación gingival", "dentina coronaria sana en toda su extensión"],
+    "correctIndexes": [0, 1, 2],
+    "explanation": "Una bolsa profunda, la movilidad y la alteración de la respuesta pulpar orientan a una lesión que compromete a la vez pulpa y periodonto. La ausencia de inflamación y una dentina sana no apoyan este diagnóstico.",
+    "hint": "Fíjate en qué signos afectan a la vez al periodonto y a la pulpa.",
+    "tags": ["lesion-endo-periodontal", "diagnostico"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "match",
+    "question": "Empareja cada complicación de la endodoncia con su definición.",
+    "pairs": [
+      {"left": "Sobreinstrumentación", "right": "La preparación rebasa el foramen apical"},
+      {"left": "Sobreobturación", "right": "El material de obturación se extiende más allá del ápice"},
+      {"left": "Subobturación", "right": "El material de obturación queda corto del ápice"},
+      {"left": "Filtración coronaria", "right": "Paso de microorganismos por un sellado coronal deficiente"}
+    ],
+    "explanation": "La sobreinstrumentación y la sobreobturación sobrepasan el foramen apical, la subobturación deja el material corto del ápice y la filtración coronaria permite la reinfección desde la corona. Reconocerlas orienta el manejo de cada complicación.",
+    "tags": ["errores-de-procedimiento", "complicaciones"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "order",
+    "question": "Ordena los pasos de un retratamiento endodóntico convencional.",
+    "orderItems": [
+      {"text": "Acceso y localización del material de obturación", "position": 1},
+      {"text": "Remoción de la gutapercha con calor, solventes o ultrasonido", "position": 2},
+      {"text": "Nueva instrumentación y limpieza del sistema de conductos", "position": 3},
+      {"text": "Irrigación y desinfección final", "position": 4},
+      {"text": "Obturación con la técnica elegida", "position": 5}
+    ],
+    "explanation": "El retratamiento exige acceder, retirar el material antiguo, reinstrumentar y desinfectar el conducto y, finalmente, obturarlo de nuevo. Saltarse alguno de estos pasos compromete el resultado.",
+    "tags": ["retratamiento", "procedimiento"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "en-case-retratamiento",
+    "caseText": "Paciente de 47 años acude por dolor a la masticación en el diente 36 y sensación de presión. Refiere una endodoncia realizada hace tres años. A la exploración presenta percusión dolorosa y sensibilidad a la palpación apical, sin edema extraoral. La radiografía muestra una obturación radicular corta del ápice, una radiolucidez periapical asociada que no aparecía en la radiografía del año anterior y un cono que se extiende ligeramente más allá del foramen.",
+    "question": "¿Cuál es el diagnóstico clínico más probable?",
+    "options": ["Fracaso endodóntico con lesión periapical sintomática que indica retratamiento", "Pulpitis reversible de origen cariogénico", "Diente vital y sano", "Periodontitis apical asintomática sin necesidad de tratamiento"],
+    "correctIndex": 0,
+    "explanation": "La historia de endodoncia previa, el dolor a la percusión y la lesión periapical de aparición reciente indican un fracaso endodóntico sintomático. El retratamiento es la opción indicada frente a una obturación deficiente.",
+    "hint": "Relaciona la endodoncia previa, el dolor y la lesión nueva en la radiografía.",
+    "tags": ["caso-clinico", "retratamiento", "diagnostico"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "en-case-retratamiento",
+    "caseText": "Paciente de 47 años acude por dolor a la masticación en el diente 36 y sensación de presión. Refiere una endodoncia realizada hace tres años. A la exploración presenta percusión dolorosa y sensibilidad a la palpación apical, sin edema extraoral. La radiografía muestra una obturación radicular corta del ápice, una radiolucidez periapical asociada que no aparecía en la radiografía del año anterior y un cono que se extiende ligeramente más allá del foramen.",
+    "question": "¿Cuál es el manejo más adecuado para este paciente?",
+    "options": ["Extracción inmediata del diente", "Solo antibióticos sin tratamiento local", "Retratamiento endodóntico no quirúrgico del 36", "Observación con control radiográfico anual"],
+    "correctIndex": 2,
+    "explanation": "El retratamiento no quirúrgico busca eliminar el material deficiente, desinfectar y obturar de nuevo, conservando el diente. La extracción inmediata y la observación no son la primera opción ante una endodoncia fracasada y recuperable.",
+    "hint": "La lesión nueva y la obturación deficiente hacen conveniente rehacer el conducto, no extraer.",
+    "tags": ["caso-clinico", "plan-de-tratamiento"]
+  },
+  {
+    "specialty_slug": "endodoncia",
+    "level": 3,
+    "type": "case",
+    "caseId": "en-case-retratamiento",
+    "caseText": "Paciente de 47 años acude por dolor a la masticación en el diente 36 y sensación de presión. Refiere una endodoncia realizada hace tres años. A la exploración presenta percusión dolorosa y sensibilidad a la palpación apical, sin edema extraoral. La radiografía muestra una obturación radicular corta del ápice, una radiolucidez periapical asociada que no aparecía en la radiografía del año anterior y un cono que se extiende ligeramente más allá del foramen.",
+    "question": "Durante el retratamiento se confirma que el cono sobrepasa el ápice (sobreobturación). ¿Qué conducta es la correcta?",
+    "options": ["Dejar el exceso extruido y obturar sobre él", "Remover el exceso, limpiar el conducto y realizar una nueva obturación", "Abandonar el retratamiento", "Extraer el diente de inmediato"],
+    "correctIndex": 1,
+    "explanation": "La sobreobturación debe corregirse retirando el exceso de material y completando la limpieza antes de obturar de nuevo. Mantener material extruido mantiene la irritación periapical y el riesgo de dolor postoperatorio.",
+    "hint": "El material que ya irrita el ápice no debe quedar ahí ni repetirse.",
+    "tags": ["caso-clinico", "sobreobturacion", "manejo"]
+  }
+]

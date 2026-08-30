@@ -14,6 +14,7 @@ import Head from 'expo-router/head';
 
 import { useAuth } from '@/src/hooks/useAuth';
 import { Colors } from '@/constants/theme';
+import { configureNotifications } from '@/src/services/notifications';
 
 // Prevent splash screen from auto-hiding before fonts are loaded
 SplashScreen.preventAutoHideAsync();
@@ -39,10 +40,10 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     if (!user && !isAuthRoute) {
       router.replace('/auth/login');
     } else if (user && isAuthRoute && !isProfileSetup) {
-      // Permite /auth/profile-setup con sesión (flujo de registro).
+      // Allow /auth/profile-setup with a session (sign-up flow).
       router.replace('/(tabs)');
     } else if (user && !isAuthRoute && !isTeacherRoute && profileLoaded && !profile) {
-      // Primer login sin perfil creado → completar perfil.
+      // First login without a created profile → complete the profile.
       router.replace('/auth/profile-setup');
     } else if (isTeacherRoute && userRole !== 'teacher') {
       router.replace('/(tabs)');
@@ -77,6 +78,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    configureNotifications();
     if (loaded) {
       SplashScreen.hideAsync();
     }

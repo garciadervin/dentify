@@ -29,8 +29,14 @@ export default function ProfileSetupScreen() {
   const handleSaveProfile = async () => {
     setError(null);
 
-    if (!fullName.trim() || !studentId.trim()) {
-      setError('Completa todos los campos');
+    const role = (user?.user_metadata?.role as 'student' | 'teacher') ?? 'student';
+
+    if (!fullName.trim()) {
+      setError('Escribe tu nombre completo');
+      return;
+    }
+    if (role === 'student' && !studentId.trim()) {
+      setError('Completa el ID de estudiante');
       return;
     }
 
@@ -48,7 +54,7 @@ export default function ProfileSetupScreen() {
       return;
     }
 
-    // Refleja el nombre en user_metadata (avatars, guards) y en profiles.
+    // Mirror the name into user_metadata (avatars, guards) and profiles.
     await supabase.auth.updateUser({ data: { full_name: fullName.trim() } });
 
     // Upsert so revisiting this screen after a partial setup does not fail
@@ -57,8 +63,8 @@ export default function ProfileSetupScreen() {
       {
         id: user.id,
         full_name: fullName.trim(),
-        student_id: studentId.trim() || null,
-        role: 'student',
+        student_id: role === 'student' ? studentId.trim() || null : null,
+        role,
       },
       { onConflict: 'id' }
     );
@@ -159,37 +165,51 @@ export default function ProfileSetupScreen() {
             />
           </View>
 
-          {/* Student ID input */}
-          <View style={{ marginBottom: 24 }}>
-            <Text
-              style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
-                color: colors.deepSlate,
-                marginBottom: 6,
-              }}
-            >
-              ID de estudiante
-            </Text>
-            <TextInput
-              testID="student-id-input"
-              value={studentId}
-              onChangeText={setStudentId}
-              placeholder="STU-2024-001"
-              placeholderTextColor={colors.neutral}
-              autoCapitalize="characters"
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: 12,
-                padding: 16,
-                fontSize: 16,
-                fontFamily: 'Inter',
-                color: colors.deepSlate,
-                borderWidth: 1,
-                borderColor: colors.borderLight,
-              }}
-            />
-          </View>
+          {/* Student ID input (solo estudiantes) */}
+          {(user?.user_metadata?.role ?? 'student') === 'student' ? (
+            <View style={{ marginBottom: 24 }}>
+              <Text
+                style={{
+                  fontFamily: 'Inter',
+                  fontSize: 14,
+                  color: colors.deepSlate,
+                  marginBottom: 6,
+                }}
+              >
+                ID de estudiante
+              </Text>
+              <TextInput
+                testID="student-id-input"
+                value={studentId}
+                onChangeText={setStudentId}
+                placeholder="STU-2024-001"
+                placeholderTextColor={colors.neutral}
+                autoCapitalize="characters"
+                style={{
+                  backgroundColor: colors.surface,
+                  borderRadius: 12,
+                  padding: 16,
+                  fontSize: 16,
+                  fontFamily: 'Inter',
+                  color: colors.deepSlate,
+                  borderWidth: 1,
+                  borderColor: colors.borderLight,
+                }}
+              />
+            </View>
+          ) : (
+            <View style={{ marginBottom: 24 }}>
+              <Text
+                style={{
+                  fontFamily: 'Inter',
+                  fontSize: 13,
+                  color: colors.neutral,
+                }}
+              >
+                Registrarás tu cuenta como docente. Verás el panel de seguimiento de estudiantes.
+              </Text>
+            </View>
+          )}
 
           {/* Save button */}
           <TouchableOpacity

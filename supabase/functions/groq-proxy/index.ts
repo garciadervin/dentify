@@ -2,7 +2,7 @@
  * Groq API Proxy — Supabase Edge Function
  *
  * Proxies AI requests so API keys stay server-side:
- *   - chat/completions    → Groq (Qwen 3.6 27B)
+ *   - chat/completions    → Groq (Qwen 3.8 27B)
  *   - audio/transcriptions → Groq Whisper (multipart, real file bytes)
  *   - embeddings          → OpenAI text-embedding-3-small (RAG queries)
  *
@@ -67,7 +67,7 @@ serve(async (req) => {
     }
 
     // Whitelist models per endpoint to prevent quota abuse via arbitrary models.
-    const CHAT_MODELS = new Set(['qwen/qwen3.6-27b']);
+    const CHAT_MODELS = new Set(['qwen/qwen3.8-27b']);
     const WHISPER_MODELS = new Set(['whisper-large-v3']);
     const EMBEDDING_MODELS = new Set(['text-embedding-3-small']);
     const MAX_AUDIO_BASE64 = 20 * 1024 * 1024; // ~15MB audio

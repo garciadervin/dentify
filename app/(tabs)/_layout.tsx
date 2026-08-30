@@ -1,6 +1,6 @@
 /**
- * Tab layout — 4 pestañas con barra flotante personalizada (boceto dentify.pen).
- * Inicio · Simulador · Escáner · Chat. El Perfil se abre vía el avatar.
+ * Tab layout — 4 tabs with a custom floating bar.
+ * Home · Simulator · Scanner · Chat. Profile opens via the avatar.
  */
 
 import React from 'react';
