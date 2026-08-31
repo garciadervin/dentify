@@ -105,6 +105,20 @@ jest.mock('expo-speech', () => ({
   getVoicesAsync: jest.fn(() => Promise.resolve([])),
 }));
 
+// useFocusEffect needs a NavigationContainer in production; in tests run the
+// effect on mount so screens that refresh-on-focus still behave. Partial mock:
+// keep the real exports (expo-router depends on them) and override only this hook.
+jest.mock('@react-navigation/native', () => {
+  const actual = jest.requireActual('@react-navigation/native') as Record<string, unknown>;
+  const React = require('react');
+  return {
+    ...actual,
+    useFocusEffect: (effect: () => void | (() => void)) => {
+      React.useEffect(() => effect(), [effect]);
+    },
+  };
+});
+
 // ── YOLO / TFJS mocks for Phase 6: YOLO Diagnosis Module ────────────────
 
 // Mock expo-camera

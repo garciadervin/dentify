@@ -7,37 +7,38 @@ import {
 import * as supabaseLib from '@/src/lib/supabase';
 
 // DB-shaped rows (question_type, case_id, ...) as returned by the `questions` table.
+// Case text comes from the joined `clinical_cases` relationship (3NF).
 function dbRows() {
   return [
     {
       id: 'a1', specialty_slug: 'operatoria-dental', level: 1, question_type: 'mcq',
       question: 'Indep 1', options: ['A', 'B', 'C', 'D'], correct_index: 0,
-      correct_indexes: null, pairs: null, order_items: null, case_id: null, case_text: null,
+      correct_indexes: null, pairs: null, order_items: null, case_id: null, clinical_cases: null,
       hint: null, points: 10, difficulty: 1, explanation: 'ex', tags: ['t'],
     },
     {
       id: 'c1', specialty_slug: 'operatoria-dental', level: 3, question_type: 'case',
       question: 'Caso 1a', options: ['A', 'B', 'C', 'D'], correct_index: 1,
-      correct_indexes: null, pairs: null, order_items: null, case_id: 'case-1', case_text: 'Paciente X',
+      correct_indexes: null, pairs: null, order_items: null, case_id: 'case-1', clinical_cases: { text: 'Paciente X' },
       hint: null, points: 10, difficulty: 3, explanation: 'ex', tags: ['t'],
     },
     {
       id: 'c2', specialty_slug: 'operatoria-dental', level: 3, question_type: 'case',
       question: 'Caso 1b', options: ['A', 'B', 'C', 'D'], correct_index: 2,
-      correct_indexes: null, pairs: null, order_items: null, case_id: 'case-1', case_text: 'Paciente X',
+      correct_indexes: null, pairs: null, order_items: null, case_id: 'case-1', clinical_cases: { text: 'Paciente X' },
       hint: null, points: 10, difficulty: 3, explanation: 'ex', tags: ['t'],
     },
     {
       id: 'a2', specialty_slug: 'operatoria-dental', level: 2, question_type: 'match',
       question: 'Indep 2', options: null, correct_index: null, correct_indexes: null,
       pairs: [{ left: 'L1', right: 'R1' }, { left: 'L2', right: 'R2' }], order_items: null,
-      case_id: null, case_text: null, hint: null, points: 15, difficulty: 2, explanation: 'ex', tags: ['t'],
+      case_id: null, clinical_cases: null, hint: null, points: 15, difficulty: 2, explanation: 'ex', tags: ['t'],
     },
     {
       id: 'a3', specialty_slug: 'operatoria-dental', level: 2, question_type: 'order',
       question: 'Indep 3', options: null, correct_index: null, correct_indexes: null, pairs: null,
       order_items: [{ text: 'A', position: 1 }, { text: 'B', position: 2 }, { text: 'C', position: 3 }],
-      case_id: null, case_text: null, hint: null, points: 15, difficulty: 2, explanation: 'ex', tags: ['t'],
+      case_id: null, clinical_cases: null, hint: null, points: 15, difficulty: 2, explanation: 'ex', tags: ['t'],
     },
   ];
 }
@@ -80,6 +81,8 @@ describe('quiz service', () => {
     expect(caseIds).toHaveLength(2);
     const idx = session.findIndex((q) => q.caseId === 'case-1');
     expect(session[idx + 1]?.caseId).toBe('case-1');
+    // Case text is mapped from the joined clinical_cases row.
+    expect(session[idx]?.caseText).toBe('Paciente X');
   });
 
   it('fetchQuizSession respects the count for non-case pools', async () => {

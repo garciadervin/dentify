@@ -52,16 +52,19 @@ export function useAuth(): UseAuthReturn {
       return;
     }
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('full_name, avatar_color, role, student_id, streak_count')
         .eq('id', id)
         .maybeSingle();
+      // A query error (offline / transient) is NOT "no profile": leave
+      // profileLoaded=false so the auth guard does not bounce the user to
+      // profile setup. Only a successful lookup with no row means no profile.
+      if (error) return;
       setProfile((data as unknown as Profile) ?? null);
-    } catch {
-      setProfile(null);
-    } finally {
       setProfileLoaded(true);
+    } catch {
+      // transient failure — keep profileLoaded=false (see above)
     }
   }, []);
 

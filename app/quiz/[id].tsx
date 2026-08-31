@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -68,6 +68,7 @@ export default function QuizScreen() {
   const [showResult, setShowResult] = useState(false);
   const [levelCompleted, setLevelCompleted] = useState(false);
   const [fadeAnim] = useState(new Animated.Value(1));
+  const transitioningRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -116,7 +117,7 @@ export default function QuizScreen() {
   );
 
   const handleNext = useCallback(() => {
-    if (!answered) return;
+    if (!answered || transitioningRef.current) return;
     if (isLastQuestion) {
       setShowResult(true);
       const correct = correctCount;
@@ -136,6 +137,7 @@ export default function QuizScreen() {
       }
       return;
     }
+    transitioningRef.current = true;
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 140,
@@ -148,7 +150,9 @@ export default function QuizScreen() {
         toValue: 1,
         duration: 180,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        transitioningRef.current = false;
+      });
     });
   }, [
     answered,

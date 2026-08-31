@@ -20,6 +20,8 @@ jest.mock('@/src/hooks/useProgress', () => ({
       { id: 's2', slug: 'endodoncia', name: 'Endodoncia', icon: '🔬', currentLevel: 1, totalLevels: 3, status: 'locked', progress: 0 },
     ],
     loading: false,
+    error: false,
+    reload: jest.fn(),
     completeLevel: jest.fn(),
     getProgress: () => 0,
     getXP: () => 240,

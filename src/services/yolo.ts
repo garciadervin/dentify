@@ -181,7 +181,9 @@ export async function processImage(imageUri: string): Promise<Detection[]> {
   } catch (error: any) {
     console.timeEnd('YOLO:processImage');
     console.warn('YOLO: Inference failed:', error.message);
-    return [];
+    // Propagate so callers can distinguish a real failure from an empty
+    // detection set (a false "no conditions found").
+    throw error;
   }
 }
 

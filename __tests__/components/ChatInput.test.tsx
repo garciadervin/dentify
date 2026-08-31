@@ -18,9 +18,11 @@ describe('ChatInput', () => {
     expect(screen.getByTestId('voice-button')).toBeTruthy();
   });
 
-  it('should not render an attach button (eliminado del diseño)', () => {
-    render(<ChatInput onSend={jest.fn()} />);
+  it('should render the attach button only when onAttach is provided', () => {
+    const { rerender } = render(<ChatInput onSend={jest.fn()} />);
     expect(screen.queryByTestId('attach-button')).toBeNull();
+    rerender(<ChatInput onSend={jest.fn()} onAttach={jest.fn()} />);
+    expect(screen.getByTestId('attach-button')).toBeTruthy();
   });
 
   it('should not call onSend when pressing send with empty text', () => {

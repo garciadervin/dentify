@@ -43,6 +43,7 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
   const [isRecording, setIsRecording] = useState(false);
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const startingRef = useRef(false);
+  const recordingRef = useRef(false);
 
   const handleSend = () => {
     const trimmed = text.trim();
@@ -76,6 +77,7 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
       });
       await audioRecorder.prepareToRecordAsync();
       audioRecorder.record();
+      recordingRef.current = true;
       setIsRecording(true);
     } catch {
       Alert.alert('Error', 'No se pudo iniciar la grabación de voz.');
@@ -88,6 +90,8 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
    * Stop recording, transcribe via Gemini, and handle the result.
    */
   const stopRecording = useCallback(async () => {
+    if (!recordingRef.current) return; // recording never started (e.g. denied)
+    recordingRef.current = false;
     try {
       await audioRecorder.stop();
       const uri = audioRecorder.uri;

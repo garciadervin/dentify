@@ -33,6 +33,10 @@ export interface UseProgressReturn {
   specialties: Specialty[];
   currentLevel: number;
   loading: boolean;
+  /** true when the progress query failed (network/RLS), distinct from an empty result. */
+  error: boolean;
+  /** Re-fetches progress; used when the screen regains focus or on retry. */
+  reload: () => void;
   completeLevel: (specialty: string, level: number) => Promise<boolean>;
   getProgress: (specialty: string) => number;
   getXP: () => number;
@@ -87,54 +91,62 @@ function buildSpecialties(defs: SpecialtyDef[], rows: ProgressRow[]): Specialty[
 export function useProgress(): UseProgressReturn {
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const defsRef = useRef<SpecialtyDef[]>([]);
   const rowsRef = useRef<ProgressRow[]>([]);
+  const cancelledRef = useRef(false);
 
-  useEffect(() => {
+  const loadData = useCallback(async () => {
     const supabase = getSupabase();
     if (!supabase) {
-      // Defer setting loading to false so the initial render shows loading=true
-      const id = setTimeout(() => setLoading(false), 0);
-      return () => clearTimeout(id);
+      setLoading(false);
+      return;
     }
+    try {
+      const [{ data: defs, error: defsError }, { data: rows, error: rowsError }] =
+        await Promise.all([
+          supabase
+            .from('specialties')
+            .select('id, slug, name, icon, levels_count, levels(level_number, xp_reward)')
+            .order('order_index'),
+          supabase
+            .from('pedagogical_progress')
+            .select('specialty, level, status, completed_at'),
+        ]);
 
-    let cancelled = false;
-    const client = supabase;
-
-    async function load() {
-      try {
-        const [{ data: defs, error: defsError }, { data: rows, error: rowsError }] =
-          await Promise.all([
-            client
-              .from('specialties')
-              .select('id, slug, name, icon, levels_count, levels(level_number, xp_reward)')
-              .order('order_index'),
-            client
-              .from('pedagogical_progress')
-              .select('specialty, level, status, completed_at'),
-          ]);
-
-        if (cancelled) return;
-        if (defsError || rowsError) {
-          console.warn('useProgress: no se pudieron cargar especialidades/progreso');
-          setLoading(false);
-          return;
-        }
-
-        defsRef.current = (defs ?? []) as unknown as SpecialtyDef[];
-        rowsRef.current = (rows ?? []) as unknown as ProgressRow[];
-        setSpecialties(buildSpecialties(defsRef.current, rowsRef.current));
+      if (cancelledRef.current) return;
+      if (defsError || rowsError) {
+        setError(true);
         setLoading(false);
-      } catch {
-        if (!cancelled) setLoading(false);
+        return;
       }
-    }
 
-    load();
-    return () => {
-      cancelled = true;
-    };
+      defsRef.current = (defs ?? []) as unknown as SpecialtyDef[];
+      rowsRef.current = (rows ?? []) as unknown as ProgressRow[];
+      setSpecialties(buildSpecialties(defsRef.current, rowsRef.current));
+      setError(false);
+      setLoading(false);
+    } catch {
+      if (cancelledRef.current) return;
+      setError(true);
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    cancelledRef.current = false;
+    setLoading(true);
+    void loadData();
+    return () => {
+      cancelledRef.current = true;
+    };
+  }, [loadData]);
+
+  const reload = useCallback(() => {
+    cancelledRef.current = false;
+    setLoading(true);
+    void loadData();
+  }, [loadData]);
 
   /**
    * Marks a level as completed: UPSERTs progress, activates the next level (or
@@ -175,14 +187,22 @@ export function useProgress(): UseProgressReturn {
     const ok = await upsertRow(specialty, level, 'completed', now);
     if (!ok) return false;
 
-    // Activate the next level or the next specialty.
+    // Activate the next level (or the next specialty) only if it is not already
+    // completed — repeating a level must not erase a 'completed' row.
     const def = defsRef.current.find((d) => d.name === specialty);
+    const alreadyDone = (spec: string, lvl: number) =>
+      rowsRef.current.some((r) => r.specialty === spec && r.level === lvl && r.status === 'completed');
+
     if (def && level < def.levels_count) {
-      await upsertRow(specialty, level + 1, 'active');
+      if (!alreadyDone(specialty, level + 1)) {
+        await upsertRow(specialty, level + 1, 'active');
+      }
     } else if (def) {
       const idx = defsRef.current.findIndex((d) => d.id === def.id);
       const next = defsRef.current[idx + 1];
-      if (next) await upsertRow(next.name, 1, 'active');
+      if (next && !alreadyDone(next.name, 1)) {
+        await upsertRow(next.name, 1, 'active');
+      }
     }
 
     // Refresh local state from the last view of rows.
@@ -223,6 +243,8 @@ export function useProgress(): UseProgressReturn {
     specialties,
     currentLevel,
     loading,
+    error,
+    reload,
     completeLevel,
     getProgress,
     getXP,

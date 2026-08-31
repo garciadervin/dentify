@@ -91,11 +91,11 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={DefaultTheme}>
       <Head>
-        <title>Dentify — Aprendizaje Dental Clínico</title>
-        <meta name="description" content="Dentify es una plataforma interactiva de aprendizaje dental con simulador 3D, quizzes clínicos y asistente IA especializado en odontología." />
+        <title>Dentify — App educativa de odontología con IA</title>
+        <meta name="description" content="App educativa de odontología con IA: asistente clínico RAG, simulador 3D dental, diagnóstico por visión y ruta pedagógica gamificada." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:title" content="Dentify — Aprendizaje Dental Clínico" />
-        <meta property="og:description" content="Plataforma interactiva de aprendizaje dental con simulador 3D, quizzes clínicos y asistente IA." />
+        <meta property="og:title" content="Dentify — App educativa de odontología con IA" />
+        <meta property="og:description" content="App educativa de odontología con IA: asistente clínico RAG, simulador 3D dental, diagnóstico por visión y ruta pedagógica gamificada." />
         <meta property="og:type" content="website" />
       </Head>
       <AuthGuard>

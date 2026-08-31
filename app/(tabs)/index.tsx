@@ -6,9 +6,10 @@
  * empty state is shown when there is no progress.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ScreenContainer from '@/components/ScreenContainer';
 import AppHeader from '@/components/AppHeader';
@@ -23,11 +24,18 @@ import { recordStudyActivity } from '@/src/services/activity';
 export default function DashboardScreen() {
   const colors = Colors;
   const { user, profile } = useAuth();
-  const { specialties, loading, getXP } = useProgress();
+  const { specialties, loading, error, reload, getXP } = useProgress();
   const { badges, checkAndAwardBadge } = useBadges();
   const router = useRouter();
 
   const [streak, setStreak] = useState(profile?.streak_count ?? 0);
+
+  // Refresh progress when the tab regains focus (e.g. returning from a quiz).
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [reload])
+  );
 
   // Log daily study activity and award the streak badge when applicable.
   useEffect(() => {
@@ -106,6 +114,21 @@ export default function DashboardScreen() {
         {loading ? (
           <View style={styles.emptyCard}>
             <Text style={styles.emptyTitle}>Cargando tu progreso...</Text>
+          </View>
+        ) : error ? (
+          <View style={styles.emptyCard}>
+            <MaterialCommunityIcons name="wifi-alert" size={32} color="#C0392B" />
+            <Text style={styles.emptyTitle}>No se pudo cargar tu progreso</Text>
+            <Text style={styles.emptySub}>
+              Revisa tu conexión e inténtalo de nuevo.
+            </Text>
+            <TouchableOpacity
+              testID="retry-progress"
+              onPress={reload}
+              style={[styles.continueButton, { backgroundColor: colors.clinicalBlue, borderColor: '#005C8A' }]}
+            >
+              <Text style={styles.continueButtonTitle}>Reintentar</Text>
+            </TouchableOpacity>
           </View>
         ) : specialties.length === 0 ? (
           <View style={styles.emptyCard}>

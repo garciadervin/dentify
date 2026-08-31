@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
-import { View, TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, ActivityIndicator, StyleSheet, Linking } from 'react-native';
 import { CameraView as ExpoCameraView, useCameraPermissions, CameraType, FlashMode } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
@@ -93,25 +93,64 @@ const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(function Camera
         >
           Necesitamos acceso a la cámara para realizar diagnósticos
         </Text>
-        <TouchableOpacity
-          style={{
-            backgroundColor: colors.clinicalBlue,
-            paddingHorizontal: 24,
-            paddingVertical: 12,
-            borderRadius: 12,
-          }}
-          onPress={requestPermission}
-        >
-          <Text
+        {permission.canAskAgain === false ? (
+          <>
+            <Text
+              style={{
+                fontFamily: 'Inter',
+                fontSize: 14,
+                color: colors.neutral,
+                textAlign: 'center',
+                marginBottom: 16,
+                paddingHorizontal: 24,
+              }}
+            >
+              El permiso de cámara fue denegado permanentemente. Actívalo desde los
+              ajustes del dispositivo para usar el diagnóstico.
+            </Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.clinicalBlue,
+                paddingHorizontal: 24,
+                paddingVertical: 12,
+                borderRadius: 12,
+              }}
+              onPress={() => Linking.openSettings()}
+              accessibilityRole="button"
+            >
+              <Text
+                style={{
+                  fontFamily: 'Inter-SemiBold',
+                  fontSize: 16,
+                  color: '#FFFFFF',
+                }}
+              >
+                Abrir ajustes
+              </Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <TouchableOpacity
             style={{
-              fontFamily: 'Inter-SemiBold',
-              fontSize: 16,
-              color: '#FFFFFF',
+              backgroundColor: colors.clinicalBlue,
+              paddingHorizontal: 24,
+              paddingVertical: 12,
+              borderRadius: 12,
             }}
+            onPress={requestPermission}
+            accessibilityRole="button"
           >
-            Permitir acceso
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={{
+                fontFamily: 'Inter-SemiBold',
+                fontSize: 16,
+                color: '#FFFFFF',
+              }}
+            >
+              Permitir acceso
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }

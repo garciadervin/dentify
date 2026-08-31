@@ -65,7 +65,6 @@ interface QuestionRow {
   pairs: unknown;
   order_items: unknown;
   case_id: string | null;
-  case_text: string | null;
   hint: string | null;
   points: number;
   difficulty: number;
@@ -97,7 +96,7 @@ function mapRow(row: QuestionRow): QuizQuestion {
       ? (row.order_items as OrderItem[])
       : null,
     caseId: row.case_id,
-    caseText: row.case_text,
+    caseText: (row as { clinical_cases?: { text?: string | null } | null }).clinical_cases?.text ?? null,
     hint: row.hint,
     points: row.points ?? 10,
     difficulty: row.difficulty ?? 1,
@@ -136,19 +135,20 @@ function shuffle<T>(arr: T[]): T[] {
 /**
  * Splits the pool into "blocks": each standalone question is one block and the
  * sub-questions of a clinical case (same case_id) form one indivisible block.
+ * Grouping is position-independent so a case's sub-questions are kept together
+ * even if they are not contiguous in the pool, without losing or duplicating
+ * any question.
  */
 function toBlocks(questions: QuizQuestion[]): QuizQuestion[][] {
   const blocks: QuizQuestion[][] = [];
-  let i = 0;
-  while (i < questions.length) {
-    const q = questions[i];
-    if (q.caseId) {
-      const group = questions.slice(i).filter((x) => x.caseId === q.caseId);
-      blocks.push(group);
-      i += group.length;
-    } else {
+  const groupedCases = new Set<string>();
+  for (const q of questions) {
+    if (!q.caseId) {
       blocks.push([q]);
-      i += 1;
+    } else if (!groupedCases.has(q.caseId)) {
+      const group = questions.filter((x) => x.caseId === q.caseId);
+      group.forEach((g) => groupedCases.add(g.caseId!));
+      blocks.push(group);
     }
   }
   return blocks;
@@ -169,7 +169,7 @@ export async function fetchQuizQuestions(
     const { data, error } = await supabase
       .from('questions')
       .select(
-        'id, question, question_type, options, correct_index, correct_indexes, pairs, order_items, case_id, case_text, hint, points, difficulty, explanation, level'
+        'id, question, question_type, options, correct_index, correct_indexes, pairs, order_items, case_id, clinical_cases(text), hint, points, difficulty, explanation, level'
       )
       .eq('specialty_slug', slug)
       .eq('level', level)
@@ -256,7 +256,7 @@ export async function fetchMistakes(
     const { data: qs, error: qErr } = await supabase
       .from('questions')
       .select(
-        'id, question, question_type, options, correct_index, correct_indexes, pairs, order_items, case_id, case_text, hint, points, difficulty, explanation, level'
+        'id, question, question_type, options, correct_index, correct_indexes, pairs, order_items, case_id, clinical_cases(text), hint, points, difficulty, explanation, level'
       )
       .in('id', wrongIds)
       .eq('specialty_slug', slug)

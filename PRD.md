@@ -127,7 +127,7 @@ Vision processing (YOLO26n-seg) runs **locally** via TensorFlow Lite inside a We
 | --- | --- | --- |
 | **FR-01** | The system shall allow the user to ask clinical questions via text input. | High |
 | **FR-02** | The system shall allow the user to ask questions via voice, transcribing audio with the multimodal Gemini model (`denty-transcribe`). | High |
-| **FR-03** | Responses shall be generated using RAG: the query is embedded with `text-embedding-3-small`, the most relevant manual fragments are retrieved from `clinical_manuals` via pgvector cosine similarity, and the fragments are passed as context to the chat model (**Qwen 3.8 27B**). | High |
+| **FR-03** | Responses shall be generated using RAG: the query is embedded with `text-embedding-3-small`, the most relevant manual fragments are retrieved from `clinical_manuals` via pgvector cosine similarity, and the fragments are passed as context to the chat model (**Gemini 3.5 Flash Lite**). | High |
 | **FR-04** | The assistant shall recognize voice navigation commands (e.g., "abrir simulador", "mostrar escáner") and navigate accordingly. | Medium |
 | **FR-05** | Conversation history shall persist locally (SQLite) and sync with Supabase when connectivity is available. | Medium |
 

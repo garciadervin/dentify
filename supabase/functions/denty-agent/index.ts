@@ -45,6 +45,22 @@ const MAX_ITERATIONS = 3;
 const MAX_TOKENS = 700;
 const MAX_BODY_BYTES = 10 * 1024 * 1024; // base64 images included
 
+// ── Per-user rate limiting (best-effort; Edge Function instances are ephemeral) ──
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 10;
+const rateHits = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateHits.get(userId);
+  if (!entry || now >= entry.resetAt) {
+    rateHits.set(userId, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -80,6 +96,10 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const MAX_EXTRACTED_TEXT = 12_000;
 const RAG_MATCH_COUNT = 3;
 const MAX_CHUNK_CHARS = 700;
+// Decompression-bomb guards for PDF/DOCX extraction.
+const MAX_INFLATED_BYTES = 2 * 1024 * 1024;
+const MAX_PDF_STREAMS = 200;
+const MAX_STREAM_BYTES = 4 * 1024 * 1024;
 
 function base64ToBytes(b64: string): Uint8Array {
   return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
@@ -96,7 +116,7 @@ function decodeText(bytes: Uint8Array): string {
 
 function inflateRawSafe(bytes: Uint8Array): Uint8Array | null {
   try {
-    return pako.inflateRaw(bytes);
+    return pako.inflateRaw(bytes, { maxOutputLength: MAX_INFLATED_BYTES });
   } catch {
     return null;
   }
@@ -143,7 +163,8 @@ function extractPdfText(bytes: Uint8Array): string {
   const streamMarker = new TextEncoder().encode('stream');
   const endMarker = new TextEncoder().encode('endstream');
   let pos = 0;
-  while (pos < bytes.length) {
+  let streamCount = 0;
+  while (pos < bytes.length && streamCount < MAX_PDF_STREAMS) {
     const s = indexOfBytes(bytes, streamMarker, pos);
     if (s === -1) break;
     let cs = s + streamMarker.length;
@@ -152,9 +173,15 @@ function extractPdfText(bytes: Uint8Array): string {
     const e = indexOfBytes(bytes, endMarker, cs);
     if (e === -1) break;
     const raw = bytes.slice(cs, e);
+    if (raw.length > MAX_STREAM_BYTES) {
+      // Suspiciously large compressed stream — skip it (bomb guard).
+      pos = e + endMarker.length;
+      continue;
+    }
     const inflated = inflateRawSafe(raw) ?? raw;
     collectPdfText(decodeText(inflated), chunks);
     pos = e + endMarker.length;
+    streamCount++;
   }
   return chunks.join(' ');
 }
@@ -606,6 +633,9 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await authClient.auth.getUser(jwt);
     if (userError || !user?.id) return jsonResponse({ error: 'Invalid session' }, 401);
     const userId = user.id;
+    if (isRateLimited(userId)) {
+      return jsonResponse({ error: 'Demasiadas solicitudes. Espera un momento y vuelve a intentarlo.' }, 429);
+    }
 
     const body = await req.json().catch(() => null);
     if (!body || !Array.isArray(body.messages) || body.messages.length === 0) {

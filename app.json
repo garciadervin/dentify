@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "dentify",
+    "name": "Dentify",
     "slug": "dentify",
+    "description": "App educativa de odontología con IA: asistente clínico RAG, simulador 3D dental, diagnóstico por visión y ruta pedagógica gamificada.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

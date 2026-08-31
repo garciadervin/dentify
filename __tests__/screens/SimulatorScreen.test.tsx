@@ -32,15 +32,14 @@ describe('SimulatorScreen', () => {
     });
   });
 
-  it('should update the model viewer when a different tooth is selected', async () => {
+  it('should update the tooth name when a different tooth is selected', async () => {
     render(<SimulatorScreen />);
     await waitFor(() => {
-      expect(screen.getByTestId('model-viewer')).toBeTruthy();
+      expect(screen.getAllByText(/incisivo central superior/i).length).toBeGreaterThan(0);
     });
-    const tooth16 = screen.getByTestId('tooth-16');
-    fireEvent.press(tooth16);
+    fireEvent.press(screen.getByTestId('tooth-16'));
     await waitFor(() => {
-      expect(screen.getByTestId('model-viewer')).toBeTruthy();
+      expect(screen.getAllByText(/primer molar superior/i).length).toBeGreaterThan(0);
     });
   });
 });

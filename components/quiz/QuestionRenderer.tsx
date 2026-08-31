@@ -131,16 +131,20 @@ function MultiOptionList({
 
 function FillBlank({
   question,
+  options,
+  correctShuffledIndex,
   phase,
   selected,
   onSelect,
 }: {
   question: QuizQuestion;
+  options: string[];
+  /** Position of the correct tile AFTER the options are shuffled. */
+  correctShuffledIndex: number;
   phase: AnswerPhase;
   selected: number | null;
   onSelect: (index: number) => void;
 }) {
-  const options = useMemo(() => shuffle(question.options ?? []), [question]);
   const [before, after] = useMemo(() => {
     const parts = question.question.split('____');
     return [parts[0] ?? '', parts.slice(1).join('____')];
@@ -158,7 +162,7 @@ function FillBlank({
               testID="fill-blank-value"
               style={[
                 styles.fillBlank,
-                phase === 'incorrect' && selected !== null && question.correctIndex !== selected && styles.fillBlankWrong,
+                phase === 'incorrect' && selected !== null && correctShuffledIndex !== selected && styles.fillBlankWrong,
                 phase === 'correct' && styles.fillBlankCorrect,
               ]}
             >
@@ -173,7 +177,7 @@ function FillBlank({
 
       <View style={styles.fillTiles}>
         {options.map((word, index) => {
-          const isCorrectAnswer = phase !== 'idle' && index === question.correctIndex;
+          const isCorrectAnswer = phase !== 'idle' && index === correctShuffledIndex;
           const isWrongPick = phase === 'incorrect' && index === selected;
           let bg = Colors.surface;
           let border = Colors.pillBorder;
@@ -480,6 +484,18 @@ export default function QuestionRenderer({
   const options = question.options ?? [];
   const multiDone = type === 'multi_select' && selectedIndexes.size > 0;
 
+  // fill_blank tiles are shuffled; remap the correct answer to its shuffled
+  // position so grading and highlighting use consistent indices.
+  const fillBlank = useMemo(() => {
+    if (type !== 'fill_blank') return null;
+    const opts = question.options ?? [];
+    const indexes = shuffle(opts.map((_, i) => i));
+    return {
+      options: indexes.map((i) => opts[i]),
+      correctShuffledIndex: question.correctIndex != null ? indexes.indexOf(question.correctIndex) : -1,
+    };
+  }, [question, type]);
+
   return (
     <View testID="question-renderer">
       {/* Clinical case header */}
@@ -543,15 +559,17 @@ export default function QuestionRenderer({
         />
       )}
 
-      {type === 'fill_blank' && (
+      {type === 'fill_blank' && fillBlank && (
         <FillBlank
           question={question}
+          options={fillBlank.options}
+          correctShuffledIndex={fillBlank.correctShuffledIndex}
           phase={phase}
           selected={selected}
           onSelect={(i) => {
             if (phase !== 'idle') return;
             setSelected(i);
-            reveal(i === question.correctIndex);
+            reveal(i === fillBlank.correctShuffledIndex);
           }}
         />
       )}

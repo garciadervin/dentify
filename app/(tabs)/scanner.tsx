@@ -155,7 +155,9 @@ export default function ScannerScreen() {
             upsert: false,
           });
         if (error) throw error;
-        return supabase.storage.from('diagnosis-images').getPublicUrl(data.path).data.publicUrl;
+        // The bucket is private; store the object path (signed URLs are issued
+        // when an image actually needs to be displayed).
+        return data.path;
       } catch (err) {
         console.warn('Diagnosis image upload failed:', err);
         return null;
@@ -178,7 +180,6 @@ export default function ScannerScreen() {
           image_url: imageUrl,
           detected_objects:
             detections as unknown as Database['public']['Tables']['diagnosis_sessions']['Insert']['detected_objects'],
-          clinical_notes: null,
         });
         if (error) throw error;
       }

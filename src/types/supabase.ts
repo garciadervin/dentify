@@ -128,7 +128,6 @@ export interface Database {
           pairs: Json | null;
           order_items: Json | null;
           case_id: string | null;
-          case_text: string | null;
           hint: string | null;
           points: number;
           difficulty: number;
@@ -148,7 +147,6 @@ export interface Database {
           pairs?: Json | null;
           order_items?: Json | null;
           case_id?: string | null;
-          case_text?: string | null;
           hint?: string | null;
           points?: number;
           difficulty?: number;
@@ -168,11 +166,25 @@ export interface Database {
           pairs?: Json | null;
           order_items?: Json | null;
           case_id?: string | null;
-          case_text?: string | null;
           hint?: string | null;
           points?: number;
           difficulty?: number;
           tags?: string[] | null;
+        };
+        Relationships: [];
+      };
+      clinical_cases: {
+        Row: {
+          id: string;
+          text: string;
+        };
+        Insert: {
+          id: string;
+          text: string;
+        };
+        Update: {
+          id?: string;
+          text?: string;
         };
         Relationships: [];
       };
@@ -231,7 +243,6 @@ export interface Database {
           specialty: string;
           level: number;
           status: 'locked' | 'active' | 'completed';
-          score: number;
           completed_at: string | null;
         };
         Insert: {
@@ -240,7 +251,6 @@ export interface Database {
           specialty: string;
           level: number;
           status?: 'locked' | 'active' | 'completed';
-          score?: number;
           completed_at?: string | null;
         };
         Update: {
@@ -249,7 +259,6 @@ export interface Database {
           specialty?: string;
           level?: number;
           status?: 'locked' | 'active' | 'completed';
-          score?: number;
           completed_at?: string | null;
         };
         Relationships: [];
@@ -260,7 +269,6 @@ export interface Database {
           profile_id: string;
           image_url: string | null;
           detected_objects: Json | null;
-          clinical_notes: string | null;
           created_at: string;
         };
         Insert: {
@@ -268,7 +276,6 @@ export interface Database {
           profile_id: string;
           image_url?: string | null;
           detected_objects?: Json | null;
-          clinical_notes?: string | null;
           created_at?: string;
         };
         Update: {
@@ -276,7 +283,6 @@ export interface Database {
           profile_id?: string;
           image_url?: string | null;
           detected_objects?: Json | null;
-          clinical_notes?: string | null;
           created_at?: string;
         };
         Relationships: [];
