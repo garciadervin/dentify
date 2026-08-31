@@ -1,43 +1,19 @@
 // jest.setup.ts — Mock expo modules for testing
 import { jest } from '@jest/globals';
 
-// Set test environment variables for services that need them
-// GROQ_API_KEY is set here so tests can manipulate it via delete/restore
-process.env.GROQ_API_KEY = 'test-groq-api-key';
-// Supabase credentials for RAG tests (uses mock @supabase/supabase-js)
+// Supabase credentials for tests (uses mock @supabase/supabase-js)
 process.env.EXPO_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 
-// Mock global fetch for the AI proxy: route by the JSON body's `endpoint`
-// field, because the app sends all traffic to the single groq-proxy URL.
+// Mock global fetch for the AI Edge Functions (denty-agent, denty-transcribe).
+// The real functions live server-side; tests only assert client behavior.
 global.fetch = jest.fn() as any;
-(global.fetch as any).mockImplementation(async (_url: string, init?: any) => {
-  let body: any = {};
-  try {
-    body = JSON.parse(init?.body ?? '{}');
-  } catch {
-    /* body not JSON */
+(global.fetch as any).mockImplementation(async (url: string) => {
+  if (String(url).includes('denty-transcribe')) {
+    return { ok: true, json: async () => ({ text: 'Transcripción simulada.' }) };
   }
-
-  if (body?.endpoint === 'chat/completions') {
-    return {
-      ok: true,
-      json: async () => ({
-        choices: [{ message: { content: 'Respuesta simulada de Denty-AI.' } }],
-      }),
-    };
-  }
-  if (body?.endpoint === 'audio/transcriptions') {
-    return {
-      ok: true,
-      json: async () => ({ text: 'Transcripción simulada.' }),
-    };
-  }
-  if (body?.endpoint === 'embeddings') {
-    return {
-      ok: true,
-      json: async () => ({ data: [{ embedding: new Array(1536).fill(0.01) }] }),
-    };
+  if (String(url).includes('denty-agent')) {
+    return { ok: true, json: async () => ({ content: 'Respuesta simulada de Denty-AI.', sources: [] }) };
   }
   return { ok: true, json: async () => ({}) };
 });

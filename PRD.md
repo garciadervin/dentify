@@ -57,7 +57,7 @@ The system follows an **Edge-First** architecture: vision and 3D processing run 
 | **GLB / KHR_mesh_quantization** | 3D file format and quantization extension used to compress polygonal meshes (supported natively by three.js, no runtime decoder) |
 | **Expo** | Development framework for React Native |
 | **NativeWind** | Tailwind CSS-based styling library for React Native |
-| **Groq** | Cloud inference provider serving the chat (Qwen 3.8 27B) and Whisper (STT) models |
+| **Google AI Studio** | Free-tier cloud provider serving the chat/vision model (Gemini 3.5 Flash Lite) and web search (Grounding with Google Search); OpenAI serves RAG embeddings |
 | **STT / TTS** | Speech-to-Text / Text-to-Speech |
 
 ### 1.4 References
@@ -65,7 +65,7 @@ The system follows an **Edge-First** architecture: vision and 3D processing run 
 - IEEE Std 830-1998 — *Recommended Practice for Software Requirements Specifications*.
 - ISO/IEC 25010:2023 — *Systems and software Quality Requirements and Evaluation (SQuaRE)*.
 - UNERG Clinical Dental Procedures Manual (2024 edition) and selected clinical textbooks.
-- Official documentation for Supabase, Expo SDK 54, TensorFlow Lite, Groq API, OpenAI Embeddings API.
+- Official documentation for Supabase, Expo SDK 54, TensorFlow Lite, Google AI Studio / Gemini API.
 
 ### 1.5 Document Overview
 
@@ -80,11 +80,11 @@ Section 2 gives a high-level product description. Section 3 details the function
 Dentify is a standalone system that runs on students' mobile devices. It integrates with the following external services:
 
 - **Supabase**: authentication, relational database (PostgreSQL), vector storage (pgvector) for RAG, and Edge Functions.
-- **Groq API**: inference for the chat model (**Qwen 3.8 27B**, multimodal) and **Whisper Large V3** (speech-to-text).
-- **OpenAI Embeddings API**: `text-embedding-3-small` (1536 dimensions) to embed RAG queries and manual fragments.
+- **Google AI Studio**: inference for the chat model (**Gemini 3.5 Flash Lite**, multimodal) with a fallback chain to `gemini-3.1-flash-lite` and `gemma-4-31b-it`, plus **Grounding with Google Search** for up-to-date web answers.
+- **OpenAI**: `text-embedding-3-small` (1536 dimensions) to embed RAG queries and manual fragments (server-side in `denty-agent`).
 - **3D Model CDN**: distribution of `.glb` models optimized with `KHR_mesh_quantization` and JPEG textures (bundled assets, no runtime decoder).
 
-Vision processing (YOLO26n-seg) runs **locally** via TensorFlow Lite inside a WebView. Voice is recorded on the device, transcribed by Whisper through a Supabase Edge Function, and text is sent to the chat model.
+Vision processing (YOLO26n-seg) runs **locally** via TensorFlow Lite inside a WebView. Voice is recorded on the device, transcribed by Gemini 3.5 Flash Lite through a Supabase Edge Function (`denty-transcribe`), and text is sent to the chat model.
 
 ### 2.2 Product Functions
 
@@ -114,7 +114,7 @@ Vision processing (YOLO26n-seg) runs **locally** via TensorFlow Lite inside a We
 
 - The student has a smartphone with a camera and at least 4 GB of RAM.
 - RAG quality depends on the completeness of the indexed clinical manuals (two manuals currently).
-- AI availability depends on Groq/OpenAI cloud services.
+- AI availability depends on Google AI Studio cloud services (free tier: ~15 RPM / 500 RPD; the fallback chain and degraded mode absorb temporary rate limits).
 - 3D models are provided by the content team under an appropriate license.
 
 ---
@@ -126,7 +126,7 @@ Vision processing (YOLO26n-seg) runs **locally** via TensorFlow Lite inside a We
 | ID | Description | Priority |
 | --- | --- | --- |
 | **FR-01** | The system shall allow the user to ask clinical questions via text input. | High |
-| **FR-02** | The system shall allow the user to ask questions via voice, transcribing audio with Whisper Large V3. | High |
+| **FR-02** | The system shall allow the user to ask questions via voice, transcribing audio with the multimodal Gemini model (`denty-transcribe`). | High |
 | **FR-03** | Responses shall be generated using RAG: the query is embedded with `text-embedding-3-small`, the most relevant manual fragments are retrieved from `clinical_manuals` via pgvector cosine similarity, and the fragments are passed as context to the chat model (**Qwen 3.8 27B**). | High |
 | **FR-04** | The assistant shall recognize voice navigation commands (e.g., "abrir simulador", "mostrar escáner") and navigate accordingly. | Medium |
 | **FR-05** | Conversation history shall persist locally (SQLite) and sync with Supabase when connectivity is available. | Medium |
@@ -174,7 +174,7 @@ Aligned with **ISO/IEC 25010**.
 | **Maintainability** | NFR-03 | Source code shall be written in TypeScript with strict typing. | `tsc --noEmit` passes; ESLint clean. |
 |  | NFR-04 | AI models and RAG manuals shall be updatable without app recompilation. | Manuals re-ingested via the ingestion script; model swapped as an asset. |
 | **Reliability** | NFR-05 | The application shall degrade gracefully when the backend is unavailable: chat returns an explanatory message and RAG falls back to lexical search. | Airplane-mode tests. |
-| **Security** | NFR-06 | All communication with Supabase/Groq/OpenAI shall use HTTPS; API keys stay server-side (Supabase Secrets + Edge Function). | Network traffic inspection; no key in the client bundle. |
+| **Security** | NFR-06 | All communication with Supabase/Google AI Studio shall use HTTPS; API keys stay server-side (Supabase Secrets + Edge Functions). | Network traffic inspection; no key in the client bundle. |
 |  | NFR-07 | Student personal data shall be protected by Supabase Auth and Row Level Security. | RLS policy review. |
 | **Usability** | NFR-08 | The interface shall follow the Clinical Clarity design system (DESIGN.md) and be responsive. | Design review with representative users. |
 | **Portability** | NFR-09 | The application shall behave identically on iOS and Android, except for platform restrictions. | Testing on iPhone 14 and Pixel 7 (Expo Go). |
@@ -200,8 +200,8 @@ Aligned with **ISO/IEC 25010**.
 | External Component | Protocol / Format | Purpose |
 | --- | --- | --- |
 | **Supabase** | REST / PostgreSQL | Auth, relational + vector storage, Edge Functions. |
-| **Groq API** | HTTPS / JSON | Chat (Qwen 3.8 27B) and Whisper (STT) inference. |
-| **OpenAI Embeddings API** | HTTPS / JSON | `text-embedding-3-small` for RAG. |
+| **Google AI Studio** | HTTPS / JSON | Chat + vision (Gemini 3.5 Flash Lite), transcription (audio), Grounding with Google Search. |
+| **OpenAI** | HTTPS / JSON | `text-embedding-3-small` for RAG. |
 | **3D Model CDN** | HTTPS / GLB (optimized) | Download of anatomical models. |
 
 ### 5.4 Communication Interfaces
@@ -230,11 +230,11 @@ graph TD
         D[Supabase]
         D1[Auth - JWT]
         D2["PostgreSQL + pgvector (HNSW)"]
-        D3[Edge Functions - groq-proxy]
-        E[Groq API]
-        E1[Qwen 3.8 27B]
-        E2[Whisper Large V3]
-        F[OpenAI Embeddings]
+        D3["Edge Functions - denty-agent / denty-transcribe"]
+        E[Google AI Studio]
+        E1["Gemini 3.5 Flash Lite (chat/visión/voz)"]
+        E2[OpenAI text-embedding-3-small]
+        E3[Grounding Google Search]
     end
 
     A --> B1 & B2 & B3
@@ -242,15 +242,14 @@ graph TD
     A --> C2 --> D3
     A <--> D1
     A <--> D2
-    A <--> D3 --> E1 & E2
-    D3 --> F
+    A <--> D3 --> E1 & E2 & E3
     C4 <--> A
 ```
 
 **Edge-First Description:**
 
 - Vision (YOLO26n-seg) and 3D rendering run **on device** (offline-capable).
-- The chat assistant routes through the `groq-proxy` Edge Function: the client sends the query, the function retrieves the semantic embedding (OpenAI), the client queries `match_manuals` (pgvector), and the function completes the answer with Qwen 3.8 27B. API keys live only in Supabase Secrets.
+- The chat assistant routes through the `denty-agent` Edge Function (agent loop with RAG + tools), and voice dictation through `denty-transcribe`. Both call Google AI Studio server-side; API keys live only in Supabase Secrets. If a model is rate-limited, the request falls back to the next model in the chain.
 - Supabase acts as the unified backend: auth, relational + vector storage, and Edge Functions.
 
 ---
@@ -289,27 +288,25 @@ Full schema is in `supabase/migrations/`; the RAG corpus is loaded by `scripts/i
 sequenceDiagram
     participant User
     participant MobileApp as Mobile App (Expo)
-    participant Edge as Edge Function (groq-proxy)
+    participant Edge as Edge Function (denty-agent)
     participant Supabase
-    participant Groq
-    participant OpenAI
+    participant Gemini as Google AI Studio
 
     User->>MobileApp: Voice button or text question
     alt Voice
         MobileApp->>MobileApp: Record + base64 audio
-        MobileApp->>Edge: audio/transcriptions (multipart)
-        Edge->>Groq: Whisper Large V3
-        Groq-->>Edge: text
+        MobileApp->>Edge: denty-transcribe (audio base64)
+        Edge->>Gemini: transcribe audio (Gemini 3.5 Flash Lite)
+        Gemini-->>Edge: text
     end
-    MobileApp->>Edge: embeddings { input: query }
-    Edge->>OpenAI: text-embedding-3-small
-    OpenAI-->>Edge: vector (1536)
-    MobileApp->>Supabase: match_manuals(query_embedding)
-    Supabase-->>MobileApp: top fragments
-    MobileApp->>Edge: chat/completions { prompt + RAG context }
-    Edge->>Groq: Qwen 3.8 27B
-    Groq-->>Edge: answer (reasoning disabled)
-    MobileApp->>User: Display answer (text) / TTS
+    MobileApp->>Edge: denty-agent { messages + attachments }
+    Edge->>Gemini: embeddings { input: query }
+    Gemini-->>Edge: vector (1536)
+    Edge->>Supabase: match_manuals(query_embedding)
+    Supabase-->>Edge: top fragments
+    Edge->>Gemini: chat { system + prompt + RAG context } (fallback chain)
+    Gemini-->>Edge: answer (with tools / sources)
+    MobileApp->>User: Display answer (Markdown + sources) / TTS
     opt Save
         MobileApp->>Supabase: upsert ai_conversations
     end
@@ -337,9 +334,9 @@ sequenceDiagram
 
 | Requirement | Description | Module | Technical Component | Verification |
 | --- | --- | --- | --- | --- |
-| FR-01 | Text questions | Denty-AI | `ChatInput`, `chatWithContext`, Groq (Qwen) | Manual + unit test |
-| FR-02 | Voice questions | Denty-AI | `expo-audio` recording, `transcribeAudio`, Whisper | Audio integration test |
-| FR-03 | RAG over manuals | Denty-AI | `match_manuals` (pgvector), `embeddings.ts`, OpenAI | Vector retrieval test + live query |
+| FR-01 | Text questions | Denty-AI | `ChatInput`, `sendAgentMessage`, denty-agent (Gemini) | Manual + unit test |
+| FR-02 | Voice questions | Denty-AI | `expo-audio` recording, `transcribeAudio`, denty-transcribe | Audio integration test |
+| FR-03 | RAG over manuals | Denty-AI | `match_manuals` (pgvector), denty-agent, OpenAI embeddings | Vector retrieval test + live query |
 | FR-04 | Voice navigation | Denty-AI | `voiceCommands.ts` | Unit test |
 | FR-05 | Persistent history | Denty-AI | SQLite + `ai_conversations` | Offline/online sync test |
 | FR-06 | Compressed GLB loading | 3D Simulator | three.js, `modelCache`, Expo GL | Load-time measurement |
@@ -365,7 +362,7 @@ sequenceDiagram
 - Model: `text-embedding-3-small` — **1536 dimensions**.
 - Chunking: 500-token fragments with 50-token overlap.
 - Indexing: HNSW (pgvector, cosine).
-- Offline fallback: deterministic 1536-dim bag-of-words vectorizer (`src/services/embeddings.ts`) used when the backend is unreachable.
+- Fallback: lexical search (`match_manuals_by_text`, pg_trgm) when the embedding endpoint is unreachable — the vector space is never mixed.
 
 ### Appendix B – Vision Model Specification
 
@@ -378,9 +375,10 @@ sequenceDiagram
 
 | Use | Provider | Model |
 | --- | --- | --- |
-| Clinical chat | Groq | `qwen/qwen3.8-27b` (reasoning disabled) |
-| Speech-to-text | Groq | `whisper-large-v3` |
+| Clinical chat + vision | Google AI Studio | `gemini-3.5-flash-lite` (fallback: `gemini-3.1-flash-lite`, `gemma-4-31b-it`) |
+| Speech-to-text | Google AI Studio | `gemini-3.5-flash-lite` (audio input) |
 | Embeddings | OpenAI | `text-embedding-3-small` (1536) |
+| Web search | Google AI Studio | Grounding with Google Search (5.000/mes gratis) |
 
 ### Appendix D – Test Plan (ISO/IEC 25010)
 

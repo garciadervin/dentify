@@ -32,7 +32,6 @@ import {
   type AgentSource,
   type AgentAttachment,
 } from '@/src/services/agent';
-import { getOfflineMessage } from '@/src/services/groq';
 import {
   pickImageAttachment,
   pickFileAttachment,
@@ -248,12 +247,14 @@ export default function ChatScreen() {
           fallbackText = 'El asistente tardó en responder. Intenta de nuevo en unos segundos.';
         } else if (
           errorText.includes('no configurada') ||
-          errorText.includes('Groq proxy error') ||
-          errorText.includes('Groq API error') ||
+          errorText.includes('Proxy request failed') ||
           errorText.includes('fetch failed') ||
           errorText.includes('Network request failed')
         ) {
-          fallbackText = getOfflineMessage();
+          fallbackText =
+            'El asistente Denty-AI no pudo conectarse al servidor.\n\n' +
+            'Verifica tu conexión y que la Edge Function `denty-agent` esté desplegada ' +
+            'en Supabase con el secreto `GEMINI_API_KEY` configurado.';
         } else {
           fallbackText =
             errorText ||

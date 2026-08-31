@@ -38,8 +38,7 @@ import {
   handleWebViewMessage,
   type Detection,
 } from '@/src/services/yolo';
-import { retrieveRelevantChunks, generatePrompt } from '@/src/services/rag';
-import { sendMessage } from '@/src/services/groq';
+import { sendAgentMessage } from '@/src/services/agent';
 
 type ScannerState = 'idle' | 'capturing' | 'processing' | 'results';
 
@@ -202,12 +201,9 @@ export default function ScannerScreen() {
     setLoadingDescription(true);
     setShowDescription(true);
     try {
-      const conditionNames = detections.map((d) => d.className);
-      const uniqueConditions = [...new Set(conditionNames)];
-      const query = `Describe las siguientes condiciones dentales detectadas: ${uniqueConditions.join(', ')}. Proporciona información clínica relevante sobre cada una.`;
-      const context = await retrieveRelevantChunks(query);
-      const prompt = generatePrompt(query, context);
-      const response = await sendMessage([{ role: 'user', content: prompt }]);
+      const uniqueConditions = [...new Set(detections.map((d) => d.className))];
+      const query = `Describe las siguientes condiciones dentales detectadas: ${uniqueConditions.join(', ')}. Proporciona información clínica relevante sobre cada una, fundamentada en los manuales clínicos.`;
+      const response = await sendAgentMessage([{ role: 'user', content: query }]);
       setDescription(response.content);
     } catch {
       setDescription('No se pudo obtener la descripción. Intenta de nuevo más tarde.');

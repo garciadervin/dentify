@@ -2,8 +2,8 @@
  * ChatInput — input bar.
  *
  * White pill with microphone (record → transcribe), text field and
- * circular blue send button. Voice is transcribed with Groq Whisper and
- * supports voice navigation commands.
+ * circular blue send button. Voice is transcribed server-side with Gemini
+ * and supports voice navigation commands.
  */
 
 import React, { useState, useRef, useCallback } from 'react';
@@ -17,7 +17,7 @@ import {
   requestRecordingPermissionsAsync,
   setAudioModeAsync,
 } from 'expo-audio';
-import { transcribeAudio } from '@/src/services/groq';
+import { transcribeAudio } from '@/src/services/voice';
 import { parseNavigationCommand, NAVIGATION_COMMANDS } from '@/src/services/voiceCommands';
 
 // Lazy-load expo-speech (TTS), not available on web
@@ -85,7 +85,7 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
   }, [audioRecorder]);
 
   /**
-   * Stop recording, transcribe via Groq Whisper, and handle the result.
+   * Stop recording, transcribe via Gemini, and handle the result.
    */
   const stopRecording = useCallback(async () => {
     try {

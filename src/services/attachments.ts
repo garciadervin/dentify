@@ -1,7 +1,7 @@
 /**
  * attachments — image/file selection for Denty-AI.
  *
- * Images are analyzed with the model's vision (qwen3.8); files (PDF, DOCX, txt,
+ * Images are analyzed with the model's vision (Gemini); files (PDF, DOCX, txt,
  * csv, json, rtf, html…) are uploaded as base64 to the `denty-agent` Edge
  * Function, which extracts their text reliably on the server.
  */

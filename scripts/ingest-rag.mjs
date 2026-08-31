@@ -4,13 +4,12 @@
  * into the Supabase `clinical_manuals` table (PRD §5, Appendix A).
  *
  * Usage:
- *   node scripts/ingest-rag.mjs [--dry-run] [--embedder hash|openai]
- *                                [--chunk-size 500] [--overlap 50]
+ *   node scripts/ingest-rag.mjs [--dry-run] [--chunk-size 500] [--overlap 50]
  *
- * Embedders:
- *   hash   (default) — deterministic offline bag-of-words vectorizer, mirrors
- *          src/services/embeddings.ts. No API key needed.
- *   openai — text-embedding-3-small via OPENAI_API_KEY (1536 dims).
+ * Embedder:
+ *   openai — text-embedding-3-small via OPENAI_API_KEY (1536 dims), the same
+ *          provider denty-agent uses at query time, so retrieval cosine
+ *          similarity is meaningful.
  *
  * Database:
  *   Reads SUPABASE_URL / EXPO_PUBLIC_SUPABASE_URL and a write-capable key
@@ -45,60 +44,20 @@ function loadEnv(file) {
 }
 loadEnv(path.join(ROOT, '.env'));
 
-// ── Embedding (must mirror src/services/embeddings.ts EXACTLY) ─────────────
 const EMBEDDING_DIM = 1536;
-const STOP_WORDS = new Set([
-  'que', 'para', 'como', 'con', 'por', 'del', 'las', 'los', 'una', 'uno',
-  'unos', 'unas', 'cual', 'cuales', 'dime', 'explica', 'puedo', 'debe',
-  'deben', 'tiene', 'tienen', 'esta', 'este', 'esto', 'estos', 'estas', 'ser',
-  'son', 'era', 'mas', 'pero', 'sin', 'sobre', 'entre', 'hacia', 'desde',
-  'hasta', 'todo', 'toda', 'todos', 'todas', 'sus', 'su', 'sea', 'sean', 'hay',
-  'fue', 'nada', 'muy', 'asi', 'cada', 'luego', 'donde', 'cuando',
-]);
+const EMBEDDING_MODEL = 'text-embedding-3-small';
 
-function fnv1a(str) {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return h >>> 0;
-}
+// ── OpenAI embedder (must match denty-agent server-side embedding) ─────────
+const BATCH = 100; // OpenAI /embeddings accepts up to 2048 inputs per request
 
-function tokenize(text) {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter((w) => w.length > 2 && !STOP_WORDS.has(w));
-}
-
-function embedText(text) {
-  const vec = new Array(EMBEDDING_DIM).fill(0);
-  for (const token of tokenize(text)) {
-    vec[fnv1a(token) % EMBEDDING_DIM] += 1;
-  }
-  let norm = 0;
-  for (let i = 0; i < EMBEDDING_DIM; i++) norm += vec[i] * vec[i];
-  norm = Math.sqrt(norm);
-  if (norm !== 0) {
-    for (let i = 0; i < EMBEDDING_DIM; i++) vec[i] /= norm;
-  }
-  return vec;
-}
-
-// ── OpenAI embedder ────────────────────────────────────────────────────────
-async function embedOpenAI(texts, apiKey, model = 'text-embedding-3-small') {
+async function embedOpenAI(texts, apiKey) {
   const out = new Array(texts.length);
-  const BATCH = 128;
   for (let i = 0; i < texts.length; i += BATCH) {
     const batch = texts.slice(i, i + BATCH);
     const res = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({ model, input: batch }),
+      body: JSON.stringify({ model: EMBEDDING_MODEL, input: batch }),
     });
     if (!res.ok) {
       const e = await res.json().catch(() => ({}));
@@ -106,6 +65,7 @@ async function embedOpenAI(texts, apiKey, model = 'text-embedding-3-small') {
     }
     const data = await res.json();
     for (const item of data.data) out[i + item.index] = item.embedding;
+    console.log(`   ✔ ${Math.min(i + BATCH, texts.length)}/${texts.length} fragmentos embebidos`);
   }
   return out;
 }
@@ -136,11 +96,10 @@ async function parsePdf(filePath) {
 
 // ── CLI ────────────────────────────────────────────────────────────────────
 function parseArgs(argv) {
-  const args = { dryRun: false, embedder: 'hash', chunkSize: 500, overlap: 50, pdfs: [] };
+  const args = { dryRun: false, chunkSize: 500, overlap: 50, pdfs: [] };
   for (let i = 0; i < argv.length; i++) {
     switch (argv[i]) {
       case '--dry-run': args.dryRun = true; break;
-      case '--embedder': args.embedder = argv[++i]; break;
       case '--chunk-size': args.chunkSize = Number(argv[++i]); break;
       case '--overlap': args.overlap = Number(argv[++i]); break;
       case '--pdfs': args.pdfs = args.pdfs.concat(argv[++i].split(',')); break;
@@ -161,8 +120,8 @@ async function main() {
   }
 
   const openaiKey = process.env.OPENAI_API_KEY;
-  if (args.embedder === 'openai' && !openaiKey) {
-    console.error('--embedder openai requires OPENAI_API_KEY in .env or env.');
+  if (!openaiKey) {
+    console.error('OPENAI_API_KEY is required (in .env or env). Set it and re-run.');
     process.exit(1);
   }
 
@@ -183,14 +142,8 @@ async function main() {
 
   // Embed
   const allChunks = records.flatMap((r) => r.chunks.map((c) => c.text));
-  let embeddings;
-  if (args.embedder === 'openai') {
-    console.log('⚡ Generando embeddings con OpenAI text-embedding-3-small…');
-    embeddings = await embedOpenAI(allChunks, openaiKey);
-  } else {
-    console.log('⚡ Generando embeddings locales (hash, 1536-dim)…');
-    embeddings = allChunks.map((t) => embedText(t));
-  }
+  console.log(`⚡ Generando embeddings con ${EMBEDDING_MODEL} (${EMBEDDING_DIM} dims)…`);
+  const embeddings = await embedOpenAI(allChunks, openaiKey);
 
   let i = 0;
   for (const rec of records) {
@@ -217,7 +170,7 @@ async function main() {
       JSON.stringify(
         {
           generated_at: new Date().toISOString(),
-          embedder: args.embedder,
+          embedder: 'openai',
           dimension: EMBEDDING_DIM,
           chunks: records.flatMap((r) =>
             r.chunks.map((c) => ({
@@ -235,7 +188,7 @@ async function main() {
     );
     console.log(`⚠️  Sin credenciales de Supabase (o --dry-run). Exportado a docs/rag-export.json`);
     console.log(`   Resumen: ${summary}`);
-    console.log(`   Para cargar: node scripts/ingest-rag.mjs --embedder ${args.embedder} (cuando el proyecto esté activo)`);
+    console.log(`   Para cargar: node scripts/ingest-rag.mjs (cuando el proyecto esté activo)`);
     return;
   }
 

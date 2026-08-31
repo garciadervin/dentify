@@ -1,15 +1,17 @@
 /**
  * Denty-AI Agent — Supabase Edge Function
  *
- * Study assistant with agent capabilities on Qwen 3.8 (multimodal):
+ * Study assistant with agent capabilities on Google Gemini (Gemini 3.5 Flash Lite):
  *  - Verifies the user's JWT (reads only the user's own data via RLS).
- *  - Agent loop (max 5 iterations) with a whitelist of tools:
- *      retrieve_manuals   → server-side RAG (OpenAI embeddings + pgvector)
- *      web_search         → Tavily if TAVILY_API_KEY is set, else DuckDuckGo (free)
- *      get_my_profile     → authenticated user's profile (curated summary)
- *      get_my_progress    → user's academic progress (curated summary)
- *  - Vision: images reach the model as image_url parts (base64) in the messages;
- *    no extra tool is required.
+ *  - Agent loop (max 3 iterations) with a whitelist of tools:
+ *      retrieve_manuals → server-side RAG (OpenAI text-embedding-3-small + pgvector)
+ *      web_search       → Grounding with Google Search (native Gemini, free quota)
+ *      get_my_profile   → authenticated user's profile (curated summary)
+ *      get_my_progress  → user's academic progress (curated summary)
+ *  - Model fallback chain: when a model is rate-limited or errors, the request
+ *    moves to the next model. The last model runs WITHOUT tools (degraded mode)
+ *    so basic questions still get answered under heavy load.
+ *  - Vision: images reach the model as image_url parts (base64).
  *  - Attachments: images → vision parts; files (PDF/DOCX/txt/...) → server-side
  *    text extraction appended to the last user message.
  *
@@ -25,19 +27,23 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import pako from 'npm:pako@2.1.0';
 import JSZip from 'npm:jszip@3.10.1';
 
-const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY');
+const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-const TAVILY_API_KEY = Deno.env.get('TAVILY_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
 
-const CHAT_MODEL = 'qwen/qwen3.8-27b';
-const EMBEDDING_MODEL = 'text-embedding-3-small';
-const GROQ_BASE_URL = 'https://api.groq.com/openai/v1';
+const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
+const GEMINI_NATIVE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 const OPENAI_BASE_URL = 'https://api.openai.com/v1';
 
-const MAX_ITERATIONS = 5;
-const MAX_BODY_BYTES = 10 * 1024 * 1024; // imágenes base64 incluidas
+// Primary → fallbacks. The last model runs without tools (degraded mode).
+const MODEL_CHAIN = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemma-4-31b-it'];
+// RAG embeddings: OpenAI 3-small (1536 dims), matching the clinical_manuals index.
+const EMBEDDING_MODEL = 'text-embedding-3-small';
+
+const MAX_ITERATIONS = 3;
+const MAX_TOKENS = 700;
+const MAX_BODY_BYTES = 10 * 1024 * 1024; // base64 images included
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -66,6 +72,8 @@ function jsonResponse(body: unknown, status: number): Response {
 function stripReasoningBlock(content: string): string {
   return content.replace(/\n?<think>[\s\S]*?<\/think>\n?/g, '').trim();
 }
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // ── Attachment text extraction (PDF, DOCX, RTF, HTML, plain text) ──
 
@@ -292,19 +300,107 @@ interface ToolResult {
   sources: AgentSource[];
 }
 
-// ── Tools ────────────────────────────────────────────────────────────────
+// ── Gemini API helpers ─────────────────────────────────────────────────────
+
+/**
+ * POST to the OpenAI-compatible Gemini endpoint. Returns the parsed JSON and
+ * the HTTP status so the caller can decide whether to fall back to another
+ * model.
+ */
+async function callGeminiChat(
+  model: string,
+  payload: Record<string, unknown>
+): Promise<{ data: any; status: number }> {
+  const res = await fetch(`${GEMINI_BASE_URL}/chat/completions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GEMINI_API_KEY}` },
+    body: JSON.stringify(payload),
+  });
+  const text = await res.text();
+  let data: any = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    // non-JSON error body — keep {}
+  }
+  return { data, status: res.status };
+}
+
+/**
+ * Calls the model chain in order: on a rate limit it waits the suggested delay
+ * and retries once; on other errors the request moves to the next model. The
+ * last model runs WITHOUT tools so a basic answer can still be produced under
+ * heavy load.
+ */
+async function chatWithFallback(
+  messages: any[],
+  tools: unknown[]
+): Promise<{ message: any; model: string }> {
+  let lastError = 'No model responded';
+  for (let i = 0; i < MODEL_CHAIN.length; i++) {
+    const model = MODEL_CHAIN[i];
+    const withTools = i < MODEL_CHAIN.length - 1;
+    const payload: Record<string, unknown> = {
+      model,
+      messages,
+      temperature: 0.4,
+      max_tokens: MAX_TOKENS,
+    };
+    if (withTools) {
+      payload.tools = tools;
+      payload.tool_choice = 'auto';
+    }
+
+    let status = 0;
+    let data: any = {};
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const res = await callGeminiChat(model, payload);
+      status = res.status;
+      data = res.data;
+      const message = data?.choices?.[0]?.message;
+      if (status === 200 && message) return { message, model };
+      lastError = data?.error?.message ?? `HTTP ${status}`;
+      // Rate limit: honor the suggested delay (capped) and retry once.
+      if (status === 429 && attempt === 0) {
+        const retryAfter = Number(data?.error?.details?.[0]?.metadata?.retry_delay?.seconds ?? 4);
+        await sleep(Math.min(retryAfter, 20) * 1000);
+      } else {
+        break;
+      }
+    }
+
+    // A model can reject the `tools` field with 400/404 — retry it plain.
+    if (withTools && (status === 400 || status === 404)) {
+      const { data: plain, status: plainStatus } = await callGeminiChat(model, {
+        model,
+        messages,
+        temperature: 0.4,
+        max_tokens: MAX_TOKENS,
+      });
+      const plainMessage = plain?.choices?.[0]?.message;
+      if (plainStatus === 200 && plainMessage) return { message: plainMessage, model };
+    }
+  }
+  throw new Error(lastError);
+}
 
 async function openaiEmbed(text: string): Promise<number[] | null> {
   if (!OPENAI_API_KEY) return null;
-  const res = await fetch(`${OPENAI_BASE_URL}/embeddings`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${OPENAI_API_KEY}` },
-    body: JSON.stringify({ model: EMBEDDING_MODEL, input: text }),
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.data?.[0]?.embedding ?? null;
+  try {
+    const res = await fetch(`${OPENAI_BASE_URL}/embeddings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${OPENAI_API_KEY}` },
+      body: JSON.stringify({ model: EMBEDDING_MODEL, input: text }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.data?.[0]?.embedding ?? null;
+  } catch {
+    return null;
+  }
 }
+
+// ── Tools ────────────────────────────────────────────────────────────────
 
 async function retrieveManuals(query: string, userClient: ReturnType<typeof createClient>): Promise<ToolResult> {
   const embedding = await openaiEmbed(query);
@@ -328,11 +424,11 @@ async function retrieveManuals(query: string, userClient: ReturnType<typeof crea
         };
       }
     } catch {
-      // cae al fallback de texto
+      // fall through to lexical search
     }
   }
 
-  // Lexical fallback
+  // Lexical fallback (pg_trgm)
   try {
     const terms = query
       .toLowerCase()
@@ -361,63 +457,58 @@ async function retrieveManuals(query: string, userClient: ReturnType<typeof crea
       };
     }
   } catch {
-    // sin resultados
+    // no results
   }
 
   return { content: 'No se encontraron fragmentos relevantes en los manuales.', sources: [] };
 }
 
+/**
+ * Web search via native Gemini Grounding with Google Search (free quota of
+ * 5,000 searches/month). Returns the grounded answer text plus the cited web
+ * sources so the app can show source chips.
+ */
 async function webSearch(query: string): Promise<ToolResult> {
-  // Tavily (built for agents) when a key is set; otherwise DuckDuckGo (free).
-  if (TAVILY_API_KEY) {
-    try {
-      const res = await fetch('https://api.tavily.com/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ api_key: TAVILY_API_KEY, query, max_results: 5, search_depth: 'basic' }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const results = (data?.results ?? []) as { title?: string; url?: string; content?: string }[];
-        if (results.length > 0) {
-          const content = results
-            .map((r, i) => `[${i + 1}] ${r.title}\n${r.url}\n${r.content ?? ''}`)
-            .join('\n\n');
-          return {
-            content,
-            sources: results.map((r) => ({ type: 'web' as const, title: r.title ?? r.url ?? 'Web', url: r.url })),
-          };
-        }
-      }
-    } catch {
-      // fallback DuckDuckGo
-    }
-  }
-
-  // DuckDuckGo Instant Answer (no key, basic results)
   try {
     const res = await fetch(
-      `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`
+      `${GEMINI_NATIVE_URL}/models/gemini-3.5-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: query }] }],
+          tools: [{ googleSearch: {} }],
+          generationConfig: { temperature: 0 },
+        }),
+      }
     );
     if (!res.ok) return { content: 'Búsqueda web no disponible en este momento.', sources: [] };
+
     const data = await res.json();
+    const candidate = data?.candidates?.[0];
+    const text =
+      (candidate?.content?.parts as any[] | undefined)?.map((p: any) => p.text ?? '').filter(Boolean).join('\n') ?? '';
+
+    const grounding = candidate?.groundingMetadata ?? {};
     const sources: AgentSource[] = [];
-    const parts: string[] = [];
-    if (data.AbstractText) {
-      parts.push(data.AbstractText);
-      sources.push({ type: 'web', title: data.AbstractSource ?? 'DuckDuckGo', url: data.AbstractURL });
-    }
-    const topics: { Text?: string; FirstURL?: string }[] = Array.isArray(data.RelatedTopics)
-      ? data.RelatedTopics.filter((t: unknown) => (t as { Text?: string }).Text)
-      : [];
-    for (const t of topics.slice(0, 5)) {
-      if (t.Text) {
-        parts.push(t.Text);
-        if (t.FirstURL) sources.push({ type: 'web', title: t.Text.split(' - ')[0] ?? 'Web', url: t.FirstURL });
+    const seen = new Set<string>();
+    for (const chunk of Array.isArray(grounding.groundingChunks) ? grounding.groundingChunks : []) {
+      const uri = chunk?.web?.uri;
+      if (uri && !seen.has(uri)) {
+        seen.add(uri);
+        sources.push({ type: 'web', title: chunk.web.title ?? uri, url: uri });
       }
     }
-    if (parts.length === 0) return { content: 'No se encontraron resultados web para esa consulta.', sources: [] };
-    return { content: parts.join('\n\n'), sources };
+    for (const src of Array.isArray(grounding.groundingSources) ? grounding.groundingSources : []) {
+      const uri = src?.uri;
+      if (uri && !seen.has(uri)) {
+        seen.add(uri);
+        sources.push({ type: 'web', title: uri, url: uri });
+      }
+    }
+
+    if (!text.trim()) return { content: 'No se encontraron resultados web para esa consulta.', sources };
+    return { content: text, sources };
   } catch {
     return { content: 'Búsqueda web no disponible en este momento.', sources: [] };
   }
@@ -499,7 +590,7 @@ async function executeTool(name: string, args: any, userId: string, userClient: 
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
-  if (!GROQ_API_KEY) return jsonResponse({ error: 'GROQ_API_KEY not configured on server' }, 500);
+  if (!GEMINI_API_KEY) return jsonResponse({ error: 'GEMINI_API_KEY not configured on server' }, 500);
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     return jsonResponse({ error: 'Supabase not configured on server' }, 500);
   }
@@ -534,6 +625,7 @@ serve(async (req) => {
 
     let messages: any[] = [...body.messages];
     const sources: AgentSource[] = [];
+    const toolContexts: string[] = [];
     let finalContent = '';
 
     // Process attachments: images → vision parts; files → extracted text.
@@ -574,35 +666,12 @@ serve(async (req) => {
     }
 
     for (let i = 0; i < MAX_ITERATIONS; i++) {
-      const res = await fetch(`${GROQ_BASE_URL}/chat/completions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
-        body: JSON.stringify({
-          model: CHAT_MODEL,
-          messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
-          tools: TOOLS,
-          tool_choice: 'auto',
-          temperature: 0.4,
-          max_tokens: 1024,
-          reasoning_effort: 'none',
-        }),
-      });
+      const { message } = await chatWithFallback([{ role: 'system', content: SYSTEM_PROMPT }, ...messages], TOOLS);
+      messages.push(message);
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        return jsonResponse({ error: `Groq API error: ${res.status}${err?.error?.message ? ` — ${err.error.message}` : ''}` }, 502);
-      }
-
-      const data = await res.json();
-      const choice = data?.choices?.[0];
-      const msg = choice?.message;
-      if (!msg) return jsonResponse({ error: 'Empty response from model' }, 502);
-
-      messages.push(msg);
-
-      const toolCalls = Array.isArray(msg.tool_calls) ? msg.tool_calls : [];
+      const toolCalls = Array.isArray(message.tool_calls) ? message.tool_calls : [];
       if (toolCalls.length === 0) {
-        finalContent = stripReasoningBlock(msg.content ?? '');
+        finalContent = stripReasoningBlock(message.content ?? '');
         break;
       }
 
@@ -615,7 +684,41 @@ serve(async (req) => {
         }
         const result = await executeTool(tc.function?.name ?? '', args, userId, userClient);
         sources.push(...result.sources);
+        if (result.content.trim()) toolContexts.push(result.content);
         messages.push({ role: 'tool', tool_call_id: tc.id, content: result.content });
+      }
+    }
+
+    // If the loop ended without an answer (tool-call exhaustion, rate limits, or
+    // a degraded model that returned empty), answer once more with a plain
+    // completion grounded on the tool results — the user always gets a response.
+    if (!finalContent) {
+      const contextBlock = toolContexts.length > 0
+        ? `\n\n## Contexto de herramientas\n${toolContexts.join('\n\n')}`
+        : '';
+      const cleanMessages = messages.filter(
+        (m) =>
+          m.role !== 'tool' &&
+          !(m.role === 'assistant' && Array.isArray(m.tool_calls) && m.tool_calls.length > 0)
+      );
+      const lastUserIndex = cleanMessages.map((m) => m.role).lastIndexOf('user');
+      if (lastUserIndex >= 0) {
+        const lastUser = cleanMessages[lastUserIndex];
+        const augmentedUser =
+          typeof lastUser.content === 'string'
+            ? { role: 'user', content: lastUser.content + contextBlock }
+            : lastUser;
+        const history = [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...cleanMessages.slice(0, lastUserIndex),
+          augmentedUser,
+        ];
+        try {
+          const { message } = await chatWithFallback(history, []);
+          finalContent = stripReasoningBlock(message.content ?? '');
+        } catch {
+          // keep the friendly fallback below
+        }
       }
     }
 
@@ -626,6 +729,11 @@ serve(async (req) => {
     return jsonResponse({ content: finalContent, sources }, 200);
   } catch (err) {
     console.error('denty-agent error', err);
-    return jsonResponse({ error: 'Proxy request failed' }, 500);
+    const msg = err instanceof Error ? err.message : String(err);
+    const rateLimited = /429|rate limit|RESOURCE_EXHAUSTED/i.test(msg);
+    return jsonResponse(
+      { error: rateLimited ? 'El asistente está muy solicitado en este momento. Intenta de nuevo en unos segundos.' : 'Proxy request failed' },
+      rateLimited ? 429 : 500
+    );
   }
 });

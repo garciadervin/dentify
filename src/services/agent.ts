@@ -2,7 +2,7 @@
  * agent — client for the `denty-agent` Edge Function (tool-using assistant).
  *
  * Messages may carry text and/or images (image_url parts in base64) that the
- * multimodal qwen3.8 model processes directly. The function returns the final
+ * multimodal Gemini model processes directly. The function returns the final
  * answer plus the sources used (manuals, web, or the user's progress).
  */
 
