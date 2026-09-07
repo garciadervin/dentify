@@ -9,7 +9,7 @@ Aplicación en español, con arquitectura **Edge-First**: visión (YOLO) y rende
 | Módulo | Descripción |
 | --- | --- |
 | **Denty-AI** | Asistente multimodal (texto/voz) con respuestas fundamentadas en manuales clínicos venezolanos mediante RAG (pgvector). Navegación por comandos de voz. |
-| **Simulador 3D** | Visualización interactiva de 16 modelos de piezas dentales (`.glb` optimizados: `KHR_mesh_quantization` + texturas JPEG) con rotación, zoom, selección de estructuras y vista de capas anatómicas. |
+| **Simulador 3D** | Visualización interactiva de 16 modelos de piezas dentales (`.glb` optimizados: `KHR_mesh_quantization` + texturas JPEG). Cada modelo se **centra y encuadra automáticamente** al cargar (sin pan, con zoom acotado) y soporta rotación, zoom, selección de estructuras y vista de capas anatómicas. |
 | **Diagnóstico por visión** | Segmentación local (YOLO26n-seg, TFLite) de condiciones dentales en fotos: Abrasión, Obturación, Corona y clases de Caries 1–6, con descripción educativa vía RAG. |
 | **Ruta pedagógica** | Progresión por especialidades (Operatoria, Endodoncia, Periodoncia…) con quizzes, insignias (badges) y XP. Vista para docentes. |
 
@@ -41,6 +41,12 @@ Dispositivo (Edge)                      Nube
 ```
 
 Las claves de API viven **solo en Supabase Secrets** (Edge Functions `denty-agent` y `denty-transcribe`); el cliente nunca las ve.
+
+### Roles y seguridad
+
+- El registro crea cuentas **estudiante** siempre (el rol no es auto-asignable: la política `INSERT` de `profiles` lo exige). Las cuentas de **docente** las habilita un administrador (`private.promote_to_teacher`, migración 0008) — el rol es inmutable por el usuario.
+- La BD está normalizada (1NF–3NF/BCNF): los hijos referencian `specialties` por **`specialty_id`** (uuid), sin claves naturales duplicadas (migración 0009).
+- El bucket `diagnosis-images` es **privado**; las imágenes se sirven con URLs firmadas. Políticas RLS owner-scoped en todas las tablas + GRANTs explícitos a `authenticated`.
 
 ## Empezar
 
@@ -126,7 +132,7 @@ assets/
   models/       16 modelos GLB optimizados (KHR_mesh_quantization + JPEG)
   ml/           modelo YOLO26n-seg (TFLite) + runtime de inferencia
 supabase/
-  migrations/   esquema + pgvector + storage + banco de preguntas
+  migrations/   esquema normalizado + pgvector + storage + banco de preguntas
   functions/    denty-agent y denty-transcribe (Edge Functions)
 scripts/
   ingest-rag.mjs, optimize-models.mjs, build-question-seed.mjs

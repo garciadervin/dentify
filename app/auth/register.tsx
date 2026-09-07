@@ -16,8 +16,6 @@ import { getSupabase } from '@/src/lib/supabase';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-type Role = 'student' | 'teacher';
-
 export default function RegisterScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -27,7 +25,6 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<Role>('student');
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -51,7 +48,7 @@ export default function RegisterScreen() {
     }
 
     setSubmitting(true);
-    const { error: signUpError, needsConfirmation } = await signUp(email.trim(), password, role);
+    const { error: signUpError, needsConfirmation } = await signUp(email.trim(), password);
     setSubmitting(false);
 
     if (signUpError) {
@@ -85,41 +82,34 @@ export default function RegisterScreen() {
 
   if (registeredEmail) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.skyLight }} edges={['top', 'bottom']}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 32, gap: 16 }}>
-          <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: '#0077B614', alignItems: 'center', justifyContent: 'center' }}>
+      <SafeAreaView className="flex-1 bg-sky-light" edges={['top', 'bottom']}>
+        <View className="flex-1 items-center justify-center gap-4 px-8">
+          <View className="h-[88px] w-[88px] items-center justify-center rounded-[44px] bg-[#0077B614]">
             <MaterialCommunityIcons name="email-check-outline" size={40} color={colors.clinicalBlue} />
           </View>
-          <Text style={{ fontFamily: 'Manrope-Bold', fontSize: 26, color: colors.deepSlate, textAlign: 'center' }}>
+          <Text className="text-center font-heading-bold text-[26px] text-deep-slate">
             Revisa tu correo
           </Text>
-          <Text style={{ fontFamily: 'Inter', fontSize: 15, color: colors.neutral, textAlign: 'center', lineHeight: 22 }}>
+          <Text className="text-center font-sans text-[15px] leading-[22px] text-neutral">
             Te enviamos un enlace de confirmación a{' '}
-            <Text style={{ fontFamily: 'Inter-Bold', color: colors.deepSlate }}>{registeredEmail}</Text>.
+            <Text className="font-inter-bold text-deep-slate">{registeredEmail}</Text>.
             {'\n'}Confirma tu cuenta y luego inicia sesión.
           </Text>
           {error && (
-            <Text style={{ fontFamily: 'Inter', fontSize: 13, color: '#DC2626', textAlign: 'center' }}>{error}</Text>
+            <Text className="text-center font-sans text-[13px] text-[#DC2626]">{error}</Text>
           )}
           <TouchableOpacity
             testID="resend-email"
             onPress={handleResend}
             disabled={resending}
-            style={{
-              backgroundColor: colors.clinicalBlue,
-              borderRadius: 14,
-              paddingVertical: 14,
-              alignItems: 'center',
-              alignSelf: 'stretch',
-              marginTop: 8,
-            }}
+            className="mt-2 items-center self-stretch rounded-[14px] bg-clinical-blue py-3.5"
           >
-            <Text style={{ fontFamily: 'Inter-SemiBold', fontSize: 15, color: '#FFFFFF' }}>
+            <Text className="font-inter-semibold text-[15px] text-white">
               {resending ? 'Enviando...' : 'Reenviar correo de confirmación'}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.replace('/auth/login')} style={{ paddingVertical: 10 }}>
-            <Text style={{ fontFamily: 'Inter-SemiBold', fontSize: 14, color: colors.clinicalBlue }}>
+          <TouchableOpacity onPress={() => router.replace('/auth/login')} className="py-2.5">
+            <Text className="font-inter-semibold text-[14px] text-clinical-blue">
               Iniciar sesión
             </Text>
           </TouchableOpacity>
@@ -129,69 +119,38 @@ export default function RegisterScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.skyLight }} edges={['top', 'bottom']}>
+    <SafeAreaView className="flex-1 bg-sky-light" edges={['top', 'bottom']}>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'center',
-            paddingHorizontal: 24,
-          }}
+          contentContainerClassName="flex-grow justify-center px-6"
           keyboardShouldPersistTaps="handled"
         >
-          <View style={{ width: '100%' }}>
+          <View className="w-full">
           {/* Header */}
-          <View style={{ marginBottom: 40, alignItems: 'center' }}>
-            <Text
-              style={{
-                fontFamily: 'Manrope-Bold',
-                fontSize: 32,
-                color: colors.deepSlate,
-                marginBottom: 8,
-              }}
-            >
+          <View className="mb-10 items-center">
+            <Text className="mb-2 font-heading-bold text-[32px] text-deep-slate">
               Registro
             </Text>
-            <Text
-              style={{
-                fontFamily: 'Inter',
-                fontSize: 16,
-                color: colors.neutral,
-              }}
-            >
+            <Text className="font-sans text-[16px] text-neutral">
               Crea tu cuenta en Dentify
             </Text>
           </View>
 
           {/* Error message */}
           {error && (
-            <View
-              style={{
-                backgroundColor: '#FEE2E2',
-                borderRadius: 12,
-                padding: 12,
-                marginBottom: 16,
-              }}
-            >
-              <Text style={{ color: '#DC2626', fontFamily: 'Inter', fontSize: 14 }}>
+            <View className="mb-4 rounded-[12px] bg-[#FEE2E2] p-3">
+              <Text className="font-sans text-[14px] text-[#DC2626]">
                 {error}
               </Text>
             </View>
           )}
 
           {/* Email input */}
-          <View style={{ marginBottom: 18 }}>
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 13,
-                color: colors.deepSlate,
-                marginBottom: 6,
-              }}
-            >
+          <View className="mb-[18px]">
+            <Text className="mb-1.5 font-inter-semibold text-[13px] text-deep-slate">
               Correo electrónico
             </Text>
             <TextInput
@@ -205,30 +164,15 @@ export default function RegisterScreen() {
               autoCorrect={false}
               onFocus={() => setEmailFocused(true)}
               onBlur={() => setEmailFocused(false)}
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: 14,
-                padding: 14,
-                fontSize: 15,
-                fontFamily: 'Inter',
-                color: colors.deepSlate,
-                borderWidth: 2,
-                borderColor: emailFocused ? colors.clinicalBlue : colors.borderLight,
-                borderBottomWidth: 4.5,
-              }}
+              className={`rounded-[14px] border-2 border-b-[4.5px] bg-surface p-3.5 font-sans text-[15px] text-deep-slate ${
+                emailFocused ? 'border-clinical-blue' : 'border-border-light'
+              }`}
             />
           </View>
 
           {/* Password input */}
-          <View style={{ marginBottom: 18 }}>
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 13,
-                color: colors.deepSlate,
-                marginBottom: 6,
-              }}
-            >
+          <View className="mb-[18px]">
+            <Text className="mb-1.5 font-inter-semibold text-[13px] text-deep-slate">
               Contraseña
             </Text>
             <TextInput
@@ -241,30 +185,15 @@ export default function RegisterScreen() {
               autoCapitalize="none"
               onFocus={() => setPasswordFocused(true)}
               onBlur={() => setPasswordFocused(false)}
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: 14,
-                padding: 14,
-                fontSize: 15,
-                fontFamily: 'Inter',
-                color: colors.deepSlate,
-                borderWidth: 2,
-                borderColor: passwordFocused ? colors.clinicalBlue : colors.borderLight,
-                borderBottomWidth: 4.5,
-              }}
+              className={`rounded-[14px] border-2 border-b-[4.5px] bg-surface p-3.5 font-sans text-[15px] text-deep-slate ${
+                passwordFocused ? 'border-clinical-blue' : 'border-border-light'
+              }`}
             />
           </View>
 
           {/* Confirm password input */}
-          <View style={{ marginBottom: 26 }}>
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 13,
-                color: colors.deepSlate,
-                marginBottom: 6,
-              }}
-            >
+          <View className="mb-[26px]">
+            <Text className="mb-1.5 font-inter-semibold text-[13px] text-deep-slate">
               Confirmar contraseña
             </Text>
             <TextInput
@@ -277,69 +206,23 @@ export default function RegisterScreen() {
               autoCapitalize="none"
               onFocus={() => setConfirmFocused(true)}
               onBlur={() => setConfirmFocused(false)}
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: 14,
-                padding: 14,
-                fontSize: 15,
-                fontFamily: 'Inter',
-                color: colors.deepSlate,
-                borderWidth: 2,
-                borderColor: confirmFocused ? colors.clinicalBlue : colors.borderLight,
-                borderBottomWidth: 4.5,
-              }}
+              className={`rounded-[14px] border-2 border-b-[4.5px] bg-surface p-3.5 font-sans text-[15px] text-deep-slate ${
+                confirmFocused ? 'border-clinical-blue' : 'border-border-light'
+              }`}
             />
           </View>
 
-          {/* Rol */}
-          <View style={{ marginBottom: 24 }}>
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 13,
-                color: colors.deepSlate,
-                marginBottom: 8,
-              }}
-            >
-              Me registro como
+          {/* Teacher note — no self-service teacher accounts (privilege escalation) */}
+          <View className="mb-6 flex-row items-center gap-2.5 rounded-[14px] border border-border-light bg-surface p-3.5">
+            <MaterialCommunityIcons
+              name="account-tie-outline"
+              size={20}
+              color={colors.clinicalBlue}
+            />
+            <Text className="flex-1 font-sans text-[12px] leading-[17px] text-neutral">
+              Esta cuenta se crea como estudiante. Si eres docente, tu acceso
+              docente es activado por el coordinador del programa.
             </Text>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              {(['student', 'teacher'] as Role[]).map((r) => {
-                const selected = role === r;
-                return (
-                  <TouchableOpacity
-                    key={r}
-                    testID={`role-${r}`}
-                    onPress={() => setRole(r)}
-                    style={{
-                      flex: 1,
-                      alignItems: 'center',
-                      paddingVertical: 12,
-                      borderRadius: 14,
-                      borderWidth: 2,
-                      backgroundColor: selected ? colors.clinicalBlue : colors.surface,
-                      borderColor: selected ? '#005C8A' : colors.borderLight,
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      name={r === 'student' ? 'school-outline' : 'account-tie'}
-                      size={20}
-                      color={selected ? '#FFFFFF' : colors.neutral}
-                    />
-                    <Text
-                      style={{
-                        fontFamily: 'Inter-SemiBold',
-                        fontSize: 13,
-                        color: selected ? '#FFFFFF' : colors.deepSlate,
-                        marginTop: 4,
-                      }}
-                    >
-                      {r === 'student' ? 'Estudiante' : 'Docente'}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
           </View>
 
           {/* Register button */}
@@ -348,24 +231,13 @@ export default function RegisterScreen() {
             onPress={handleRegister}
             disabled={submitting}
             activeOpacity={0.8}
-            style={{
-              backgroundColor: submitting ? colors.neutral : colors.clinicalBlue,
-              borderColor: submitting ? colors.neutral : '#005C8A',
-              borderWidth: 1,
-              borderBottomWidth: submitting ? 1 : 5,
-              borderRadius: 16,
-              padding: 16,
-              alignItems: 'center',
-              marginBottom: 20,
-            }}
+            className={`mb-5 items-center rounded-[16px] border p-4 ${
+              submitting
+                ? 'border-neutral bg-neutral'
+                : 'border-b-[5px] border-clinical-dark bg-clinical-blue'
+            }`}
           >
-            <Text
-              style={{
-                fontFamily: 'Inter-Bold',
-                fontSize: 16,
-                color: '#FFFFFF',
-              }}
-            >
+            <Text className="font-inter-bold text-[16px] text-white">
               {submitting ? 'Creando cuenta...' : 'Crear cuenta'}
             </Text>
           </TouchableOpacity>

@@ -80,69 +80,38 @@ export default function ProfileSetupScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.skyLight }} edges={['top', 'bottom']}>
+    <SafeAreaView className="flex-1 bg-sky-light" edges={['top', 'bottom']}>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'center',
-            paddingHorizontal: 24,
-          }}
+          contentContainerClassName="flex-grow justify-center px-6"
           keyboardShouldPersistTaps="handled"
         >
-          <View style={{ width: '100%' }}>
+          <View className="w-full">
           {/* Header */}
-          <View style={{ marginBottom: 40, alignItems: 'center' }}>
-            <Text
-              style={{
-                fontFamily: 'Manrope-Bold',
-                fontSize: 32,
-                color: colors.deepSlate,
-                marginBottom: 8,
-              }}
-            >
+          <View className="mb-10 items-center">
+            <Text className="mb-2 font-heading-bold text-[32px] text-deep-slate">
               Tu perfil
             </Text>
-            <Text
-              style={{
-                fontFamily: 'Inter',
-                fontSize: 16,
-                color: colors.neutral,
-              }}
-            >
+            <Text className="font-sans text-[16px] text-neutral">
               Completa tu información
             </Text>
           </View>
 
           {/* Error message */}
           {error && (
-            <View
-              style={{
-                backgroundColor: '#FEE2E2',
-                borderRadius: 12,
-                padding: 12,
-                marginBottom: 16,
-              }}
-            >
-              <Text style={{ color: '#DC2626', fontFamily: 'Inter', fontSize: 14 }}>
+            <View className="mb-4 rounded-[12px] bg-[#FEE2E2] p-3">
+              <Text className="font-sans text-[14px] text-[#DC2626]">
                 {error}
               </Text>
             </View>
           )}
 
           {/* Full name input */}
-          <View style={{ marginBottom: 16 }}>
-            <Text
-              style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
-                color: colors.deepSlate,
-                marginBottom: 6,
-              }}
-            >
+          <View className="mb-4">
+            <Text className="mb-1.5 font-sans text-[14px] text-deep-slate">
               Nombre completo
             </Text>
             <TextInput
@@ -152,30 +121,14 @@ export default function ProfileSetupScreen() {
               placeholder="Dr. Juan Pérez"
               placeholderTextColor={colors.neutral}
               autoCapitalize="words"
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: 12,
-                padding: 16,
-                fontSize: 16,
-                fontFamily: 'Inter',
-                color: colors.deepSlate,
-                borderWidth: 1,
-                borderColor: colors.borderLight,
-              }}
+              className="rounded-[12px] border border-border-light bg-surface p-4 font-sans text-[16px] text-deep-slate"
             />
           </View>
 
           {/* Student ID input (solo estudiantes) */}
           {(user?.user_metadata?.role ?? 'student') === 'student' ? (
-            <View style={{ marginBottom: 24 }}>
-              <Text
-                style={{
-                  fontFamily: 'Inter',
-                  fontSize: 14,
-                  color: colors.deepSlate,
-                  marginBottom: 6,
-                }}
-              >
+            <View className="mb-6">
+              <Text className="mb-1.5 font-sans text-[14px] text-deep-slate">
                 ID de estudiante
               </Text>
               <TextInput
@@ -185,27 +138,12 @@ export default function ProfileSetupScreen() {
                 placeholder="STU-2024-001"
                 placeholderTextColor={colors.neutral}
                 autoCapitalize="characters"
-                style={{
-                  backgroundColor: colors.surface,
-                  borderRadius: 12,
-                  padding: 16,
-                  fontSize: 16,
-                  fontFamily: 'Inter',
-                  color: colors.deepSlate,
-                  borderWidth: 1,
-                  borderColor: colors.borderLight,
-                }}
+                className="rounded-[12px] border border-border-light bg-surface p-4 font-sans text-[16px] text-deep-slate"
               />
             </View>
           ) : (
-            <View style={{ marginBottom: 24 }}>
-              <Text
-                style={{
-                  fontFamily: 'Inter',
-                  fontSize: 13,
-                  color: colors.neutral,
-                }}
-              >
+            <View className="mb-6">
+              <Text className="font-sans text-[13px] text-neutral">
                 Registrarás tu cuenta como docente. Verás el panel de seguimiento de estudiantes.
               </Text>
             </View>
@@ -217,20 +155,11 @@ export default function ProfileSetupScreen() {
             onPress={handleSaveProfile}
             disabled={submitting}
             activeOpacity={0.8}
-            style={{
-              backgroundColor: submitting ? colors.neutral : colors.clinicalBlue,
-              borderRadius: 12,
-              padding: 16,
-              alignItems: 'center',
-            }}
+            className={`items-center rounded-[12px] p-4 ${
+              submitting ? 'bg-neutral' : 'bg-clinical-blue'
+            }`}
           >
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 16,
-                color: '#FFFFFF',
-              }}
-            >
+            <Text className="font-inter-semibold text-[16px] text-white">
               {submitting ? 'Guardando...' : 'Guardar perfil'}
             </Text>
           </TouchableOpacity>

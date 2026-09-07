@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors, createShadow } from '@/constants/theme';
 
@@ -10,6 +10,11 @@ interface ModelControlsProps {
   onToggleAutoRotate?: () => void;
   autoRotate?: boolean;
 }
+
+// Shadows (cross-platform via createShadow + elevation) can't be expressed in
+// Tailwind, so they stay as plain style objects.
+const containerShadow = { ...createShadow(2, 8, '#000000', 0.08), elevation: 5 };
+const buttonShadow = { ...createShadow(1, 3, '#000000', 0.05) };
 
 /**
  * Floating controls over the 3D viewer.
@@ -23,10 +28,15 @@ export default function ModelControls({
   autoRotate = false,
 }: ModelControlsProps) {
   return (
-    <View style={styles.container} testID="model-controls">
+    <View
+      className="absolute bottom-3 flex-row gap-2.5 self-center rounded-2xl bg-[rgba(255,255,255,0.82)] px-3 py-1.5"
+      style={containerShadow}
+      testID="model-controls"
+    >
       <TouchableOpacity
         testID="zoom-in"
-        style={styles.button}
+        className="h-[38px] w-[38px] items-center justify-center rounded-full border border-[#E5E5E5] bg-white"
+        style={buttonShadow}
         onPress={onZoomIn}
         accessibilityLabel="Acercar"
         accessibilityRole="button"
@@ -36,7 +46,8 @@ export default function ModelControls({
 
       <TouchableOpacity
         testID="zoom-out"
-        style={styles.button}
+        className="h-[38px] w-[38px] items-center justify-center rounded-full border border-[#E5E5E5] bg-white"
+        style={buttonShadow}
         onPress={onZoomOut}
         accessibilityLabel="Alejar"
         accessibilityRole="button"
@@ -46,7 +57,8 @@ export default function ModelControls({
 
       <TouchableOpacity
         testID="reset-view"
-        style={styles.button}
+        className="h-[38px] w-[38px] items-center justify-center rounded-full border border-[#E5E5E5] bg-white"
+        style={buttonShadow}
         onPress={onReset}
         accessibilityLabel="Restablecer vista"
         accessibilityRole="button"
@@ -56,7 +68,12 @@ export default function ModelControls({
 
       <TouchableOpacity
         testID="auto-rotate-toggle"
-        style={[styles.button, autoRotate && styles.buttonActive]}
+        className={`h-[38px] w-[38px] items-center justify-center rounded-full border ${
+          autoRotate
+            ? 'border-clinical-blue bg-clinical-blue'
+            : 'border-[#E5E5E5] bg-white'
+        }`}
+        style={buttonShadow}
         onPress={onToggleAutoRotate}
         accessibilityLabel={autoRotate ? 'Desactivar rotación automática' : 'Activar rotación automática'}
         accessibilityRole="button"
@@ -71,34 +88,3 @@ export default function ModelControls({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: 12,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    gap: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.82)',
-    borderRadius: 24,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    ...createShadow(2, 8, '#000000', 0.08),
-    elevation: 5,
-  },
-  button: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    ...createShadow(1, 3, '#000000', 0.05),
-  },
-  buttonActive: {
-    backgroundColor: Colors.clinicalBlue,
-    borderColor: Colors.clinicalBlue,
-  },
-});

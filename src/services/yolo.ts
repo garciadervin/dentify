@@ -15,8 +15,8 @@
  * @see assets/ml/metadata.yaml for model details
  */
 
-import { Platform } from 'react-native';
-import { File, Paths } from 'expo-file-system';
+import { File } from 'expo-file-system';
+import { resolveModelUri } from '@/src/services/modelResolver';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -33,15 +33,6 @@ export interface YOLOMessage {
   detections?: Detection[];
   error?: string;
 }
-
-// ── Constants ──────────────────────────────────────────────────────────────
-
-// Must match assets/ml/metadata.yaml `names` exactly (classId ↔ label).
-export const CLASS_NAMES = [
-  'Abrasion', 'Filling', 'Crown',
-  'Caries 1 class', 'Caries 2 class', 'Caries 3 class',
-  'Caries 4 class', 'Caries 5 class', 'Caries 6 class',
-];
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -121,12 +112,13 @@ export async function loadModel(): Promise<void> {
     return;
   }
 
-  console.time('YOLO:loadModel');
   try {
-    // Read model file as base64 using new expo-file-system API
-    const modelAsset = require('@/assets/ml/best_int8.tflite');
-    const modelFile = new File(modelAsset);
-    const modelBase64 = await modelFile.base64();
+    // require() of a .tflite returns a Metro asset module id (a number), not a
+    // file URI — resolve it to a local file first, then read it as base64.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- Metro assets require a static require() call
+    const modelAsset: number = require('@/assets/ml/best_int8.tflite');
+    const modelUri = await resolveModelUri(modelAsset);
+    const modelBase64 = await new File(modelUri).base64();
 
     if (!modelBase64) {
       throw new Error('Could not read model file');
@@ -138,10 +130,8 @@ export async function loadModel(): Promise<void> {
     });
 
     _modelLoaded = true;
-    console.timeEnd('YOLO:loadModel');
-  } catch (error: any) {
-    console.timeEnd('YOLO:loadModel');
-    console.warn('YOLO: Failed to load model:', error.message);
+  } catch (error) {
+    console.warn('YOLO: Failed to load model:', (error as Error).message);
     throw error;
   }
 }
@@ -161,11 +151,9 @@ export async function processImage(imageUri: string): Promise<Detection[]> {
     return [];
   }
 
-  console.time('YOLO:processImage');
   try {
     // Read image as base64 using new expo-file-system API
-    const imageFile = new File(imageUri);
-    const imageBase64 = await imageFile.base64();
+    const imageBase64 = await new File(imageUri).base64();
 
     if (!imageBase64) {
       throw new Error('Could not read image file');
@@ -176,15 +164,11 @@ export async function processImage(imageUri: string): Promise<Detection[]> {
       imageData: `data:image/jpeg;base64,${imageBase64}`,
     });
 
-    console.timeEnd('YOLO:processImage');
     return result.detections ?? [];
-  } catch (error: any) {
-    console.timeEnd('YOLO:processImage');
-    console.warn('YOLO: Inference failed:', error.message);
+  } catch (error) {
+    console.warn('YOLO: Inference failed:', (error as Error).message);
     // Propagate so callers can distinguish a real failure from an empty
     // detection set (a false "no conditions found").
     throw error;
   }
 }
-
-export default { loadModel, processImage, setWebViewRef, handleWebViewMessage, CLASS_NAMES };

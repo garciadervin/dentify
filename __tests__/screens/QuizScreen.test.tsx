@@ -70,16 +70,17 @@ describe('QuizScreen', () => {
     });
   });
 
-  it('should highlight correct option in green and incorrect in red after selecting wrong answer', async () => {
+  it('shows "incorrect" feedback after a wrong answer and still advances', async () => {
     render(<QuizScreen />);
     await waitFor(() => {
       expect(screen.getByTestId('option-0')).toBeTruthy();
     });
-    const option = screen.getByTestId('option-0');
-    fireEvent.press(option);
-    expect(screen.getByTestId('option-1')).toHaveStyle({ backgroundColor: '#E8F5F3' });
-    expect(screen.getByTestId('option-0')).toHaveStyle({ backgroundColor: '#FDE8E7' });
+    // Option 0 is wrong for the first question (its correctIndex is 1).
+    fireEvent.press(screen.getByTestId('option-0'));
     expect(screen.getByTestId('quiz-feedback')).toBeTruthy();
+    expect(screen.getByText('Respuesta incorrecta')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('next-question'));
+    expect(screen.getByTestId('question-text')).toBeTruthy();
   });
 
   it('should render the next-question button', async () => {

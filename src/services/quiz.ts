@@ -54,7 +54,6 @@ export interface QuizQuestion {
 
 interface QuestionRow {
   id: string;
-  specialty_slug: string;
   level: number;
   question: string;
   options: unknown;
@@ -68,17 +67,6 @@ interface QuestionRow {
   hint: string | null;
   points: number;
   difficulty: number;
-}
-
-/**
- * Converts a specialty name to the slug used in the `questions` table.
- */
-export function specialtyToSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/\s+/g, '-');
 }
 
 function mapRow(row: QuestionRow): QuizQuestion {
@@ -106,21 +94,20 @@ function mapRow(row: QuestionRow): QuizQuestion {
   };
 }
 
-async function resolveSlug(specialtyName: string): Promise<string> {
-  let slug = specialtyToSlug(specialtyName);
+/** Resolves a specialty display name to its surrogate id (specialties.id). */
+async function resolveSpecialtyId(specialtyName: string): Promise<string | null> {
   const supabase = getSupabase();
-  if (!supabase) return slug;
+  if (!supabase) return null;
   try {
     const { data: spec } = await supabase
       .from('specialties')
-      .select('slug')
+      .select('id')
       .eq('name', specialtyName)
       .maybeSingle();
-    if (spec?.slug) slug = spec.slug;
+    return spec?.id ?? null;
   } catch {
-    // use the derived slug
+    return null;
   }
-  return slug;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -164,14 +151,15 @@ export async function fetchQuizQuestions(
 ): Promise<QuizQuestion[]> {
   const supabase = getSupabase();
   if (!supabase) return [];
-  const slug = await resolveSlug(specialtyName);
+  const specialtyId = await resolveSpecialtyId(specialtyName);
+  if (!specialtyId) return [];
   try {
     const { data, error } = await supabase
       .from('questions')
       .select(
         'id, question, question_type, options, correct_index, correct_indexes, pairs, order_items, case_id, clinical_cases(text), hint, points, difficulty, explanation, level'
       )
-      .eq('specialty_slug', slug)
+      .eq('specialty_id', specialtyId)
       .eq('level', level)
       .order('created_at');
     if (error || !data) return [];
@@ -252,14 +240,15 @@ export async function fetchMistakes(
       .map(([qid]) => qid);
     if (wrongIds.length === 0) return [];
 
-    const slug = await resolveSlug(specialtyName);
+    const specialtyId = await resolveSpecialtyId(specialtyName);
+    if (!specialtyId) return [];
     const { data: qs, error: qErr } = await supabase
       .from('questions')
       .select(
         'id, question, question_type, options, correct_index, correct_indexes, pairs, order_items, case_id, clinical_cases(text), hint, points, difficulty, explanation, level'
       )
       .in('id', wrongIds)
-      .eq('specialty_slug', slug)
+      .eq('specialty_id', specialtyId)
       .eq('level', level);
     if (qErr || !qs) return [];
     return (qs as unknown as QuestionRow[]).map((q) => ({ ...mapRow(q), specialty: specialtyName }));

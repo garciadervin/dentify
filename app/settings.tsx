@@ -7,12 +7,13 @@
  */
 
 import React, { useCallback, useEffect } from 'react';
-import { View, Text, Switch, StyleSheet, Alert } from 'react-native';
+import { View, Text, Switch } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ScreenContainer from '@/components/ScreenContainer';
 import AppHeader from '@/components/AppHeader';
 import { Colors } from '@/constants/theme';
 import { useSettings } from '@/src/hooks/useSettings';
+import { useFeedback } from '@/components/feedback/FeedbackProvider';
 import { scheduleStudyReminder, configureNotifications } from '@/src/services/notifications';
 
 function SettingRow({
@@ -29,13 +30,13 @@ function SettingRow({
   onValueChange: (v: boolean) => void;
 }) {
   return (
-    <View style={styles.row}>
-      <View style={styles.rowIcon}>
+    <View className="flex-row items-center gap-3 p-4">
+      <View className="h-9 w-9 items-center justify-center rounded-full bg-clinical-blue/10">
         <MaterialCommunityIcons name={icon} size={20} color={Colors.clinicalBlue} />
       </View>
-      <View style={styles.rowInfo}>
-        <Text style={styles.rowTitle}>{title}</Text>
-        <Text style={styles.rowDesc}>{description}</Text>
+      <View className="flex-1">
+        <Text className="font-inter-semibold text-sm text-deep-slate">{title}</Text>
+        <Text className="mt-0.5 font-sans text-xs leading-[17px] text-neutral">{description}</Text>
       </View>
       <Switch
         value={value}
@@ -50,13 +51,17 @@ function SettingRow({
 
 export default function SettingsScreen() {
   const { settings, loaded, updateSetting } = useSettings();
+  const { toast } = useFeedback();
 
-  // Configure the handler and re-schedule the reminder if it was active.
+  // Configure the handler; once the persisted preference finishes loading,
+  // (re)schedule the reminder if it was active. Depends on `loaded` so a
+  // reminder enabled in the DB is registered even when the screen mounts
+  // before settings resolve.
   useEffect(() => {
     configureNotifications();
+    if (!loaded) return;
     if (settings.studyReminders) void scheduleStudyReminder(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loaded, settings.studyReminders]);
 
   const handleRemindersToggle = useCallback(
     async (value: boolean) => {
@@ -65,22 +70,19 @@ export default function SettingsScreen() {
       if (!result.ok) {
         // Revert the toggle if scheduling failed (e.g. permission denied).
         updateSetting('studyReminders', false);
-        Alert.alert(
-          'Recordatorios',
-          result.message ?? 'No se pudo programar el recordatorio.'
-        );
+        toast(result.message ?? 'No se pudo programar el recordatorio.', 'error');
       }
     },
-    [updateSetting]
+    [updateSetting, toast]
   );
 
   return (
     <ScreenContainer scroll edges={['top']}>
       <AppHeader variant="back" title="Configuración" />
 
-      <View style={styles.content}>
-        <Text style={styles.sectionTitle}>Preferencias</Text>
-        <View style={styles.card}>
+      <View className="px-6 pt-4">
+        <Text className="mb-3 font-heading-bold text-[17px] text-deep-slate">Preferencias</Text>
+        <View className="overflow-hidden rounded-[20px] bg-surface">
           <SettingRow
             icon="rotate-3d"
             title="Rotación automática 3D"
@@ -88,7 +90,7 @@ export default function SettingsScreen() {
             value={settings.autoRotate}
             onValueChange={(v) => updateSetting('autoRotate', v)}
           />
-          <View style={styles.divider} />
+          <View className="ml-16 h-px bg-border-light" />
           <SettingRow
             icon="vibrate"
             title="Vibración táctil"
@@ -96,7 +98,7 @@ export default function SettingsScreen() {
             value={settings.haptics}
             onValueChange={(v) => updateSetting('haptics', v)}
           />
-          <View style={styles.divider} />
+          <View className="ml-16 h-px bg-border-light" />
           <SettingRow
             icon="cloud-download-outline"
             title="Descargar con datos móviles"
@@ -104,7 +106,7 @@ export default function SettingsScreen() {
             value={settings.cellularDownloads}
             onValueChange={(v) => updateSetting('cellularDownloads', v)}
           />
-          <View style={styles.divider} />
+          <View className="ml-16 h-px bg-border-light" />
           <SettingRow
             icon="bell-outline"
             title="Recordatorios de estudio"
@@ -114,67 +116,8 @@ export default function SettingsScreen() {
           />
         </View>
 
-        {!loaded && <Text style={styles.syncNote}>Cargando preferencias...</Text>}
+        {!loaded && <Text className="mt-3 text-center font-sans text-xs text-neutral">Cargando preferencias...</Text>}
       </View>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-  },
-  sectionTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 17,
-    color: Colors.deepSlate,
-    marginBottom: 12,
-  },
-  card: {
-    backgroundColor: Colors.surface,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 16,
-  },
-  rowIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#0077B614',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rowInfo: {
-    flex: 1,
-  },
-  rowTitle: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.deepSlate,
-  },
-  rowDesc: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-    marginTop: 2,
-    lineHeight: 17,
-  },
-  divider: {
-    height: 1,
-    marginLeft: 64,
-    backgroundColor: Colors.borderLight,
-  },
-  syncNote: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-    marginTop: 12,
-    textAlign: 'center',
-  },
-});

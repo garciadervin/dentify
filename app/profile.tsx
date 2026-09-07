@@ -6,7 +6,7 @@
  */
 
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, type DimensionValue } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ScreenContainer from '@/components/ScreenContainer';
@@ -28,10 +28,13 @@ function StatItem({
   color: string;
 }) {
   return (
-    <View style={styles.statItem}>
+    <View
+      className="w-[47%] items-center gap-1.5 rounded-[16px] bg-surface p-4"
+      style={[createShadow(1, 6, '#000000', 0.04), { elevation: 1 }]}
+    >
       <MaterialCommunityIcons name={icon} size={22} color={color} />
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+      <Text className="font-heading-bold text-[22px] text-deep-slate">{value}</Text>
+      <Text className="text-center font-sans text-[11px] text-neutral">{label}</Text>
     </View>
   );
 }
@@ -63,28 +66,29 @@ export default function ProfileScreen() {
     <ScreenContainer scroll edges={['top']}>
       <AppHeader variant="back" title="Perfil" />
 
-      <View style={styles.content}>
+      <View className="px-6 pt-4 pb-6">
         {/* Cabecera */}
-        <View style={styles.profileHeader}>
+        <View className="mb-7 items-center">
           <View
+            className="mb-3 h-[84px] w-[84px] items-center justify-center rounded-full"
             style={[
-              styles.avatar,
-              { backgroundColor: profile?.avatar_color ?? Colors.clinicalBlue },
+              createShadow(4, 12, Colors.clinicalBlue, 0.2),
+              { elevation: 5, backgroundColor: profile?.avatar_color ?? Colors.clinicalBlue },
             ]}
           >
-            <Text style={styles.avatarInitial}>{userInitial}</Text>
+            <Text className="font-heading-bold text-[34px] text-white">{userInitial}</Text>
           </View>
-          <Text style={styles.userName}>{displayName}</Text>
-          {userEmail ? <Text style={styles.userEmail}>{userEmail}</Text> : null}
-          <View style={styles.roleBadge}>
+          <Text className="mb-0.5 font-heading-bold text-[22px] text-deep-slate">{displayName}</Text>
+          {userEmail ? <Text className="mb-2.5 font-sans text-[13px] text-neutral">{userEmail}</Text> : null}
+          <View className="flex-row items-center gap-1.5 rounded-[20px] bg-[#0077B61A] px-3.5 py-1.5">
             <MaterialCommunityIcons name="school-outline" size={14} color={Colors.clinicalBlue} />
-            <Text style={styles.roleText}>{roleLabel}</Text>
+            <Text className="font-inter-semibold text-[12px] text-clinical-blue">{roleLabel}</Text>
           </View>
         </View>
 
         {/* Stats */}
-        <Text style={styles.sectionTitle}>Estadísticas</Text>
-        <View style={styles.statsGrid}>
+        <Text className="mb-3 font-heading-bold text-[17px] text-deep-slate">Estadísticas</Text>
+        <View className="mb-7 flex-row flex-wrap gap-2.5">
           <StatItem icon="fire" label="Activas" value={String(activeCount)} color="#F4A261" />
           <StatItem icon="check-decagram" label="Completadas" value={String(completedCount)} color={Colors.successTeal} />
           <StatItem icon="star-four-points" label="XP total" value={xp.toLocaleString()} color={Colors.clinicalBlue} />
@@ -94,29 +98,34 @@ export default function ProfileScreen() {
         {/* Progress by specialty */}
         {specialties.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>Progreso por especialidad</Text>
-            <View style={styles.card}>
+            <Text className="mb-3 font-heading-bold text-[17px] text-deep-slate">Progreso por especialidad</Text>
+            <View
+              className="mb-7 overflow-hidden rounded-[20px] bg-surface"
+              style={[createShadow(1, 6, '#000000', 0.04), { elevation: 1 }]}
+            >
               {specialties.map((s, i) => (
                 <View
                   key={s.id}
-                  style={[styles.progressRow, i > 0 && { borderTopWidth: 1, borderTopColor: Colors.borderLight }]}
+                  className={`flex-row items-center gap-3 p-3.5 ${
+                    i > 0 ? 'border-t border-t-border-light' : ''
+                  }`}
                 >
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.progressName}>{s.name}</Text>
-                    <View style={[styles.progressTrack, { backgroundColor: Colors.borderLight }]}>
+                  <View className="flex-1">
+                    <Text className="mb-1.5 font-inter-semibold text-[13px] text-deep-slate">
+                      {s.name}
+                    </Text>
+                    <View className="h-[5px] overflow-hidden rounded-[3px] bg-border-light">
                       <View
-                        style={[
-                          styles.progressFill,
-                          {
-                            width: `${s.progress}%` as any,
-                            backgroundColor:
-                              s.status === 'locked' ? Colors.muted : Colors.clinicalBlue,
-                          },
-                        ]}
+                        className={`h-full min-w-[4px] rounded-[3px] ${
+                          s.status === 'locked' ? 'bg-muted' : 'bg-clinical-blue'
+                        }`}
+                        style={{ width: `${s.progress}%` as DimensionValue }}
                       />
                     </View>
                   </View>
-                  <Text style={styles.progressPct}>{s.progress}%</Text>
+                  <Text className="min-w-[36px] text-right font-inter-semibold text-[12px] text-neutral">
+                    {s.progress}%
+                  </Text>
                 </View>
               ))}
             </View>
@@ -126,16 +135,19 @@ export default function ProfileScreen() {
         {/* Logros */}
         {badges.filter((b) => b.earned).length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>Logros desbloqueados</Text>
-            <View style={styles.card}>
+            <Text className="mb-3 font-heading-bold text-[17px] text-deep-slate">Logros desbloqueados</Text>
+            <View
+              className="mb-7 overflow-hidden rounded-[20px] bg-surface"
+              style={[createShadow(1, 6, '#000000', 0.04), { elevation: 1 }]}
+            >
               {badges
                 .filter((b) => b.earned)
                 .map((b) => (
-                  <View key={b.id} style={styles.badgeRow}>
-                    <Text style={styles.badgeIcon}>{b.icon}</Text>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.badgeName}>{b.name}</Text>
-                      <Text style={styles.badgeDesc}>{b.description}</Text>
+                  <View key={b.id} className="flex-row items-center gap-3 p-3.5">
+                    <Text className="text-[22px]">{b.icon}</Text>
+                    <View className="flex-1">
+                      <Text className="font-inter-semibold text-[13px] text-deep-slate">{b.name}</Text>
+                      <Text className="mt-0.5 font-sans text-[11px] text-neutral">{b.description}</Text>
                     </View>
                     <MaterialCommunityIcons name="check-circle" size={18} color={Colors.successTeal} />
                   </View>
@@ -145,33 +157,36 @@ export default function ProfileScreen() {
         )}
 
         {/* Menu */}
-        <Text style={styles.sectionTitle}>Cuenta</Text>
-        <View style={styles.card}>
+        <Text className="mb-3 font-heading-bold text-[17px] text-deep-slate">Cuenta</Text>
+        <View
+          className="mb-7 overflow-hidden rounded-[20px] bg-surface"
+          style={[createShadow(1, 6, '#000000', 0.04), { elevation: 1 }]}
+        >
           <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => router.push('/edit-profile' as any)}
+            className="flex-row items-center gap-3 p-4"
+            onPress={() => router.push('/edit-profile')}
           >
             <MaterialCommunityIcons name="account-edit-outline" size={20} color={Colors.neutral} />
-            <Text style={styles.menuItemText}>Editar perfil</Text>
+            <Text className="flex-1 font-sans text-[15px] text-deep-slate">Editar perfil</Text>
             <MaterialCommunityIcons name="chevron-right" size={18} color={Colors.neutral} />
           </TouchableOpacity>
-          <View style={styles.divider} />
+          <View className="ml-[52px] h-px bg-border-light" />
           <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => router.push('/settings' as any)}
+            className="flex-row items-center gap-3 p-4"
+            onPress={() => router.push('/settings')}
           >
             <MaterialCommunityIcons name="cog-outline" size={20} color={Colors.neutral} />
-            <Text style={styles.menuItemText}>Configuración</Text>
+            <Text className="flex-1 font-sans text-[15px] text-deep-slate">Configuración</Text>
             <MaterialCommunityIcons name="chevron-right" size={18} color={Colors.neutral} />
           </TouchableOpacity>
-          <View style={styles.divider} />
-          <TouchableOpacity style={styles.menuItem} onPress={() => setShowLogoutModal(true)}>
+          <View className="ml-[52px] h-px bg-border-light" />
+          <TouchableOpacity className="flex-row items-center gap-3 p-4" onPress={() => setShowLogoutModal(true)}>
             <MaterialCommunityIcons name="logout" size={20} color="#C0392B" />
-            <Text style={[styles.menuItemText, { color: '#C0392B' }]}>Cerrar sesión</Text>
+            <Text className="flex-1 font-sans text-[15px] text-error">Cerrar sesión</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.version}>Dentify v1.0.0</Text>
+        <Text className="text-center font-sans text-[12px] text-neutral">Dentify v1.0.0</Text>
       </View>
 
       {/* Sign-out confirmation modal */}
@@ -181,24 +196,27 @@ export default function ProfileScreen() {
         animationType="fade"
         onRequestClose={() => setShowLogoutModal(false)}
       >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Cerrar sesión</Text>
-            <Text style={styles.modalMessage}>
+        <View
+          className="flex-1 items-center justify-center p-10"
+          style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
+        >
+          <View className="w-full items-center rounded-[20px] bg-surface p-6">
+            <Text className="mb-2 font-heading-bold text-[18px] text-deep-slate">Cerrar sesión</Text>
+            <Text className="mb-6 text-center font-sans text-[14px] text-neutral">
               ¿Estás seguro de que quieres cerrar sesión?
             </Text>
-            <View style={styles.modalButtons}>
+            <View className="w-full flex-row gap-3">
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: Colors.borderLight }]}
+                className="flex-1 items-center rounded-[12px] bg-border-light py-3"
                 onPress={() => setShowLogoutModal(false)}
               >
-                <Text style={[styles.modalButtonText, { color: Colors.deepSlate }]}>Cancelar</Text>
+                <Text className="font-inter-semibold text-[14px] text-deep-slate">Cancelar</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#C0392B' }]}
+                className="flex-1 items-center rounded-[12px] bg-error py-3"
                 onPress={confirmSignOut}
               >
-                <Text style={[styles.modalButtonText, { color: '#FFFFFF' }]}>Cerrar sesión</Text>
+                <Text className="font-inter-semibold text-[14px] text-white">Cerrar sesión</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -207,211 +225,3 @@ export default function ProfileScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
-  },
-  profileHeader: {
-    alignItems: 'center',
-    marginBottom: 28,
-  },
-  avatar: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-    ...createShadow(4, 12, Colors.clinicalBlue, 0.2),
-    elevation: 5,
-  },
-  avatarInitial: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 34,
-    color: '#FFFFFF',
-  },
-  userName: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 22,
-    color: Colors.deepSlate,
-    marginBottom: 2,
-  },
-  userEmail: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-    color: Colors.neutral,
-    marginBottom: 10,
-  },
-  roleBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,119,182,0.1)',
-  },
-  roleText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: Colors.clinicalBlue,
-  },
-  sectionTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 17,
-    color: Colors.deepSlate,
-    marginBottom: 12,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 28,
-  },
-  statItem: {
-    width: '47%',
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    gap: 6,
-    ...createShadow(1, 6, '#000000', 0.04),
-    elevation: 1,
-  },
-  statValue: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 22,
-    color: Colors.deepSlate,
-  },
-  statLabel: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    color: Colors.neutral,
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: Colors.surface,
-    borderRadius: 20,
-    marginBottom: 28,
-    overflow: 'hidden',
-    ...createShadow(1, 6, '#000000', 0.04),
-    elevation: 1,
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-    gap: 12,
-  },
-  progressName: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-    color: Colors.deepSlate,
-    marginBottom: 6,
-  },
-  progressTrack: {
-    height: 5,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 3,
-    minWidth: 4,
-  },
-  progressPct: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: Colors.neutral,
-    minWidth: 36,
-    textAlign: 'right',
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-    gap: 12,
-  },
-  badgeIcon: {
-    fontSize: 22,
-  },
-  badgeName: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-    color: Colors.deepSlate,
-  },
-  badgeDesc: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    color: Colors.neutral,
-    marginTop: 2,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 16,
-  },
-  menuItemText: {
-    fontFamily: 'Inter',
-    fontSize: 15,
-    color: Colors.deepSlate,
-    flex: 1,
-  },
-  divider: {
-    height: 1,
-    marginLeft: 52,
-    backgroundColor: Colors.borderLight,
-  },
-  version: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-    textAlign: 'center',
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
-  },
-  modalContent: {
-    width: '100%',
-    backgroundColor: Colors.surface,
-    borderRadius: 20,
-    padding: 24,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 18,
-    color: Colors.deepSlate,
-    marginBottom: 8,
-  },
-  modalMessage: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: Colors.neutral,
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    width: '100%',
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  modalButtonText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-  },
-});

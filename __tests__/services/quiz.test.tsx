@@ -2,7 +2,6 @@ import {
   fetchQuizSession,
   fetchMistakes,
   recordAnswer,
-  specialtyToSlug,
 } from '@/src/services/quiz';
 import * as supabaseLib from '@/src/lib/supabase';
 
@@ -11,31 +10,31 @@ import * as supabaseLib from '@/src/lib/supabase';
 function dbRows() {
   return [
     {
-      id: 'a1', specialty_slug: 'operatoria-dental', level: 1, question_type: 'mcq',
+      id: 'a1', specialty_id: 'spec-1', level: 1, question_type: 'mcq',
       question: 'Indep 1', options: ['A', 'B', 'C', 'D'], correct_index: 0,
       correct_indexes: null, pairs: null, order_items: null, case_id: null, clinical_cases: null,
       hint: null, points: 10, difficulty: 1, explanation: 'ex', tags: ['t'],
     },
     {
-      id: 'c1', specialty_slug: 'operatoria-dental', level: 3, question_type: 'case',
+      id: 'c1', specialty_id: 'spec-1', level: 3, question_type: 'case',
       question: 'Caso 1a', options: ['A', 'B', 'C', 'D'], correct_index: 1,
       correct_indexes: null, pairs: null, order_items: null, case_id: 'case-1', clinical_cases: { text: 'Paciente X' },
       hint: null, points: 10, difficulty: 3, explanation: 'ex', tags: ['t'],
     },
     {
-      id: 'c2', specialty_slug: 'operatoria-dental', level: 3, question_type: 'case',
+      id: 'c2', specialty_id: 'spec-1', level: 3, question_type: 'case',
       question: 'Caso 1b', options: ['A', 'B', 'C', 'D'], correct_index: 2,
       correct_indexes: null, pairs: null, order_items: null, case_id: 'case-1', clinical_cases: { text: 'Paciente X' },
       hint: null, points: 10, difficulty: 3, explanation: 'ex', tags: ['t'],
     },
     {
-      id: 'a2', specialty_slug: 'operatoria-dental', level: 2, question_type: 'match',
+      id: 'a2', specialty_id: 'spec-1', level: 2, question_type: 'match',
       question: 'Indep 2', options: null, correct_index: null, correct_indexes: null,
       pairs: [{ left: 'L1', right: 'R1' }, { left: 'L2', right: 'R2' }], order_items: null,
       case_id: null, clinical_cases: null, hint: null, points: 15, difficulty: 2, explanation: 'ex', tags: ['t'],
     },
     {
-      id: 'a3', specialty_slug: 'operatoria-dental', level: 2, question_type: 'order',
+      id: 'a3', specialty_id: 'spec-1', level: 2, question_type: 'order',
       question: 'Indep 3', options: null, correct_index: null, correct_indexes: null, pairs: null,
       order_items: [{ text: 'A', position: 1 }, { text: 'B', position: 2 }, { text: 'C', position: 3 }],
       case_id: null, clinical_cases: null, hint: null, points: 15, difficulty: 2, explanation: 'ex', tags: ['t'],
@@ -54,7 +53,7 @@ function mockSupabase({ questions = dbRows(), history = [] as any[] } = {}) {
         return chain;
       }),
       order: jest.fn(() => Promise.resolve({ data: current, error: null })),
-      maybeSingle: jest.fn(() => Promise.resolve({ data: { slug: 'operatoria-dental' }, error: null })),
+      maybeSingle: jest.fn(() => Promise.resolve({ data: { id: 'spec-1' }, error: null })),
       insert: jest.fn(() => Promise.resolve({ error: null })),
       then: (resolve: any, reject: any) => Promise.resolve({ data: current, error: null }).then(resolve, reject),
     };
@@ -68,11 +67,6 @@ function mockSupabase({ questions = dbRows(), history = [] as any[] } = {}) {
 
 describe('quiz service', () => {
   afterEach(() => jest.restoreAllMocks());
-
-  it('specialtyToSlug normalizes accents and spaces', () => {
-    expect(specialtyToSlug('Anatomía Dental')).toBe('anatomia-dental');
-    expect(specialtyToSlug('Operatoria Dental')).toBe('operatoria-dental');
-  });
 
   it('fetchQuizSession keeps case sub-questions grouped together', async () => {
     jest.spyOn(supabaseLib, 'getSupabase').mockReturnValue(mockSupabase() as any);

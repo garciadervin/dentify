@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  StyleSheet,
   Animated,
   ActivityIndicator,
 } from 'react-native';
@@ -60,7 +59,6 @@ export default function QuizScreen() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answered, setAnswered] = useState(false);
-  const [currentCorrect, setCurrentCorrect] = useState(false);
   const [results, setResults] = useState<AnswerResult[]>([]);
   const [combo, setCombo] = useState(0);
   const [maxCombo, setMaxCombo] = useState(0);
@@ -82,7 +80,6 @@ export default function QuizScreen() {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [specialty, level, sessionNonce]);
 
   const currentQuestion = questions[currentIndex];
@@ -100,7 +97,6 @@ export default function QuizScreen() {
     (correct: boolean) => {
       if (answered || !currentQuestion) return;
       setAnswered(true);
-      setCurrentCorrect(correct);
 
       const multiplier = comboMultiplier(combo);
       const earned = correct ? Math.round(currentQuestion.points * multiplier) : 0;
@@ -145,7 +141,6 @@ export default function QuizScreen() {
     }).start(() => {
       setCurrentIndex((prev) => prev + 1);
       setAnswered(false);
-      setCurrentCorrect(false);
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 180,
@@ -170,7 +165,6 @@ export default function QuizScreen() {
   ]);
 
   const handleStartReview = useCallback(() => {
-    const wrongIds = new Set(wrongQuestions.map((q) => q.id));
     setQuestions(wrongQuestions);
     setIsReview(true);
     setResults([]);
@@ -179,7 +173,6 @@ export default function QuizScreen() {
     setTotalXp(0);
     setCurrentIndex(0);
     setAnswered(false);
-    setCurrentCorrect(false);
     setShowResult(false);
   }, [wrongQuestions]);
 
@@ -193,11 +186,13 @@ export default function QuizScreen() {
 
   if (loading) {
     return (
-      <ScreenContainer style={styles.flex} edges={['top']}>
+      <ScreenContainer style={{ flex: 1 }} edges={['top']}>
         <AppHeader variant="back" title={specialty} subtitle={`Nivel ${level}`} />
-        <View style={styles.center}>
+        <View className="flex-1 items-center justify-center gap-3 px-8">
           <ActivityIndicator size="large" color={Colors.clinicalBlue} />
-          <Text style={styles.centerText}>Cargando preguntas...</Text>
+          <Text className="text-center font-sans text-[14px] leading-[20px] text-neutral">
+            Cargando preguntas...
+          </Text>
         </View>
       </ScreenContainer>
     );
@@ -205,20 +200,23 @@ export default function QuizScreen() {
 
   if (questions.length === 0) {
     return (
-      <ScreenContainer style={styles.flex} edges={['top']}>
+      <ScreenContainer style={{ flex: 1 }} edges={['top']}>
         <AppHeader variant="back" title={specialty} />
-        <View style={styles.center}>
+        <View className="flex-1 items-center justify-center gap-3 px-8">
           <MaterialCommunityIcons name="file-question-outline" size={48} color={Colors.neutral} />
-          <Text style={styles.centerTitle}>
+          <Text className="text-center font-heading-bold text-[18px] text-deep-slate">
             {isReview ? 'No hay errores para repasar' : 'No hay preguntas disponibles'}
           </Text>
-          <Text style={styles.centerText}>
+          <Text className="text-center font-sans text-[14px] leading-[20px] text-neutral">
             {isReview
               ? '¡Respondiste todo correctamente! No hay nada que repasar.'
               : `Las preguntas para ${specialty} — nivel ${level} no están disponibles todavía.`}
           </Text>
-          <TouchableOpacity style={styles.primaryButton} onPress={handleFinish}>
-            <Text style={styles.primaryButtonText}>Volver al inicio</Text>
+          <TouchableOpacity
+            className="flex-row items-center justify-center gap-2 self-stretch rounded-[14px] border-b-4 border-b-clinical-dark bg-clinical-blue px-8 py-3.5"
+            onPress={handleFinish}
+          >
+            <Text className="font-inter-semibold text-[16px] text-white">Volver al inicio</Text>
           </TouchableOpacity>
         </View>
       </ScreenContainer>
@@ -234,38 +232,36 @@ export default function QuizScreen() {
     return (
       <ScreenContainer scroll edges={['top']}>
         <AppHeader variant="back" title={isReview ? 'Repaso completado' : 'Resultado'} />
-        <View testID="quiz-result" style={styles.resultContainer}>
-          <Text style={styles.resultEmoji}>
+        <View testID="quiz-result" className="items-center gap-4 px-8 py-10">
+          <Text className="text-[56px]">
             {isPerfect ? '🏆' : isGood ? '⭐' : '📚'}
           </Text>
 
           <View
-            style={[
-              styles.scoreCircle,
-              { borderColor: isPerfect ? Colors.successTeal : isGood ? Colors.clinicalBlue : '#C0392B' },
-            ]}
+            className={`h-[140px] w-[140px] items-center justify-center rounded-full border-[6px] ${
+              isPerfect ? 'border-success-teal' : isGood ? 'border-clinical-blue' : 'border-error'
+            }`}
           >
             <Text
-              style={[
-                styles.scorePercent,
-                { color: isPerfect ? Colors.successTeal : isGood ? Colors.clinicalBlue : '#C0392B' },
-              ]}
+              className={`font-heading-bold text-[36px] ${
+                isPerfect ? 'text-success-teal' : isGood ? 'text-clinical-blue' : 'text-error'
+              }`}
             >
               {pct}%
             </Text>
-            <Text style={styles.scoreLabel}>
+            <Text className="font-sans text-[14px] text-neutral">
               {correctCount}/{total}
             </Text>
           </View>
 
-          <Text style={styles.resultTitle}>
+          <Text className="text-center font-heading-bold text-[28px] text-deep-slate">
             {isPerfect ? '¡Perfecto!' : isGood ? '¡Buen trabajo!' : 'Sigue practicando'}
           </Text>
-          <Text style={styles.resultSubtitle}>
+          <Text className="text-center font-inter-semibold text-[14px] text-neutral">
             {specialty} — Nivel {level}
             {isReview ? ' · Repaso' : ''}
           </Text>
-          <Text style={styles.resultMessage}>
+          <Text className="text-center font-sans text-[15px] leading-[22px] text-neutral">
             {isPerfect
               ? 'Dominas completamente este tema. ¡Excelente!'
               : isGood
@@ -273,43 +269,55 @@ export default function QuizScreen() {
                 : 'Revisa el material antes de continuar. ¡Puedes mejorar!'}
           </Text>
 
-          <View style={styles.statsRow}>
-            <View style={styles.statPill}>
+          <View className="flex-row flex-wrap items-center justify-center gap-2.5">
+            <View className="flex-row items-center gap-1.5 rounded-[20px] bg-[#0077B615] px-4 py-2">
               <MaterialCommunityIcons name="star-four-points" size={16} color={Colors.clinicalBlue} />
-              <Text style={styles.statText}>+{totalXp} XP</Text>
+              <Text className="font-inter-semibold text-[14px] text-clinical-blue">+{totalXp} XP</Text>
             </View>
             {maxCombo >= 2 && (
-              <View style={styles.statPill}>
+              <View className="flex-row items-center gap-1.5 rounded-[20px] bg-[#0077B615] px-4 py-2">
                 <MaterialCommunityIcons name="fire" size={16} color="#E8590C" />
-                <Text style={styles.statText}>Racha ×{maxCombo}</Text>
+                <Text className="font-inter-semibold text-[14px] text-clinical-blue">Racha ×{maxCombo}</Text>
               </View>
             )}
           </View>
 
           {levelCompleted && (
-            <View style={styles.levelBadge}>
+            <View className="flex-row items-center gap-1.5 rounded-[20px] bg-[#006B5F14] px-4 py-2">
               <MaterialCommunityIcons name="check-decagram" size={16} color={Colors.successTeal} />
-              <Text style={[styles.statText, { color: Colors.successTeal }]}>
+              <Text className="font-inter-semibold text-[14px] text-success-teal">
                 Nivel completado — próximo nivel desbloqueado
               </Text>
             </View>
           )}
 
-          <TouchableOpacity style={styles.primaryButton} onPress={handleFinish}>
+          <TouchableOpacity
+            className="flex-row items-center justify-center gap-2 self-stretch rounded-[14px] border-b-4 border-b-clinical-dark bg-clinical-blue px-8 py-3.5"
+            onPress={handleFinish}
+          >
             <MaterialCommunityIcons name="home" size={18} color="#FFFFFF" />
-            <Text style={styles.primaryButtonText}>Continuar</Text>
+            <Text className="font-inter-semibold text-[16px] text-white">Continuar</Text>
           </TouchableOpacity>
 
           {wrongQuestions.length > 0 && !isReview && (
-            <TouchableOpacity testID="review-mistakes" style={styles.secondaryButton} onPress={handleStartReview}>
+            <TouchableOpacity
+              testID="review-mistakes"
+              className="flex-row items-center justify-center gap-2 self-stretch rounded-[14px] border-[1.5px] border-border-light bg-surface px-8 py-3"
+              onPress={handleStartReview}
+            >
               <MaterialCommunityIcons name="refresh" size={18} color={Colors.clinicalBlue} />
-              <Text style={styles.secondaryButtonText}>Repasar errores ({wrongQuestions.length})</Text>
+              <Text className="font-inter-semibold text-[15px] text-clinical-blue">
+                Repasar errores ({wrongQuestions.length})
+              </Text>
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity style={styles.secondaryButton} onPress={handleRestart}>
+          <TouchableOpacity
+            className="flex-row items-center justify-center gap-2 self-stretch rounded-[14px] border-[1.5px] border-border-light bg-surface px-8 py-3"
+            onPress={handleRestart}
+          >
             <MaterialCommunityIcons name="refresh" size={18} color={Colors.clinicalBlue} />
-            <Text style={styles.secondaryButtonText}>Repetir quiz</Text>
+            <Text className="font-inter-semibold text-[15px] text-clinical-blue">Repetir quiz</Text>
           </TouchableOpacity>
         </View>
       </ScreenContainer>
@@ -317,33 +325,28 @@ export default function QuizScreen() {
   }
 
   return (
-    <ScreenContainer style={styles.flex} edges={['top']}>
+    <ScreenContainer style={{ flex: 1 }} edges={['top']}>
       <AppHeader variant="back" title={specialty} subtitle={`Nivel ${level}`} />
 
       {/* Progress + combo */}
-      <View style={styles.topBar}>
-        <View style={[styles.progressBar, { backgroundColor: Colors.borderLight }]}>
+      <View className="flex-row items-center gap-2.5 px-6 pb-1">
+        <View className="h-1.5 flex-1 overflow-hidden rounded-[3px] bg-border-light">
           <View
-            style={[
-              styles.progressFill,
-              {
-                width: `${((currentIndex + (answered ? 1 : 0)) / questions.length) * 100}%`,
-                backgroundColor: Colors.clinicalBlue,
-              },
-            ]}
+            className="h-1.5 min-w-[6px] rounded-[3px] bg-clinical-blue"
+            style={{ width: `${((currentIndex + (answered ? 1 : 0)) / questions.length) * 100}%` }}
           />
         </View>
         {combo >= 2 && (
-          <View style={styles.comboPill} testID="combo-indicator">
+          <View className="flex-row items-center gap-1 rounded-[12px] bg-[#E8590C14] px-2.5 py-1" testID="combo-indicator">
             <MaterialCommunityIcons name="fire" size={14} color="#E8590C" />
-            <Text style={styles.comboText}>×{combo}</Text>
+            <Text className="font-inter-semibold text-[12px] text-[#E8590C]">×{combo}</Text>
           </View>
         )}
       </View>
 
       <ScrollView
-        style={styles.flex}
-        contentContainerStyle={styles.scroll}
+        className="flex-1"
+        contentContainerClassName="px-6 pt-6 pb-4"
         showsVerticalScrollIndicator={false}
       >
         <Animated.View style={{ opacity: fadeAnim }}>
@@ -359,18 +362,17 @@ export default function QuizScreen() {
         </Animated.View>
       </ScrollView>
 
-      <View style={[styles.footer, { backgroundColor: Colors.surface, borderTopColor: Colors.borderLight }]}>
+      <View className="border-t border-border-light bg-surface px-6 py-4">
         <TouchableOpacity
           testID="next-question"
-          style={[
-            styles.nextButton,
-            { backgroundColor: answered ? Colors.clinicalBlue : Colors.borderLight },
-          ]}
+          className={`flex-row items-center justify-center gap-2 rounded-[14px] px-5 py-3.5 ${
+            answered ? 'bg-clinical-blue' : 'bg-border-light'
+          }`}
           onPress={answered ? handleNext : undefined}
           disabled={!answered}
           activeOpacity={0.8}
         >
-          <Text style={[styles.nextButtonText, { color: answered ? '#FFFFFF' : Colors.neutral }]}>
+          <Text className={`font-inter-semibold text-[16px] ${answered ? 'text-white' : 'text-neutral'}`}>
             {!answered
               ? 'Responde para continuar'
               : isLastQuestion
@@ -389,196 +391,3 @@ export default function QuizScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-    gap: 12,
-  },
-  centerText: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: Colors.neutral,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  centerTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 18,
-    color: Colors.deepSlate,
-    textAlign: 'center',
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 24,
-    paddingBottom: 4,
-  },
-  progressBar: {
-    height: 6,
-    flex: 1,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: 6,
-    borderRadius: 3,
-    minWidth: 6,
-  },
-  comboPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    backgroundColor: '#E8590C14',
-  },
-  comboText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: '#E8590C',
-  },
-  scroll: {
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 16,
-  },
-  footer: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderTopWidth: 1,
-  },
-  nextButton: {
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  nextButtonText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 16,
-  },
-  resultContainer: {
-    alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 40,
-    paddingBottom: 40,
-    gap: 16,
-  },
-  resultEmoji: {
-    fontSize: 56,
-  },
-  scoreCircle: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    borderWidth: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scorePercent: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 36,
-  },
-  scoreLabel: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: Colors.neutral,
-  },
-  resultTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 28,
-    color: Colors.deepSlate,
-    textAlign: 'center',
-  },
-  resultSubtitle: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.neutral,
-    textAlign: 'center',
-  },
-  resultMessage: {
-    fontFamily: 'Inter',
-    fontSize: 15,
-    color: Colors.neutral,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-  statPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#0077B615',
-  },
-  statText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.clinicalBlue,
-  },
-  levelBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#006B5F14',
-  },
-  primaryButton: {
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    alignSelf: 'stretch',
-    backgroundColor: Colors.clinicalBlue,
-    borderBottomWidth: 4,
-    borderBottomColor: '#005C8A',
-  },
-  primaryButtonText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 16,
-    color: '#FFFFFF',
-  },
-  secondaryButton: {
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderWidth: 1.5,
-    borderColor: Colors.borderLight,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    alignSelf: 'stretch',
-    backgroundColor: Colors.surface,
-  },
-  secondaryButtonText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 15,
-    color: Colors.clinicalBlue,
-  },
-});

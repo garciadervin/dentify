@@ -14,9 +14,7 @@ import {
   Text,
   TouchableOpacity,
   Modal,
-  Alert,
   ScrollView,
-  StyleSheet,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -25,6 +23,8 @@ import AppHeader from '@/components/AppHeader';
 import MessageBubble from '@/components/MessageBubble';
 import ChatInput from '@/components/ChatInput';
 import { Colors } from '@/constants/theme';
+import { getSupabase } from '@/src/lib/supabase';
+import { useFeedback } from '@/components/feedback/FeedbackProvider';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
   sendAgentMessage,
@@ -97,6 +97,7 @@ const SUGGESTIONS = [
 
 export default function ChatScreen() {
   const { user } = useAuth();
+  const { toast } = useFeedback();
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
   const [isLoading, setIsLoading] = useState(false);
   const [showConversations, setShowConversations] = useState(false);
@@ -104,6 +105,7 @@ export default function ChatScreen() {
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
   const [attachment, setAttachment] = useState<Attachment | null>(null);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<Conversation | null>(null);
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -165,9 +167,9 @@ export default function ChatScreen() {
       const picked = kind === 'image' ? await pickImageAttachment() : await pickFileAttachment();
       if (picked) setAttachment(picked);
     } catch (err: any) {
-      Alert.alert('Adjuntar', err?.message ?? 'No se pudo adjuntar el archivo.');
+      toast(err?.message ?? 'No se pudo adjuntar el archivo.', 'error');
     }
-  }, []);
+  }, [toast]);
 
   const handleRemoveAttachment = useCallback(() => {
     setAttachment(null);
@@ -285,30 +287,40 @@ export default function ChatScreen() {
     setShowConversations(false);
   }, []);
 
-  const handleDeleteConversation = useCallback(
-    (conv: Conversation) => {
-      Alert.alert(
-        'Eliminar conversación',
-        `¿Eliminar "${conv.title}"?`,
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Eliminar',
-            style: 'destructive',
-            onPress: async () => {
-              await deleteConversationLocal(conv.id);
-              await loadConversations();
-              if (currentConvId === conv.id) {
-                setMessages([WELCOME_MESSAGE]);
-                setCurrentConvId(null);
-              }
-            },
-          },
-        ]
-      );
-    },
-    [currentConvId, loadConversations]
-  );
+  const handleDeleteConversation = useCallback((conv: Conversation) => {
+    // In-app confirmation modal (consistent on web and native; avoids the
+    // browser confirm and native Alert look).
+    setConfirmDelete(conv);
+  }, []);
+
+  const handleConfirmDelete = useCallback(async () => {
+    const conv = confirmDelete;
+    if (!conv) return;
+    // Remove locally (SQLite on native / in-memory on web).
+    await deleteConversationLocal(conv.id);
+    // Delete the remote row so the conversation does not come back on the
+    // next sync/load (the DELETE policy was added in migration 0008).
+    if (user) {
+      const supabase = getSupabase();
+      if (supabase) {
+        try {
+          await supabase
+            .from('ai_conversations')
+            .delete()
+            .eq('id', conv.id)
+            .eq('profile_id', user.id);
+        } catch (e) {
+          console.warn('Failed to delete conversation on Supabase', e);
+        }
+      }
+    }
+    await loadConversations();
+    if (currentConvId === conv.id) {
+      setMessages([WELCOME_MESSAGE]);
+      setCurrentConvId(null);
+    }
+    setConfirmDelete(null);
+  }, [confirmDelete, user, currentConvId, loadConversations]);
 
   const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
@@ -323,15 +335,15 @@ export default function ChatScreen() {
   };
 
   return (
-    <ScreenContainer style={styles.flex} edges={['top']}>
+    <ScreenContainer style={{ flex: 1 }} edges={['top']}>
       <AppHeader
         variant="bot"
         right={
-          <View style={styles.headerActions}>
+          <View className="flex-row gap-2">
             <TouchableOpacity
               testID="new-conversation"
               onPress={handleNewConversation}
-              style={styles.historyButton}
+              className="h-9 w-9 items-center justify-center rounded-[18px] border border-border-light bg-surface"
               accessibilityLabel="Nueva conversación"
               accessibilityRole="button"
             >
@@ -343,7 +355,7 @@ export default function ChatScreen() {
                 loadConversations();
                 setShowConversations(true);
               }}
-              style={styles.historyButton}
+              className="h-9 w-9 items-center justify-center rounded-[18px] border border-border-light bg-surface"
               accessibilityLabel="Historial de conversaciones"
               accessibilityRole="button"
             >
@@ -354,7 +366,7 @@ export default function ChatScreen() {
       />
 
       <KeyboardAvoidingView
-        style={styles.flex}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <FlatList
@@ -373,25 +385,25 @@ export default function ChatScreen() {
               attachmentLabel={item.attachmentLabel}
             />
           )}
-          contentContainerStyle={styles.listContent}
+          contentContainerClassName="py-3"
           onContentSizeChange={() => {
             flatListRef.current?.scrollToEnd({ animated: true });
           }}
         />
 
         {messages.length === 1 && (
-          <View style={styles.suggestions}>
+          <View className="mb-2.5">
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.suggestionsScroll}
+              contentContainerClassName="px-6"
             >
-              <View style={styles.suggestionsRow}>
+              <View className="flex-row gap-2">
                 {SUGGESTIONS.map((suggestion, index) => (
                   <TouchableOpacity
                     key={`suggest-${index}`}
                     onPress={() => handleSend(suggestion)}
-                    style={styles.suggestionChip}
+                    className="h-[34px] flex-row items-center gap-1.5 rounded-[17px] border border-pill-border bg-surface px-3.5"
                     accessibilityRole="button"
                   >
                     <MaterialCommunityIcons
@@ -399,7 +411,7 @@ export default function ChatScreen() {
                       size={14}
                       color={Colors.clinicalBlue}
                     />
-                    <Text style={styles.suggestionText}>{suggestion}</Text>
+                    <Text className="font-inter-semibold text-[12px] text-deep-slate">{suggestion}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -408,26 +420,26 @@ export default function ChatScreen() {
         )}
 
         {attachment && (
-          <View style={styles.attachmentPreview} testID="attachment-preview">
+          <View className="mx-6 mb-2 flex-row items-center gap-2.5 rounded-[14px] border border-border-light bg-sky-light p-2.5" testID="attachment-preview">
             {attachment.type === 'image' ? (
               <Image
                 source={{ uri: attachment.uri }}
-                style={styles.attachmentImage}
+                style={{ width: 44, height: 44, borderRadius: 8 }}
                 contentFit="cover"
                 transition={150}
               />
             ) : (
-              <View style={styles.attachmentFileIcon}>
+              <View className="h-11 w-11 items-center justify-center rounded-[8px] border border-border-light bg-surface">
                 <MaterialCommunityIcons name="file-document-outline" size={18} color={Colors.clinicalBlue} />
               </View>
             )}
-            <Text style={styles.attachmentName} numberOfLines={1}>
+            <Text className="flex-1 font-inter-semibold text-[13px] text-deep-slate" numberOfLines={1}>
               {attachment.name}
             </Text>
             <TouchableOpacity
               testID="remove-attachment"
               onPress={handleRemoveAttachment}
-              style={styles.attachmentRemove}
+              className="h-7 w-7 items-center justify-center rounded-[14px] bg-surface"
               accessibilityLabel="Quitar adjunto"
               accessibilityRole="button"
             >
@@ -447,32 +459,32 @@ export default function ChatScreen() {
         onRequestClose={() => setShowAttachMenu(false)}
       >
         <TouchableOpacity
-          style={styles.attachBackdrop}
+          className="flex-1 justify-center bg-black/40 px-8"
           activeOpacity={1}
           onPress={() => setShowAttachMenu(false)}
         >
-          <View style={styles.attachSheet}>
-            <Text style={styles.attachTitle}>Adjuntar a la conversación</Text>
+          <View className="gap-2 rounded-[20px] bg-surface p-4">
+            <Text className="mb-1 font-heading-bold text-[16px] text-deep-slate">Adjuntar a la conversación</Text>
             <TouchableOpacity
               testID="attach-image"
-              style={styles.attachOption}
+              className="flex-row items-center gap-3 rounded-[12px] bg-sky-light px-3 py-3.5"
               onPress={() => handlePickAttachment('image')}
               accessibilityRole="button"
             >
               <MaterialCommunityIcons name="image-outline" size={20} color={Colors.clinicalBlue} />
-              <Text style={styles.attachOptionText}>Imagen de la galería</Text>
+              <Text className="font-inter-semibold text-[14px] text-deep-slate">Imagen de la galería</Text>
             </TouchableOpacity>
             <TouchableOpacity
               testID="attach-text"
-              style={styles.attachOption}
+              className="flex-row items-center gap-3 rounded-[12px] bg-sky-light px-3 py-3.5"
               onPress={() => handlePickAttachment('file')}
               accessibilityRole="button"
             >
               <MaterialCommunityIcons name="file-document-outline" size={20} color={Colors.clinicalBlue} />
-              <Text style={styles.attachOptionText}>Archivo (PDF, DOCX, txt…)</Text>
+              <Text className="font-inter-semibold text-[14px] text-deep-slate">Archivo (PDF, DOCX, txt…)</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.attachCancel} onPress={() => setShowAttachMenu(false)}>
-              <Text style={styles.attachCancelText}>Cancelar</Text>
+            <TouchableOpacity className="items-center py-3" onPress={() => setShowAttachMenu(false)}>
+              <Text className="font-inter-semibold text-[14px] text-neutral">Cancelar</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -485,296 +497,102 @@ export default function ChatScreen() {
         transparent
         onRequestClose={() => setShowConversations(false)}
       >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalSheet}>
-            <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Conversaciones</Text>
+        <View className="flex-1 justify-end bg-black/40">
+          <View className="max-h-[70%] rounded-t-[24px] bg-surface pb-8 pt-4">
+            <View className="mb-4 h-1 w-10 self-center rounded-[2px] bg-border-light" />
+            <Text className="mb-4 px-6 font-heading-bold text-[18px] text-deep-slate">Conversaciones</Text>
 
             <TouchableOpacity
               testID="modal-new-conversation"
               onPress={handleNewConversation}
-              style={styles.newConversationButton}
+              className="mx-6 mb-3 flex-row items-center justify-center gap-2 rounded-[12px] bg-clinical-blue py-3"
               accessibilityRole="button"
             >
               <MaterialCommunityIcons name="plus" size={18} color="#FFFFFF" />
-              <Text style={styles.newConversationText}>Nueva conversación</Text>
+              <Text className="font-inter-semibold text-[14px] text-white">Nueva conversación</Text>
             </TouchableOpacity>
 
             {conversations.length === 0 ? (
-              <Text style={styles.modalEmpty}>No hay conversaciones guardadas</Text>
+              <Text className="py-8 text-center font-sans text-[14px] text-neutral">No hay conversaciones guardadas</Text>
             ) : (
               <FlatList
                 data={conversations}
                 keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.modalList}
+                contentContainerClassName="px-4"
                 renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => loadConversation(item)}
-                    style={styles.convRow}
-                    accessibilityRole="button"
-                  >
-                    <View style={styles.convRowInfo}>
-                      <Text style={styles.convTitle} numberOfLines={1}>
+                  <View className="mb-2 flex-row items-center gap-2 rounded-[12px] bg-sky-light px-3 py-3">
+                    <TouchableOpacity
+                      onPress={() => loadConversation(item)}
+                      className="flex-1"
+                      accessibilityRole="button"
+                    >
+                      <Text className="mb-1 font-inter-semibold text-[14px] text-deep-slate" numberOfLines={1}>
                         {item.title}
                       </Text>
-                      <Text style={styles.convMeta}>
+                      <Text className="font-sans text-[12px] text-neutral">
                         {formatDate(item.last_updated)} · {item.messages.length} mensajes
                       </Text>
-                    </View>
+                    </TouchableOpacity>
                     <TouchableOpacity
                       testID={`delete-conversation-${item.id}`}
                       onPress={() => handleDeleteConversation(item)}
-                      style={styles.convDelete}
+                      className="h-8 w-8 items-center justify-center rounded-[16px] bg-surface"
                       accessibilityLabel="Eliminar conversación"
                       accessibilityRole="button"
                     >
                       <MaterialCommunityIcons name="trash-can-outline" size={18} color="#C0392B" />
                     </TouchableOpacity>
-                  </TouchableOpacity>
+                  </View>
                 )}
               />
             )}
 
             <TouchableOpacity
               onPress={() => setShowConversations(false)}
-              style={styles.modalClose}
+              className="mx-6 mt-3 items-center rounded-[12px] bg-border-light py-3"
             >
-              <Text style={styles.modalCloseText}>Cerrar</Text>
+              <Text className="font-inter-semibold text-[14px] text-deep-slate">Cerrar</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de confirmación de borrado */}
+      <Modal
+        visible={!!confirmDelete}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setConfirmDelete(null)}
+      >
+        <View className="flex-1 items-center justify-center bg-black/40 px-8">
+          <View className="w-full max-w-[400px] rounded-[20px] bg-surface p-6">
+            <View className="mb-2 flex-row items-center gap-2">
+              <MaterialCommunityIcons name="trash-can-outline" size={20} color="#C0392B" />
+              <Text className="font-heading-bold text-[17px] text-deep-slate">Eliminar conversación</Text>
+            </View>
+            <Text className="mb-5 font-sans text-[14px] leading-[20px] text-neutral">
+              ¿Eliminar “{confirmDelete?.title}”? Esta acción no se puede deshacer.
+            </Text>
+            <View className="flex-row gap-3">
+              <TouchableOpacity
+                onPress={() => setConfirmDelete(null)}
+                className="flex-1 items-center rounded-[12px] bg-border-light py-3"
+                accessibilityRole="button"
+              >
+                <Text className="font-inter-semibold text-[14px] text-deep-slate">Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                testID="confirm-delete"
+                onPress={() => void handleConfirmDelete()}
+                className="flex-1 items-center rounded-[12px] bg-error py-3"
+                accessibilityRole="button"
+              >
+                <Text className="font-inter-semibold text-[14px] text-white">Eliminar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  historyButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerActions: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  listContent: {
-    paddingTop: 12,
-    paddingBottom: 12,
-  },
-  suggestions: {
-    marginBottom: 10,
-  },
-  suggestionsScroll: {
-    paddingHorizontal: 24,
-  },
-  suggestionsRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  suggestionChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    height: 34,
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: Colors.pillBorder,
-    backgroundColor: Colors.surface,
-    paddingHorizontal: 14,
-  },
-  suggestionText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: Colors.deepSlate,
-  },
-  attachmentPreview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginHorizontal: 24,
-    marginBottom: 8,
-    padding: 10,
-    borderRadius: 14,
-    backgroundColor: Colors.skyLight,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-  },
-  attachmentImage: {
-    width: 44,
-    height: 44,
-    borderRadius: 8,
-  },
-  attachmentFileIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 8,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  attachmentName: {
-    flex: 1,
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-    color: Colors.deepSlate,
-  },
-  attachmentRemove: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: Colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  attachBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-  },
-  attachSheet: {
-    backgroundColor: Colors.surface,
-    borderRadius: 20,
-    padding: 16,
-    gap: 8,
-  },
-  attachTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 16,
-    color: Colors.deepSlate,
-    marginBottom: 4,
-  },
-  attachOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    backgroundColor: Colors.skyLight,
-  },
-  attachOptionText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.deepSlate,
-  },
-  attachCancel: {
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  attachCancelText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.neutral,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
-  modalSheet: {
-    backgroundColor: Colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '70%',
-    paddingTop: 16,
-    paddingBottom: 32,
-  },
-  modalHandle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.borderLight,
-    alignSelf: 'center',
-    marginBottom: 16,
-  },
-  modalTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 18,
-    color: Colors.deepSlate,
-    paddingHorizontal: 24,
-    marginBottom: 16,
-  },
-  modalEmpty: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: Colors.neutral,
-    textAlign: 'center',
-    paddingVertical: 32,
-  },
-  modalList: {
-    paddingHorizontal: 16,
-  },
-  newConversationButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    marginHorizontal: 24,
-    marginBottom: 12,
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: Colors.clinicalBlue,
-  },
-  newConversationText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: '#FFFFFF',
-  },
-  convRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    backgroundColor: Colors.skyLight,
-    marginBottom: 8,
-  },
-  convRowInfo: {
-    flex: 1,
-  },
-  convDelete: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  convTitle: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.deepSlate,
-    marginBottom: 4,
-  },
-  convMeta: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-  },
-  modalClose: {
-    marginHorizontal: 24,
-    marginTop: 12,
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: Colors.borderLight,
-    alignItems: 'center',
-  },
-  modalCloseText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.deepSlate,
-  },
-});

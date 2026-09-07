@@ -7,10 +7,11 @@
  */
 
 import React, { useState, useRef, useCallback } from 'react';
-import { View, TextInput, TouchableOpacity, Platform, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/theme';
+import { useFeedback } from '@/components/feedback/FeedbackProvider';
 import {
   useAudioRecorder,
   RecordingPresets,
@@ -24,6 +25,7 @@ import { parseNavigationCommand, NAVIGATION_COMMANDS } from '@/src/services/voic
 let SpeechModule: any = null;
 if (Platform.OS !== 'web') {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- optional module guarded by Platform
     SpeechModule = require('expo-speech');
   } catch {
     // expo-speech not available — TTS disabled
@@ -39,6 +41,7 @@ export interface ChatInputProps {
 
 export default function ChatInput({ onSend, onAttach, disabled = false }: ChatInputProps) {
   const router = useRouter();
+  const { toast } = useFeedback();
   const [text, setText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
@@ -59,7 +62,7 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
    */
   const startRecording = useCallback(async () => {
     if (Platform.OS === 'web') {
-      Alert.alert('No disponible', 'La grabación de voz solo está disponible en la app móvil.');
+      toast('La grabación de voz solo está disponible en la app móvil.', 'info');
       return;
     }
     if (startingRef.current) return;
@@ -68,7 +71,7 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
     try {
       const { granted } = await requestRecordingPermissionsAsync();
       if (!granted) {
-        Alert.alert('Permiso denegado', 'Se necesita acceso al micrófono para grabar voz.');
+        toast('Se necesita acceso al micrófono para grabar voz.', 'error');
         return;
       }
       await setAudioModeAsync({
@@ -80,11 +83,11 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
       recordingRef.current = true;
       setIsRecording(true);
     } catch {
-      Alert.alert('Error', 'No se pudo iniciar la grabación de voz.');
+      toast('No se pudo iniciar la grabación de voz.', 'error');
     } finally {
       startingRef.current = false;
     }
-  }, [audioRecorder]);
+  }, [audioRecorder, toast]);
 
   /**
    * Stop recording, transcribe via Gemini, and handle the result.
@@ -120,21 +123,21 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
         onSend(transcribedText);
       }
     } catch {
-      Alert.alert('Error', 'No se pudo transcribir el audio.');
+      toast('No se pudo transcribir el audio.', 'error');
     } finally {
       setIsRecording(false);
     }
-  }, [audioRecorder, onSend, router]);
+  }, [audioRecorder, onSend, router, toast]);
 
   return (
-    <View style={styles.pill}>
+    <View className="mx-6 mb-2 h-[52px] flex-row items-center gap-2 rounded-[26px] border border-pill-border bg-surface pl-2.5 pr-1.5">
       {/* Attach image or file */}
       {onAttach ? (
         <TouchableOpacity
           testID="attach-button"
           onPress={onAttach}
           disabled={disabled}
-          style={styles.attachButton}
+          className="h-10 w-[34px] items-center justify-center rounded-[17px] bg-transparent"
           activeOpacity={0.6}
           accessibilityLabel="Adjuntar imagen o archivo"
           accessibilityRole="button"
@@ -143,23 +146,25 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
         </TouchableOpacity>
       ) : null}
 
-      {/* Mic — hold to record, release to transcribe */}
-      <TouchableOpacity
-        testID="voice-button"
-        onPressIn={startRecording}
-        onPressOut={stopRecording}
-        disabled={disabled}
-        style={[styles.micButton, isRecording && styles.micButtonRecording]}
-        activeOpacity={0.6}
-        accessibilityLabel="Grabar por voz"
-        accessibilityRole="button"
-      >
-        <MaterialCommunityIcons
-          name={isRecording ? 'microphone' : 'microphone-outline'}
-          size={20}
-          color={isRecording ? '#FFFFFF' : Colors.neutral}
-        />
-      </TouchableOpacity>
+      {/* Mic — hold to record, release to transcribe (native only; hidden on web) */}
+      {Platform.OS !== 'web' && (
+        <TouchableOpacity
+          testID="voice-button"
+          onPressIn={startRecording}
+          onPressOut={stopRecording}
+          disabled={disabled}
+          className={`h-10 w-[34px] items-center justify-center rounded-[17px] ${isRecording ? 'bg-error-bright' : 'bg-transparent'}`}
+          activeOpacity={0.6}
+          accessibilityLabel="Grabar por voz"
+          accessibilityRole="button"
+        >
+          <MaterialCommunityIcons
+            name={isRecording ? 'microphone' : 'microphone-outline'}
+            size={20}
+            color={isRecording ? '#FFFFFF' : Colors.neutral}
+          />
+        </TouchableOpacity>
+      )}
 
       <TextInput
         testID="chat-input"
@@ -171,7 +176,7 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
         editable={!disabled}
         multiline
         blurOnSubmit={false}
-        style={styles.input}
+        className="max-h-20 flex-1 py-0 font-sans text-[14px] text-deep-slate"
       />
 
       {/* Enviar */}
@@ -179,7 +184,7 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
         testID="send-button"
         onPress={handleSend}
         disabled={!canSend}
-        style={[styles.sendButton, { backgroundColor: canSend ? Colors.clinicalBlue : Colors.pillBorder }]}
+        className={`h-10 w-10 items-center justify-center rounded-[20px] ${canSend ? 'bg-clinical-blue' : 'bg-pill-border'}`}
         activeOpacity={0.7}
         accessibilityLabel="Enviar mensaje"
         accessibilityRole="button"
@@ -193,54 +198,3 @@ export default function ChatInput({ onSend, onAttach, disabled = false }: ChatIn
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  pill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.pillBorder,
-    paddingLeft: 10,
-    paddingRight: 6,
-    marginHorizontal: 24,
-    marginBottom: 8,
-  },
-  micButton: {
-    width: 34,
-    height: 40,
-    borderRadius: 17,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  attachButton: {
-    width: 34,
-    height: 40,
-    borderRadius: 17,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  micButtonRecording: {
-    backgroundColor: '#E74C3C',
-  },
-  input: {
-    flex: 1,
-    fontSize: 14,
-    fontFamily: 'Inter',
-    color: Colors.deepSlate,
-    paddingVertical: 0,
-    maxHeight: 80,
-  },
-  sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

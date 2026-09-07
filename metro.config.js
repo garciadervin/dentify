@@ -3,7 +3,7 @@ const { withNativeWind } = require('nativewind/metro');
 
 const config = getDefaultConfig(__dirname);
 
-// Add .glb, .gltf, .wasm to asset extensions
-config.resolver.assetExts = [...config.resolver.assetExts, 'glb', 'gltf', 'wasm'];
+// Add custom asset extensions (.glb/.gltf/.wasm 3D models, .tflite YOLO model)
+config.resolver.assetExts = [...config.resolver.assetExts, 'glb', 'gltf', 'wasm', 'tflite'];
 
 module.exports = withNativeWind(config, { input: './global.css' });

@@ -87,4 +87,66 @@ describe('QuestionRenderer', () => {
     fireEvent.press(screen.getByTestId('quiz-hint'));
     expect(screen.getByTestId('quiz-hint-text')).toBeTruthy();
   });
+
+  it('grades fill_blank as correct when the correct tile is picked (by text)', () => {
+    const q = {
+      ...base(), type: 'fill_blank' as const,
+      question: 'El grabado del esmalte dura ____ segundos.',
+      options: ['Uno', 'Quince', 'Cien'], correctIndex: 1,
+    };
+    const onAnswered = jest.fn();
+    render(<QuestionRenderer question={q} onAnswered={onAnswered} index={0} total={5} />);
+    fireEvent.press(screen.getByText('Quince'));
+    expect(onAnswered).toHaveBeenCalledWith(true);
+  });
+
+  it('grades fill_blank as wrong when a wrong tile is picked', () => {
+    const q = {
+      ...base(), type: 'fill_blank' as const,
+      question: 'El grabado del esmalte dura ____ segundos.',
+      options: ['Uno', 'Quince', 'Cien'], correctIndex: 1,
+    };
+    const onAnswered = jest.fn();
+    render(<QuestionRenderer question={q} onAnswered={onAnswered} index={0} total={5} />);
+    fireEvent.press(screen.getByText('Uno'));
+    expect(onAnswered).toHaveBeenCalledWith(false);
+  });
+
+  it('grades match as correct when every term is paired with its definition', () => {
+    const q = {
+      ...base(), type: 'match' as const,
+      question: 'Relaciona cada material con su característica.',
+      pairs: [
+        { left: 'Sellador', right: 'Evita microfiltración' },
+        { left: 'Composite', right: 'Resultado estético' },
+      ],
+    };
+    const onAnswered = jest.fn();
+    render(<QuestionRenderer question={q} onAnswered={onAnswered} index={0} total={5} />);
+    fireEvent.press(screen.getByText('Sellador'));
+    fireEvent.press(screen.getByText('Evita microfiltración'));
+    fireEvent.press(screen.getByText('Composite'));
+    fireEvent.press(screen.getByText('Resultado estético'));
+    fireEvent.press(screen.getByTestId('quiz-confirm'));
+    expect(onAnswered).toHaveBeenCalledWith(true);
+  });
+
+  it('grades match as wrong when a pairing is crossed', () => {
+    const q = {
+      ...base(), type: 'match' as const,
+      question: 'Relaciona cada material con su característica.',
+      pairs: [
+        { left: 'Sellador', right: 'Evita microfiltración' },
+        { left: 'Composite', right: 'Resultado estético' },
+      ],
+    };
+    const onAnswered = jest.fn();
+    render(<QuestionRenderer question={q} onAnswered={onAnswered} index={0} total={5} />);
+    fireEvent.press(screen.getByText('Sellador'));
+    fireEvent.press(screen.getByText('Resultado estético'));
+    fireEvent.press(screen.getByText('Composite'));
+    fireEvent.press(screen.getByText('Evita microfiltración'));
+    fireEvent.press(screen.getByTestId('quiz-confirm'));
+    expect(onAnswered).toHaveBeenCalledWith(false);
+  });
 });

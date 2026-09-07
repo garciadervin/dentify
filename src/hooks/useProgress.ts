@@ -23,7 +23,7 @@ interface SpecialtyDef {
 }
 
 interface ProgressRow {
-  specialty: string;
+  specialty_id: string;
   level: number;
   status: string;
   completed_at: string | null;
@@ -46,22 +46,22 @@ export interface UseProgressReturn {
 function buildSpecialties(defs: SpecialtyDef[], rows: ProgressRow[]): Specialty[] {
   const isDone = (def: SpecialtyDef) => {
     const done = rows.filter(
-      (r) => r.specialty === def.name && r.status === 'completed'
+      (r) => r.specialty_id === def.id && r.status === 'completed'
     );
     return done.length >= def.levels_count;
   };
 
   const anyActive = defs.find((d) =>
-    rows.some((r) => r.specialty === d.name && r.status === 'active')
+    rows.some((r) => r.specialty_id === d.id && r.status === 'active')
   );
   const firstNotDone = defs.find((d) => !isDone(d));
   const activeDef = anyActive ?? firstNotDone;
 
   return defs.map((def) => {
     const completed = rows.filter(
-      (r) => r.specialty === def.name && r.status === 'completed'
+      (r) => r.specialty_id === def.id && r.status === 'completed'
     );
-    const active = rows.filter((r) => r.specialty === def.name && r.status === 'active');
+    const active = rows.filter((r) => r.specialty_id === def.id && r.status === 'active');
     const highestCompleted = completed.reduce((m, r) => Math.max(m, r.level), 0);
     const activeLevel = active.length
       ? Math.min(...active.map((r) => r.level))
@@ -111,7 +111,7 @@ export function useProgress(): UseProgressReturn {
             .order('order_index'),
           supabase
             .from('pedagogical_progress')
-            .select('specialty, level, status, completed_at'),
+            .select('specialty_id, level, status, completed_at'),
         ]);
 
       if (cancelledRef.current) return;
@@ -163,8 +163,11 @@ export function useProgress(): UseProgressReturn {
 
     const now = new Date().toISOString();
 
+    const def = defsRef.current.find((d) => d.name === specialty);
+    if (!def) return false;
+
     const upsertRow = async (
-      spec: string,
+      specId: string,
       lvl: number,
       status: 'locked' | 'active' | 'completed',
       completedAt?: string
@@ -174,43 +177,44 @@ export function useProgress(): UseProgressReturn {
         .upsert(
           {
             profile_id: userId,
-            specialty: spec,
+            specialty_id: specId,
             level: lvl,
             status,
             completed_at: completedAt ?? null,
           },
-          { onConflict: 'profile_id,specialty,level' }
+          { onConflict: 'profile_id,specialty_id,level' }
         );
       return !error;
     };
 
-    const ok = await upsertRow(specialty, level, 'completed', now);
+    const ok = await upsertRow(def.id, level, 'completed', now);
     if (!ok) return false;
 
     // Activate the next level (or the next specialty) only if it is not already
     // completed — repeating a level must not erase a 'completed' row.
-    const def = defsRef.current.find((d) => d.name === specialty);
-    const alreadyDone = (spec: string, lvl: number) =>
-      rowsRef.current.some((r) => r.specialty === spec && r.level === lvl && r.status === 'completed');
+    const alreadyDone = (specId: string, lvl: number) =>
+      rowsRef.current.some(
+        (r) => r.specialty_id === specId && r.level === lvl && r.status === 'completed'
+      );
 
-    if (def && level < def.levels_count) {
-      if (!alreadyDone(specialty, level + 1)) {
-        await upsertRow(specialty, level + 1, 'active');
+    if (level < def.levels_count) {
+      if (!alreadyDone(def.id, level + 1)) {
+        await upsertRow(def.id, level + 1, 'active');
       }
-    } else if (def) {
+    } else {
       const idx = defsRef.current.findIndex((d) => d.id === def.id);
       const next = defsRef.current[idx + 1];
-      if (next && !alreadyDone(next.name, 1)) {
-        await upsertRow(next.name, 1, 'active');
+      if (next && !alreadyDone(next.id, 1)) {
+        await upsertRow(next.id, 1, 'active');
       }
     }
 
     // Refresh local state from the last view of rows.
     const target = rowsRef.current.find(
-      (r) => r.specialty === specialty && r.level === level
+      (r) => r.specialty_id === def.id && r.level === level
     );
     if (target) target.status = 'completed';
-    else rowsRef.current.push({ specialty, level, status: 'completed', completed_at: now });
+    else rowsRef.current.push({ specialty_id: def.id, level, status: 'completed', completed_at: now });
 
     setSpecialties(buildSpecialties(defsRef.current, rowsRef.current));
     return true;
@@ -229,7 +233,7 @@ export function useProgress(): UseProgressReturn {
     return rowsRef.current
       .filter((r) => r.status === 'completed')
       .reduce((sum, r) => {
-        const def = defs.find((d) => d.name === r.specialty);
+        const def = defs.find((d) => d.id === r.specialty_id);
         const lvl = def?.levels.find((l) => l.level_number === r.level);
         return sum + (lvl?.xp_reward ?? 0);
       }, 0);

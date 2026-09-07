@@ -6,25 +6,23 @@
  * Supabase. No fake latency data: the real model state is shown.
  */
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  StyleSheet,
   useWindowDimensions,
   Image,
-  Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ScreenContainer from '@/components/ScreenContainer';
 import AppHeader from '@/components/AppHeader';
 import CameraView, { type CameraViewHandle } from '@/components/CameraView';
 import DetectionOverlay from '@/components/DetectionOverlay';
+import { useFeedback } from '@/components/feedback/FeedbackProvider';
 import { Colors, createShadow } from '@/constants/theme';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useBadges } from '@/src/hooks/useBadges';
@@ -45,7 +43,7 @@ type ScannerState = 'idle' | 'capturing' | 'processing' | 'results';
 export default function ScannerScreen() {
   const { user } = useAuth();
   const { checkAndAwardBadge } = useBadges();
-  const router = useRouter();
+  const { toast } = useFeedback();
   const { width, height } = useWindowDimensions();
   const cameraRef = useRef<CameraViewHandle>(null);
   const inferenceWebViewRef = useRef<WebView | null>(null);
@@ -122,14 +120,14 @@ export default function ScannerScreen() {
     try {
       const uri = await cameraRef.current?.capture();
       if (uri) void handleCapture(uri);
-      else Alert.alert('Aún no lista', 'La cámara no está lista. Intenta de nuevo.');
+      else toast('La cámara no está lista. Intenta de nuevo.', 'info');
     } catch {
-      Alert.alert(
-        'Permiso de cámara',
-        'No se pudo acceder a la cámara. Revisa que el permiso esté concedido en los ajustes del dispositivo.'
+      toast(
+        'No se pudo acceder a la cámara. Revisa que el permiso esté concedido en los ajustes del dispositivo.',
+        'error'
       );
     }
-  }, [handleCapture]);
+  }, [handleCapture, toast]);
 
   const handleRetake = useCallback(() => {
     setDetections([]);
@@ -150,7 +148,7 @@ export default function ScannerScreen() {
         const name = `${userId}/diagnosis-${Date.now()}.jpg`;
         const { data, error } = await supabase.storage
           .from('diagnosis-images')
-          .upload(name, bytes as unknown as ArrayBuffer, {
+          .upload(name, bytes, {
             contentType: 'image/jpeg',
             upsert: false,
           });
@@ -186,13 +184,13 @@ export default function ScannerScreen() {
 
       await checkAndAwardBadge('diagnosis', 1);
       setSaving(false);
-      Alert.alert('Guardado', 'Diagnóstico guardado en tu historial.');
+      toast('Diagnóstico guardado en tu historial.', 'success');
     } catch (error) {
       console.warn('Failed to save diagnosis:', error);
       setSaving(false);
-      Alert.alert('Error', 'No se pudo guardar el diagnóstico. Intenta de nuevo.');
+      toast('No se pudo guardar el diagnóstico. Intenta de nuevo.', 'error');
     }
-  }, [user, capturedUri, detections, checkAndAwardBadge, uploadDiagnosisImage]);
+  }, [user, capturedUri, detections, checkAndAwardBadge, uploadDiagnosisImage, toast]);
 
   const handleViewDescription = useCallback(async () => {
     if (description) {
@@ -224,13 +222,15 @@ export default function ScannerScreen() {
   );
 
   const targetOverlay = (
-    <View style={styles.targetOverlay} pointerEvents="none">
-      <View style={styles.targetCornerTL} />
-      <View style={styles.targetCornerTR} />
-      <View style={styles.targetCornerBL} />
-      <View style={styles.targetCornerBR} />
-      <View style={styles.targetHintBadge}>
-        <Text style={styles.targetHintText}>Alinea la dentadura dentro del recuadro</Text>
+    <View className="absolute inset-0 z-[5]" style={{ pointerEvents: 'none' }}>
+      <View style={{ position: 'absolute', top: 20, left: 20, width: 26, height: 26, borderTopWidth: 3, borderLeftWidth: 3, borderColor: '#FFFFFF' }} />
+      <View style={{ position: 'absolute', top: 20, right: 20, width: 26, height: 26, borderTopWidth: 3, borderRightWidth: 3, borderColor: '#FFFFFF' }} />
+      <View style={{ position: 'absolute', bottom: 20, left: 20, width: 26, height: 26, borderBottomWidth: 3, borderLeftWidth: 3, borderColor: '#FFFFFF' }} />
+      <View style={{ position: 'absolute', bottom: 20, right: 20, width: 26, height: 26, borderBottomWidth: 3, borderRightWidth: 3, borderColor: '#FFFFFF' }} />
+      <View className="absolute inset-x-0 -bottom-3 items-center">
+        <Text className="overflow-hidden rounded-[12px] bg-deep-slate/60 px-3 py-1 font-inter-semibold text-[10px] text-white">
+          Alinea la dentadura dentro del recuadro
+        </Text>
       </View>
     </View>
   );
@@ -238,67 +238,88 @@ export default function ScannerScreen() {
   // idle / capturing / processing states: camera + shutter.
   if (scannerState !== 'results') {
     return (
-      <ScreenContainer style={styles.flex} edges={['top']}>
+      <ScreenContainer edges={['top']}>
         <AppHeader variant="title" title="Escáner" />
         {inferenceWebView}
 
         <ScrollView
-          style={styles.flex}
-          contentContainerStyle={styles.scrollCenter}
+          className="flex-1"
+          contentContainerStyle={{ alignItems: 'center' }}
           showsVerticalScrollIndicator={false}
         >
-          <View style={[styles.scrollContent, styles.scrollWrap]}>
-          <Text style={styles.caption}>DIAGNÓSTICO POR VISIÓN</Text>
+          <View className="w-full gap-4 px-6 pt-3 pb-8">
+            <Text className="font-inter-semibold text-[11px] uppercase tracking-[1.2px] text-neutral">
+              DIAGNÓSTICO POR VISIÓN
+            </Text>
 
-          <View style={[styles.cameraCard, { height: cameraHeight }]}>
-            <CameraView
-              ref={cameraRef}
-              onCapture={handleCapture}
-              isProcessing={scannerState === 'processing'}
-              framed
-            />
-            {targetOverlay}
-            {scannerState === 'processing' && (
-              <View style={styles.processingOverlay}>
-                <ActivityIndicator size="large" color="#FFFFFF" />
-                <Text style={styles.processingText}>Analizando imagen...</Text>
+            <View
+              className="w-full overflow-hidden rounded-3xl bg-deep-slate"
+              style={{ height: cameraHeight, ...createShadow(2, 12, '#000000', 0.1), elevation: 4 }}
+            >
+              <CameraView
+                ref={cameraRef}
+                onCapture={handleCapture}
+                isProcessing={scannerState === 'processing'}
+                framed
+              />
+              {targetOverlay}
+              {scannerState === 'processing' && (
+                <View
+                  className="absolute inset-0 z-[6] items-center justify-center gap-2.5"
+                  style={{ backgroundColor: 'rgba(0,0,0,0.55)' }}
+                >
+                  <ActivityIndicator size="large" color="#FFFFFF" />
+                  <Text className="font-inter-semibold text-[15px] text-white">
+                    Analizando imagen...
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {modelError ? (
+              <View className="flex-row items-center gap-2">
+                <MaterialCommunityIcons name="alert-circle-outline" size={16} color="#C0392B" />
+                <Text className="flex-1 font-sans text-xs text-error">
+                  No se pudo cargar el modelo de visión.
+                </Text>
+                <TouchableOpacity
+                  testID="retry-model"
+                  onPress={retryModel}
+                  className="flex-row items-center gap-1 rounded-[12px] bg-source-fill px-2.5 py-1.5"
+                >
+                  <MaterialCommunityIcons name="refresh" size={14} color={Colors.clinicalBlue} />
+                  <Text className="font-inter-semibold text-xs text-clinical-blue">Reintentar</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View className="flex-row items-center gap-1.5">
+                <View
+                  className={`h-2 w-2 rounded-full ${modelReady ? 'bg-success-teal' : 'bg-neutral'}`}
+                />
+                <Text className="font-sans text-xs text-neutral">
+                  {modelReady ? 'Modelo YOLO cargado en el dispositivo' : 'Cargando modelo YOLO...'}
+                </Text>
               </View>
             )}
-          </View>
 
-          {modelError ? (
-            <View style={styles.modelErrorRow}>
-              <MaterialCommunityIcons name="alert-circle-outline" size={16} color="#C0392B" />
-              <Text style={[styles.modelStatusText, { color: '#C0392B', flex: 1 }]}>
-                No se pudo cargar el modelo de visión.
-              </Text>
-              <TouchableOpacity testID="retry-model" onPress={retryModel} style={styles.retryChip}>
-                <MaterialCommunityIcons name="refresh" size={14} color={Colors.clinicalBlue} />
-                <Text style={styles.retryChipText}>Reintentar</Text>
+            <View className="items-center gap-1.5">
+              <TouchableOpacity
+                testID="capture-button"
+                onPress={handleShutter}
+                disabled={scannerState === 'processing'}
+                className="h-16 w-16 items-center justify-center rounded-full bg-clinical-blue"
+                style={{
+                  opacity: scannerState === 'processing' ? 0.6 : 1,
+                  ...createShadow(0, 4, Colors.clinicalBlue, 0.4),
+                  elevation: 5,
+                }}
+                accessibilityLabel="Capturar diagnóstico"
+                accessibilityRole="button"
+              >
+                <MaterialCommunityIcons name="camera" size={26} color="#FFFFFF" />
               </TouchableOpacity>
+              <Text className="font-sans text-xs text-neutral">Capturar diagnóstico</Text>
             </View>
-          ) : (
-            <View style={styles.modelStatusRow}>
-              <View style={[styles.statusDot, { backgroundColor: modelReady ? Colors.successTeal : Colors.neutral }]} />
-              <Text style={styles.modelStatusText}>
-                {modelReady ? 'Modelo YOLO cargado en el dispositivo' : 'Cargando modelo YOLO...'}
-              </Text>
-            </View>
-          )}
-
-          <View style={styles.shutter}>
-            <TouchableOpacity
-              testID="capture-button"
-              onPress={handleShutter}
-              disabled={scannerState === 'processing'}
-              style={[styles.shutterBtn, { opacity: scannerState === 'processing' ? 0.6 : 1 }]}
-              accessibilityLabel="Capturar diagnóstico"
-              accessibilityRole="button"
-            >
-              <MaterialCommunityIcons name="camera" size={26} color="#FFFFFF" />
-            </TouchableOpacity>
-            <Text style={styles.shutterText}>Capturar diagnóstico</Text>
-          </View>
           </View>
         </ScrollView>
       </ScreenContainer>
@@ -307,462 +328,178 @@ export default function ScannerScreen() {
 
   // results state: image + result card + actions.
   return (
-    <ScreenContainer style={styles.flex} edges={['top']}>
+    <ScreenContainer edges={['top']}>
       <AppHeader variant="title" title="Escáner" />
       {inferenceWebView}
 
       <ScrollView
-        style={styles.flex}
-        contentContainerStyle={styles.scrollCenter}
+        className="flex-1"
+        contentContainerStyle={{ alignItems: 'center' }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.scrollContent, styles.scrollWrap]}>
-        <Text style={styles.caption}>DIAGNÓSTICO POR VISIÓN</Text>
+        <View className="w-full gap-4 px-6 pt-3 pb-8">
+          <Text className="font-inter-semibold text-[11px] uppercase tracking-[1.2px] text-neutral">
+            DIAGNÓSTICO POR VISIÓN
+          </Text>
 
-        <View style={[styles.previewCard, { height: cameraHeight }]}>
-          {capturedUri && (
-            <>
-              <Image source={{ uri: capturedUri }} style={StyleSheet.absoluteFill} resizeMode="cover" />
-              <View style={StyleSheet.absoluteFill}>
-                <DetectionOverlay
-                  detections={detections}
-                  imageWidth={640}
-                  imageHeight={640}
-                  previewWidth={width - 48}
-                  previewHeight={cameraHeight}
+          <View
+            className="w-full overflow-hidden rounded-3xl bg-black"
+            style={{ height: cameraHeight, ...createShadow(2, 12, '#000000', 0.1), elevation: 4 }}
+          >
+            {capturedUri && (
+              <>
+                <Image
+                  source={{ uri: capturedUri }}
+                  className="absolute inset-0"
+                  resizeMode="cover"
                 />
-              </View>
-            </>
-          )}
-        </View>
+                <View className="absolute inset-0">
+                  <DetectionOverlay
+                    detections={detections}
+                    imageWidth={640}
+                    imageHeight={640}
+                    previewWidth={width - 48}
+                    previewHeight={cameraHeight}
+                  />
+                </View>
+              </>
+            )}
+          </View>
 
-        <View style={styles.resultCard}>
-          <Text style={styles.resultTag}>DETECCIÓN</Text>
+          <View
+            className="w-full gap-3 rounded-2xl bg-surface p-4"
+            style={{ ...createShadow(1, 8, '#000000', 0.04), elevation: 1 }}
+          >
+            <Text className="font-inter-semibold text-[11px] uppercase tracking-[1.2px] text-clinical-blue">
+              DETECCIÓN
+            </Text>
 
-          {detections.length === 0 ? (
-            inferenceError ? (
-              <View style={styles.inferenceErrorBox}>
-                <MaterialCommunityIcons name="alert-circle-outline" size={18} color="#C0392B" />
-                <Text style={styles.inferenceErrorText}>
-                  No se pudo analizar la imagen. Revisa que esté bien enfocada e iluminada.
+            {detections.length === 0 ? (
+              inferenceError ? (
+                <View className="flex-row flex-wrap items-center gap-2.5 rounded-[12px] border border-error-tint-border bg-error-tint p-3">
+                  <MaterialCommunityIcons name="alert-circle-outline" size={18} color="#C0392B" />
+                  <Text className="flex-1 font-sans text-[13px] leading-[19px] text-deep-slate">
+                    No se pudo analizar la imagen. Revisa que esté bien enfocada e iluminada.
+                  </Text>
+                  <TouchableOpacity
+                    onPress={handleRetake}
+                    className="flex-row items-center gap-1 rounded-[12px] bg-source-fill px-2.5 py-1.5"
+                  >
+                    <MaterialCommunityIcons name="camera-outline" size={14} color={Colors.clinicalBlue} />
+                    <Text className="font-inter-semibold text-xs text-clinical-blue">
+                      Intentar de nuevo
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Text className="font-sans text-sm text-neutral">
+                  No se detectaron condiciones dentales en la imagen.
                 </Text>
-                <TouchableOpacity onPress={handleRetake} style={styles.retryChip}>
-                  <MaterialCommunityIcons name="camera-outline" size={14} color={Colors.clinicalBlue} />
-                  <Text style={styles.retryChipText}>Intentar de nuevo</Text>
-                </TouchableOpacity>
-              </View>
+              )
             ) : (
-              <Text style={styles.resultEmpty}>
-                No se detectaron condiciones dentales en la imagen.
-              </Text>
-            )
-          ) : (
-            detections.map((detection, index) => {
-              const isSevere =
-                detection.className.toLowerCase().includes('caries') ||
-                detection.className.toLowerCase().includes('cálculo');
-              const barColor = isSevere ? '#C0392B' : Colors.clinicalBlue;
-              return (
-                <View key={`result-${detection.classId}-${index}`} style={styles.detectionRow}>
-                  <View style={styles.detectionTop}>
-                    <Text style={styles.detectionName}>{detection.className}</Text>
-                    <View style={[styles.pctBadge, { backgroundColor: barColor + '18' }]}>
-                      <Text style={[styles.pctText, { color: barColor }]}>
-                        {(detection.confidence * 100).toFixed(0)}%
+              detections.map((detection, index) => {
+                const isSevere =
+                  detection.className.toLowerCase().includes('caries') ||
+                  detection.className.toLowerCase().includes('cálculo');
+                const barColor = isSevere ? '#C0392B' : Colors.clinicalBlue;
+                return (
+                  <View key={`result-${detection.classId}-${index}`} className="gap-1.5">
+                    <View className="flex-row items-center justify-between">
+                      <Text className="font-heading-bold text-sm text-deep-slate">
+                        {detection.className}
                       </Text>
+                      <View
+                        className="rounded-[12px] px-2.5 py-[3px]"
+                        style={{ backgroundColor: barColor + '18' }}
+                      >
+                        <Text className="font-inter-bold text-[11px]" style={{ color: barColor }}>
+                          {(detection.confidence * 100).toFixed(0)}%
+                        </Text>
+                      </View>
+                    </View>
+                    <View className="h-1.5 overflow-hidden rounded-[3px] bg-border-light">
+                      <View
+                        className="h-full rounded-[3px]"
+                        style={{ width: `${detection.confidence * 100}%`, backgroundColor: barColor }}
+                      />
                     </View>
                   </View>
-                  <View style={[styles.confidenceTrack, { backgroundColor: Colors.borderLight }]}>
-                    <View
-                      style={[
-                        styles.confidenceFill,
-                        { width: `${detection.confidence * 100}%`, backgroundColor: barColor },
-                      ]}
-                    />
+                );
+              })
+            )}
+
+            {showDescription && (
+              <View
+                className="rounded-[16px] border border-border-light bg-surface p-3.5"
+                style={{ borderLeftWidth: 4, borderLeftColor: Colors.successTeal }}
+              >
+                {loadingDescription ? (
+                  <View className="items-center gap-2 p-2">
+                    <ActivityIndicator size="small" color={Colors.clinicalBlue} />
+                    <Text className="font-sans text-xs text-neutral">
+                      Obteniendo descripción...
+                    </Text>
                   </View>
-                </View>
-              );
-            })
-          )}
+                ) : (
+                  <Text className="font-sans text-[13px] leading-[20px] text-deep-slate">
+                    {description}
+                  </Text>
+                )}
+              </View>
+            )}
 
-          {showDescription && (
-            <View style={styles.descriptionBox}>
-              {loadingDescription ? (
-                <View style={styles.descriptionLoading}>
-                  <ActivityIndicator size="small" color={Colors.clinicalBlue} />
-                  <Text style={styles.descriptionLoadingText}>Obteniendo descripción...</Text>
-                </View>
-              ) : (
-                <Text style={styles.descriptionText}>{description}</Text>
-              )}
-            </View>
-          )}
-
-          <View style={styles.sourceRow}>
-            <MaterialCommunityIcons name="book-open-variant" size={13} color={Colors.neutral} />
-            <Text style={styles.sourceText} numberOfLines={1}>
-              Manuales clínicos UNERG · RAG
-            </Text>
-          </View>
-
-          <View style={styles.actions}>
-            <View style={styles.actionsRow}>
-              <TouchableOpacity
-                testID="capture-another"
-                onPress={handleRetake}
-                style={styles.secondaryButton}
-              >
-                <MaterialCommunityIcons name="camera-outline" size={18} color={Colors.clinicalBlue} />
-                <Text style={[styles.secondaryText, { color: Colors.clinicalBlue }]}>Cámara</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                testID="view-description"
-                onPress={handleViewDescription}
-                style={styles.secondaryButton}
-              >
-                <MaterialCommunityIcons name="information-outline" size={18} color={Colors.successTeal} />
-                <Text style={[styles.secondaryText, { color: Colors.successTeal }]}>
-                  {description && showDescription ? 'Ocultar Info' : 'Ver Info RAG'}
-                </Text>
-              </TouchableOpacity>
+            <View className="h-7 flex-row items-center gap-1.5 rounded-[14px] bg-source-fill px-2.5">
+              <MaterialCommunityIcons name="book-open-variant" size={13} color={Colors.neutral} />
+              <Text className="shrink font-sans text-[11px] text-neutral" numberOfLines={1}>
+                Manuales clínicos UNERG · RAG
+              </Text>
             </View>
 
-            <TouchableOpacity
-              testID="save-diagnosis"
-              onPress={handleSaveDiagnosis}
-              disabled={saving || detections.length === 0}
-              style={[styles.primaryButton, { opacity: saving || detections.length === 0 ? 0.6 : 1 }]}
-            >
-              {saving ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
-              ) : (
-                <>
-                  <MaterialCommunityIcons name="content-save-outline" size={18} color="#FFFFFF" />
-                  <Text style={styles.primaryText}>Guardar en Historial Clínico</Text>
-                </>
-              )}
-            </TouchableOpacity>
+            <View className="gap-3">
+              <View className="flex-row gap-2.5">
+                <TouchableOpacity
+                  testID="capture-another"
+                  onPress={handleRetake}
+                  className="flex-1 flex-row items-center justify-center gap-1.5 rounded-[14px] border-[1.5px] border-border-light bg-surface py-3"
+                >
+                  <MaterialCommunityIcons name="camera-outline" size={18} color={Colors.clinicalBlue} />
+                  <Text className="font-inter-bold text-[13px] text-clinical-blue">Cámara</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  testID="view-description"
+                  onPress={handleViewDescription}
+                  className="flex-1 flex-row items-center justify-center gap-1.5 rounded-[14px] border-[1.5px] border-border-light bg-surface py-3"
+                >
+                  <MaterialCommunityIcons name="information-outline" size={18} color={Colors.successTeal} />
+                  <Text className="font-inter-bold text-[13px] text-success-teal">
+                    {description && showDescription ? 'Ocultar Info' : 'Ver Info RAG'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                testID="save-diagnosis"
+                onPress={handleSaveDiagnosis}
+                disabled={saving || detections.length === 0}
+                className="flex-row items-center justify-center gap-2 rounded-[14px] bg-clinical-blue py-3.5"
+                style={{ opacity: saving || detections.length === 0 ? 0.6 : 1 }}
+              >
+                {saving ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <>
+                    <MaterialCommunityIcons name="content-save-outline" size={18} color="#FFFFFF" />
+                    <Text className="font-inter-bold text-sm text-white">
+                      Guardar en Historial Clínico
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
         </View>
       </ScrollView>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  scrollContent: {
-    width: '100%',
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 32,
-    gap: 16,
-  },
-  scrollCenter: {
-    alignItems: 'center',
-  },
-  scrollWrap: {
-    width: '100%',
-  },
-  caption: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 11,
-    letterSpacing: 1.2,
-    color: Colors.neutral,
-    textTransform: 'uppercase',
-  },
-  cameraCard: {
-    width: '100%',
-    borderRadius: 32,
-    overflow: 'hidden',
-    backgroundColor: Colors.deepSlate,
-    ...createShadow(2, 12, '#000000', 0.1),
-    elevation: 4,
-  },
-  targetOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 5,
-  },
-  targetCornerTL: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    width: 26,
-    height: 26,
-    borderTopWidth: 3,
-    borderLeftWidth: 3,
-    borderColor: '#FFFFFF',
-  },
-  targetCornerTR: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    width: 26,
-    height: 26,
-    borderTopWidth: 3,
-    borderRightWidth: 3,
-    borderColor: '#FFFFFF',
-  },
-  targetCornerBL: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    width: 26,
-    height: 26,
-    borderBottomWidth: 3,
-    borderLeftWidth: 3,
-    borderColor: '#FFFFFF',
-  },
-  targetCornerBR: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 26,
-    height: 26,
-    borderBottomWidth: 3,
-    borderRightWidth: 3,
-    borderColor: '#FFFFFF',
-  },
-  targetHintBadge: {
-    position: 'absolute',
-    bottom: -12,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  targetHintText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 10,
-    color: '#FFFFFF',
-    backgroundColor: 'rgba(25,28,30,0.6)',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  processingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    zIndex: 6,
-  },
-  processingText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 15,
-    color: '#FFFFFF',
-  },
-  modelStatusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  modelErrorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  modelStatusText: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-  },
-  retryChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: Colors.sourceFill,
-  },
-  retryChipText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: Colors.clinicalBlue,
-  },
-  inferenceErrorBox: {
-    gap: 10,
-    backgroundColor: '#FDE8E7',
-    borderWidth: 1,
-    borderColor: '#F5C6C1',
-    borderRadius: 12,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  },
-  inferenceErrorText: {
-    flex: 1,
-    fontFamily: 'Inter',
-    fontSize: 13,
-    lineHeight: 19,
-    color: Colors.deepSlate,
-  },
-  shutter: {
-    alignItems: 'center',
-    gap: 6,
-  },
-  shutterBtn: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: Colors.clinicalBlue,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...createShadow(0, 4, Colors.clinicalBlue, 0.4),
-    elevation: 5,
-  },
-  shutterText: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-  },
-  previewCard: {
-    width: '100%',
-    borderRadius: 32,
-    overflow: 'hidden',
-    backgroundColor: '#000',
-    ...createShadow(2, 12, '#000000', 0.1),
-    elevation: 4,
-  },
-  resultCard: {
-    width: '100%',
-    backgroundColor: Colors.surface,
-    borderRadius: 24,
-    padding: 16,
-    gap: 12,
-    ...createShadow(1, 8, '#000000', 0.04),
-    elevation: 1,
-  },
-  resultTag: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 11,
-    letterSpacing: 1.2,
-    color: Colors.clinicalBlue,
-    textTransform: 'uppercase',
-  },
-  resultEmpty: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: Colors.neutral,
-  },
-  detectionRow: {
-    gap: 6,
-  },
-  detectionTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detectionName: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 14,
-    color: Colors.deepSlate,
-  },
-  pctBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 12,
-  },
-  pctText: {
-    fontFamily: 'Inter-Bold',
-    fontSize: 11,
-  },
-  confidenceTrack: {
-    height: 6,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  confidenceFill: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  descriptionBox: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.successTeal,
-    borderRadius: 16,
-    padding: 14,
-  },
-  descriptionLoading: {
-    alignItems: 'center',
-    gap: 8,
-    padding: 8,
-  },
-  descriptionLoadingText: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-  },
-  descriptionText: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-    lineHeight: 20,
-    color: Colors.deepSlate,
-  },
-  sourceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: Colors.sourceFill,
-    paddingHorizontal: 10,
-  },
-  sourceText: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    color: Colors.neutral,
-    flexShrink: 1,
-  },
-  actions: {
-    gap: 12,
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  secondaryButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 12,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: Colors.borderLight,
-    backgroundColor: Colors.surface,
-  },
-  secondaryText: {
-    fontFamily: 'Inter-Bold',
-    fontSize: 13,
-  },
-  primaryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 14,
-    borderRadius: 14,
-    backgroundColor: Colors.clinicalBlue,
-  },
-  primaryText: {
-    fontFamily: 'Inter-Bold',
-    fontSize: 14,
-    color: '#FFFFFF',
-  },
-});

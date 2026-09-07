@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, type ViewStyle } from 'react-native';
+import { View, ScrollView, type ViewStyle } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/theme';
 
@@ -24,6 +24,14 @@ interface ScreenContainerProps {
   testID?: string;
 }
 
+// ScrollView's content container cannot receive a className, so these layout
+// rules stay as a plain style object.
+const scrollContentContainerStyle = {
+  alignItems: 'center' as const,
+  paddingBottom: 24,
+  flexGrow: 1,
+};
+
 export default function ScreenContainer({
   children,
   scroll = false,
@@ -33,56 +41,33 @@ export default function ScreenContainer({
   style,
   testID,
 }: ScreenContainerProps) {
-  const innerStyle: ViewStyle[] = [styles.inner];
-  if (!scroll) {
-    innerStyle.push(styles.innerFill);
-  }
+  const innerClassName = `w-full max-w-[640px]${scroll ? '' : ' flex-1'}`;
 
   return (
     <SafeAreaView
       testID={testID}
-      style={[styles.safe, { backgroundColor }, style]}
+      className="flex-1"
+      style={[{ backgroundColor }, style]}
       edges={edges}
     >
       {scroll ? (
         <ScrollView
-          style={styles.fill}
-          contentContainerStyle={styles.scrollContent}
+          className="flex-1"
+          contentContainerStyle={scrollContentContainerStyle}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={[...innerStyle, contentContainerStyle]}>{children}</View>
+          <View className={innerClassName} style={contentContainerStyle}>
+            {children}
+          </View>
         </ScrollView>
       ) : (
-        <View style={styles.fillCenter}>
-          <View style={[...innerStyle, contentContainerStyle]}>{children}</View>
+        <View className="flex-1 items-center">
+          <View className={innerClassName} style={contentContainerStyle}>
+            {children}
+          </View>
         </View>
       )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-  },
-  fill: {
-    flex: 1,
-  },
-  fillCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  scrollContent: {
-    alignItems: 'center',
-    paddingBottom: 24,
-    flexGrow: 1,
-  },
-  inner: {
-    width: '100%',
-    maxWidth: CONTENT_MAX_WIDTH,
-  },
-  innerFill: {
-    flex: 1,
-  },
-});

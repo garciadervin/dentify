@@ -8,7 +8,7 @@
  */
 
 import React, { useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import type { QuizQuestion } from '@/src/services/quiz';
@@ -54,35 +54,20 @@ function MultiOptionList({
   onSelect: (index: number) => void;
 }) {
   return (
-    <View style={styles.options}>
+    <View className="gap-2.5">
       {options.map((option, index) => {
         const isSelected = selectedIndexes.has(index);
         const isCorrectAnswer =
           phase !== 'idle' &&
           (correct === index || (correctIndexes?.includes(index) ?? false));
         const isWrongPick = phase === 'incorrect' && isSelected && !isCorrectAnswer;
+        const isSelectedActive = phase === 'idle' && isSelected;
 
-        let bg = Colors.surface;
-        let border = Colors.borderLight;
-        let textColor = Colors.deepSlate;
         let marker: 'check' | 'close' | 'none' = 'none';
-
-        if (phase === 'idle') {
-          if (isSelected) {
-            bg = Colors.clinicalBlue;
-            border = '#005C8A';
-            textColor = '#FFFFFF';
-          }
-        } else {
+        if (phase !== 'idle') {
           if (isCorrectAnswer) {
-            bg = '#E8F5F3';
-            border = Colors.successTeal;
-            textColor = Colors.deepSlate;
             marker = 'check';
           } else if (isWrongPick) {
-            bg = '#FDE8E7';
-            border = '#C0392B';
-            textColor = Colors.deepSlate;
             marker = 'close';
           }
         }
@@ -91,28 +76,40 @@ function MultiOptionList({
           <TouchableOpacity
             key={index}
             testID={`option-${index}`}
-            style={[styles.option, { backgroundColor: bg, borderColor: border }]}
+            className={`rounded-[14px] border-[1.5px] px-4 py-3.5 ${
+              isSelectedActive
+                ? 'border-clinical-dark bg-clinical-blue'
+                : phase !== 'idle' && isCorrectAnswer
+                  ? 'border-success-teal bg-success-tint'
+                  : phase !== 'idle' && isWrongPick
+                    ? 'border-error bg-error-tint'
+                    : 'border-border-light bg-surface'
+            }`}
             onPress={() => onSelect(index)}
             activeOpacity={phase !== 'idle' ? 1 : 0.7}
             accessibilityRole="button"
           >
-            <View style={styles.optionContent}>
+            <View className="flex-row items-center">
               <View
-                style={[
-                  styles.optionBullet,
-                  { borderColor: phase === 'idle' && isSelected ? 'rgba(255,255,255,0.5)' : Colors.borderLight },
-                ]}
+                className={`mr-3 h-7 w-7 shrink-0 items-center justify-center rounded-full border ${
+                  isSelectedActive ? 'border-white/50' : 'border-border-light'
+                }`}
               >
                 <Text
-                  style={[
-                    styles.optionBulletText,
-                    { color: phase === 'idle' && isSelected ? '#FFFFFF' : Colors.neutral },
-                  ]}
+                  className={`font-inter-semibold text-[13px] ${
+                    isSelectedActive ? 'text-white' : 'text-neutral'
+                  }`}
                 >
                   {String.fromCharCode(65 + index)}
                 </Text>
               </View>
-              <Text style={[styles.optionText, { color: textColor }]}>{option}</Text>
+              <Text
+                className={`flex-1 font-sans text-[15px] leading-[22px] ${
+                  isSelectedActive ? 'text-white' : 'text-deep-slate'
+                }`}
+              >
+                {option}
+              </Text>
               {marker !== 'none' && (
                 <MaterialCommunityIcons
                   name={marker === 'check' ? 'check-circle' : 'close-circle'}
@@ -154,56 +151,54 @@ function FillBlank({
 
   return (
     <View>
-      <View style={styles.fillSentence}>
-        <Text style={styles.fillText}>
+      <View className="mb-5 rounded-[16px] border border-border-light bg-surface p-4">
+        <Text className="font-sans text-[16px] leading-[26px] text-deep-slate">
           {before}
           {selectedText ? (
             <Text
               testID="fill-blank-value"
-              style={[
-                styles.fillBlank,
-                phase === 'incorrect' && selected !== null && correctShuffledIndex !== selected && styles.fillBlankWrong,
-                phase === 'correct' && styles.fillBlankCorrect,
-              ]}
+              className={`font-inter-semibold ${
+                phase === 'incorrect' && selected !== null && correctShuffledIndex !== selected
+                  ? 'text-error'
+                  : phase === 'correct'
+                    ? 'text-success-teal'
+                    : 'text-clinical-blue'
+              }`}
             >
               {selectedText}
             </Text>
           ) : (
-            <Text style={[styles.fillBlank, styles.fillBlankEmpty]}>________</Text>
+            <Text className="font-inter-semibold text-neutral">________</Text>
           )}
           {after}
         </Text>
       </View>
 
-      <View style={styles.fillTiles}>
+      <View className="mt-1 flex-row flex-wrap gap-2">
         {options.map((word, index) => {
           const isCorrectAnswer = phase !== 'idle' && index === correctShuffledIndex;
           const isWrongPick = phase === 'incorrect' && index === selected;
-          let bg = Colors.surface;
-          let border = Colors.pillBorder;
-          if (phase === 'idle' && index === selected) {
-            bg = Colors.clinicalBlue;
-            border = '#005C8A';
-          } else if (isCorrectAnswer) {
-            bg = '#E8F5F3';
-            border = Colors.successTeal;
-          } else if (isWrongPick) {
-            bg = '#FDE8E7';
-            border = '#C0392B';
-          }
+          const isSelectedActive = phase === 'idle' && index === selected;
           return (
             <TouchableOpacity
               key={index}
               testID={`fill-option-${index}`}
-              style={[styles.fillTile, { backgroundColor: bg, borderColor: border }]}
+              className={`rounded-[16px] border-[1.5px] px-4 py-2.5 ${
+                isSelectedActive
+                  ? 'border-clinical-dark bg-clinical-blue'
+                  : isCorrectAnswer
+                    ? 'border-success-teal bg-success-tint'
+                    : isWrongPick
+                      ? 'border-error bg-error-tint'
+                      : 'border-pill-border bg-surface'
+              }`}
               onPress={() => onSelect(index)}
               activeOpacity={phase !== 'idle' ? 1 : 0.7}
             >
               <Text
-                style={[
-                  styles.fillTileText,
-                  { color: phase === 'idle' && index === selected ? '#FFFFFF' : Colors.deepSlate },
-                ]}
+                className={`font-inter-semibold text-[15px] ${
+                  isSelectedActive ? 'text-white' : 'text-deep-slate'
+                }`}
               >
                 {word}
               </Text>
@@ -232,17 +227,19 @@ function MatchQuestion({
   onPickRight: (rightIndex: number) => void;
   onConfirm: () => void;
 }) {
-  const pairs = question.pairs ?? [];
+  // Keep a stable reference so the shuffle below runs once per question, not on
+  // every render (display state changes: matches/activeLeft/phase).
+  const pairs = useMemo(() => question.pairs ?? [], [question.pairs]);
   const rightOrder = useMemo(() => {
     return shuffle(pairs.map((_, i) => i));
-  }, [question.id]);
+  }, [pairs]);
 
   const isDone = matches.every((m) => m != null);
 
   return (
     <View>
-      <View style={styles.matchGrid}>
-        <View style={styles.matchColumn}>
+      <View className="flex-row gap-3">
+        <View className="flex-1 gap-2">
           {pairs.map((pair, leftIndex) => {
             const matched = matches[leftIndex];
             const isActive = activeLeft === leftIndex;
@@ -252,20 +249,21 @@ function MatchQuestion({
               <TouchableOpacity
                 key={leftIndex}
                 testID={`match-left-${leftIndex}`}
-                style={[
-                  styles.matchCard,
-                  {
-                    backgroundColor: isGood ? '#E8F5F3' : isBad ? '#FDE8E7' : isActive ? Colors.clinicalBlue : Colors.skyLight,
-                    borderColor: isGood ? Colors.successTeal : isBad ? '#C0392B' : isActive ? '#005C8A' : Colors.borderLight,
-                  },
-                ]}
+                className={`min-h-[52px] justify-center rounded-[12px] border-[1.5px] px-3 py-3 ${
+                  isGood
+                    ? 'border-success-teal bg-success-tint'
+                    : isBad
+                      ? 'border-error bg-error-tint'
+                      : isActive
+                        ? 'border-clinical-dark bg-clinical-blue'
+                        : 'border-border-light bg-sky-light'
+                }`}
                 onPress={() => (phase === 'idle' ? onPickLeft(leftIndex) : undefined)}
               >
                 <Text
-                  style={[
-                    styles.matchCardText,
-                    { color: isActive ? '#FFFFFF' : Colors.deepSlate },
-                  ]}
+                  className={`font-inter-semibold text-[13px] leading-[18px] ${
+                    isActive ? 'text-white' : 'text-deep-slate'
+                  }`}
                 >
                   {pair.left}
                 </Text>
@@ -274,7 +272,7 @@ function MatchQuestion({
           })}
         </View>
 
-        <View style={styles.matchColumn}>
+        <View className="flex-1 gap-2">
           {rightOrder.map((pairIndex, displayIndex) => {
             const leftIndex = matches.findIndex((m) => m === pairIndex);
             const isUsed = leftIndex !== -1;
@@ -284,17 +282,19 @@ function MatchQuestion({
               <TouchableOpacity
                 key={displayIndex}
                 testID={`match-right-${displayIndex}`}
-                style={[
-                  styles.matchCard,
-                  {
-                    backgroundColor: isGood ? '#E8F5F3' : isBad ? '#FDE8E7' : Colors.surface,
-                    borderColor: isGood ? Colors.successTeal : isBad ? '#C0392B' : Colors.pillBorder,
-                  },
-                ]}
+                className={`min-h-[52px] justify-center rounded-[12px] border-[1.5px] px-3 py-3 ${
+                  isGood
+                    ? 'border-success-teal bg-success-tint'
+                    : isBad
+                      ? 'border-error bg-error-tint'
+                      : 'border-pill-border bg-surface'
+                }`}
                 onPress={() => (phase === 'idle' ? onPickRight(pairIndex) : undefined)}
                 disabled={isUsed}
               >
-                <Text style={styles.matchCardText}>{pairs[pairIndex].right}</Text>
+                <Text className="font-inter-semibold text-[13px] leading-[18px] text-deep-slate">
+                  {pairs[pairIndex].right}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -302,13 +302,13 @@ function MatchQuestion({
       </View>
 
       {!isDone && phase === 'idle' && (
-        <Text style={styles.matchHintText}>
+        <Text className="mt-4 font-sans text-[13px] leading-[19px] text-neutral">
           Toca un término de la izquierda y luego su definición de la derecha.
         </Text>
       )}
       {isDone && phase === 'idle' && (
-        <TouchableOpacity testID="quiz-confirm" style={styles.confirmButton} onPress={onConfirm}>
-          <Text style={styles.confirmText}>Confirmar</Text>
+        <TouchableOpacity testID="quiz-confirm" className="mt-4 items-center justify-center rounded-[14px] bg-clinical-blue py-3.5" onPress={onConfirm}>
+          <Text className="font-inter-semibold text-[16px] text-white">Confirmar</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -328,10 +328,12 @@ function OrderQuestion({
   onTap: (index: number) => void;
   onConfirm: () => void;
 }) {
-  const orderItems = question.orderItems ?? [];
+  // Stable reference: the shuffle should run once per question, not on every
+  // render (placed/phase change as the user builds the sequence).
+  const orderItems = useMemo(() => question.orderItems ?? [], [question.orderItems]);
   const shuffled = useMemo(() => {
     return shuffle(orderItems.map((_, i) => i));
-  }, [question.id]);
+  }, [orderItems]);
 
   const available = shuffled.filter((i) => !placed.includes(i));
   const isDone = placed.length === orderItems.length;
@@ -347,9 +349,9 @@ function OrderQuestion({
 
   return (
     <View>
-      <View style={styles.orderList}>
+      <View className="mb-4 gap-2">
         {placed.length === 0 ? (
-          <Text style={styles.matchHintText}>
+          <Text className="mt-4 font-sans text-[13px] leading-[19px] text-neutral">
             Toca los pasos en el orden correcto, del primero al último.
           </Text>
         ) : (
@@ -358,34 +360,35 @@ function OrderQuestion({
             return (
               <View
                 key={`placed-${itemIndex}-${step}`}
-                style={[
-                  styles.orderPlaced,
-                  {
-                    backgroundColor: phase === 'idle' ? Colors.clinicalBlue : ok ? '#E8F5F3' : '#FDE8E7',
-                    borderColor: phase === 'idle' ? '#005C8A' : ok ? Colors.successTeal : '#C0392B',
-                  },
-                ]}
+                className={`flex-row items-center gap-3 rounded-[12px] border-[1.5px] px-3 py-2.5 ${
+                  phase === 'idle'
+                    ? 'border-clinical-dark bg-clinical-blue'
+                    : ok
+                      ? 'border-success-teal bg-success-tint'
+                      : 'border-error bg-error-tint'
+                }`}
               >
                 <View
-                  style={[
-                    styles.orderStep,
-                    { backgroundColor: phase === 'idle' ? '#FFFFFF' : ok ? Colors.successTeal : '#C0392B' },
-                  ]}
+                  className={`h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+                    phase === 'idle'
+                      ? 'bg-white'
+                      : ok
+                        ? 'bg-success-teal'
+                        : 'bg-error'
+                  }`}
                 >
                   <Text
-                    style={[
-                      styles.orderStepText,
-                      { color: phase === 'idle' ? Colors.clinicalBlue : '#FFFFFF' },
-                    ]}
+                    className={`font-inter-semibold text-[13px] ${
+                      phase === 'idle' ? 'text-clinical-blue' : 'text-white'
+                    }`}
                   >
                     {step + 1}
                   </Text>
                 </View>
                 <Text
-                  style={[
-                    styles.orderPlacedText,
-                    { color: phase === 'idle' ? '#FFFFFF' : Colors.deepSlate },
-                  ]}
+                  className={`flex-1 font-sans text-[14px] leading-[20px] ${
+                    phase === 'idle' ? 'text-white' : 'text-deep-slate'
+                  }`}
                 >
                   {orderItems[itemIndex].text}
                 </Text>
@@ -396,23 +399,25 @@ function OrderQuestion({
       </View>
 
       {available.length > 0 && phase === 'idle' && (
-        <View style={styles.fillTiles}>
+        <View className="mt-1 flex-row flex-wrap gap-2">
           {available.map((itemIndex) => (
             <TouchableOpacity
               key={`avail-${itemIndex}`}
               testID={`order-option-${itemIndex}`}
-              style={styles.orderChip}
+              className="rounded-[16px] border-[1.5px] border-pill-border bg-surface px-3.5 py-3"
               onPress={() => onTap(itemIndex)}
             >
-              <Text style={styles.orderChipText}>{orderItems[itemIndex].text}</Text>
+              <Text className="font-inter-semibold text-[14px] leading-[19px] text-deep-slate">
+                {orderItems[itemIndex].text}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
       )}
 
       {isDone && phase === 'idle' && (
-        <TouchableOpacity testID="quiz-confirm" style={styles.confirmButton} onPress={onConfirm}>
-          <Text style={styles.confirmText}>Confirmar orden</Text>
+        <TouchableOpacity testID="quiz-confirm" className="mt-4 items-center justify-center rounded-[14px] bg-clinical-blue py-3.5" onPress={onConfirm}>
+          <Text className="font-inter-semibold text-[16px] text-white">Confirmar orden</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -500,23 +505,25 @@ export default function QuestionRenderer({
     <View testID="question-renderer">
       {/* Clinical case header */}
       {isCase && question.caseText ? (
-        <View style={styles.caseBox} testID="quiz-case">
-          <View style={styles.caseHeader}>
+        <View className="mb-5 rounded-[16px] border border-border-light bg-sky-light p-4" testID="quiz-case">
+          <View className="mb-2 flex-row items-center gap-2">
             <MaterialCommunityIcons name="stethoscope" size={16} color={Colors.clinicalBlue} />
-            <Text style={styles.caseTitle}>Caso clínico</Text>
+            <Text className="font-heading-bold text-[14px] uppercase tracking-[0.5px] text-clinical-blue">
+              Caso clínico
+            </Text>
           </View>
-          <Text style={styles.caseText}>{question.caseText}</Text>
+          <Text className="font-sans text-[14px] leading-[21px] text-deep-slate">{question.caseText}</Text>
         </View>
       ) : null}
 
-      <View style={styles.questionRow}>
-        <Text testID="question-text" style={styles.question}>
+      <View className="mb-5 flex-row items-start gap-2">
+        <Text testID="question-text" className="flex-1 font-heading-bold text-[20px] leading-[28px] text-deep-slate">
           {question.question}
         </Text>
         {question.hint ? (
           <TouchableOpacity
             testID="quiz-hint"
-            style={styles.hintButton}
+            className="mt-0.5 h-8 w-8 items-center justify-center rounded-full border border-pill-border bg-surface"
             onPress={() => setShowHint((s) => !s)}
             accessibilityRole="button"
           >
@@ -526,8 +533,8 @@ export default function QuestionRenderer({
       </View>
 
       {showHint && question.hint ? (
-        <View style={styles.hintBox} testID="quiz-hint-text">
-          <Text style={styles.hintText}>{question.hint}</Text>
+        <View className="mb-4 rounded-[12px] bg-sky-light p-3" testID="quiz-hint-text">
+          <Text className="font-sans text-[14px] leading-[20px] text-neutral">{question.hint}</Text>
         </View>
       ) : null}
 
@@ -592,11 +599,13 @@ export default function QuestionRenderer({
             }}
           />
           {phase === 'idle' && (
-            <Text style={styles.multiHint}>Selecciona todas las opciones correctas.</Text>
+            <Text className="mb-1 mt-3 font-sans text-[13px] text-neutral">
+              Selecciona todas las opciones correctas.
+            </Text>
           )}
           {multiDone && phase === 'idle' && (
-            <TouchableOpacity testID="quiz-confirm" style={styles.confirmButton} onPress={confirmMultiSelect}>
-              <Text style={styles.confirmText}>Confirmar</Text>
+            <TouchableOpacity testID="quiz-confirm" className="mt-4 items-center justify-center rounded-[14px] bg-clinical-blue py-3.5" onPress={confirmMultiSelect}>
+              <Text className="font-inter-semibold text-[16px] text-white">Confirmar</Text>
             </TouchableOpacity>
           )}
         </>
@@ -628,296 +637,32 @@ export default function QuestionRenderer({
       {phase !== 'idle' && (
         <View
           testID="quiz-feedback"
-          style={[
-            styles.feedback,
-            { backgroundColor: phase === 'correct' ? '#E8F5F3' : '#FDE8E7', borderColor: phase === 'correct' ? Colors.successTeal : '#C0392B' },
-          ]}
+          className={`mt-5 rounded-[14px] border p-4 ${
+            phase === 'correct' ? 'border-success-teal bg-success-tint' : 'border-error bg-error-tint'
+          }`}
         >
-          <View style={styles.feedbackHeader}>
+          <View className="mb-2 flex-row items-center gap-2">
             <MaterialCommunityIcons
               name={phase === 'correct' ? 'lightbulb-on' : 'information'}
               size={18}
               color={phase === 'correct' ? Colors.successTeal : '#C0392B'}
             />
             <Text
-              style={[
-                styles.feedbackTitle,
-                { color: phase === 'correct' ? Colors.successTeal : '#C0392B' },
-              ]}
+              className={`flex-1 font-heading-bold text-[14px] ${
+                phase === 'correct' ? 'text-success-teal' : 'text-error'
+              }`}
             >
               {phase === 'correct' ? '¡Correcto!' : 'Respuesta incorrecta'}
             </Text>
-            <Text style={styles.feedbackProgress}>
+            <Text className="font-inter-semibold text-[12px] text-neutral">
               {index + 1}/{total}
             </Text>
           </View>
-          <Text style={styles.feedbackText}>{question.explanation || 'Sin explicación disponible.'}</Text>
+          <Text className="font-sans text-[14px] leading-[21px] text-deep-slate">
+            {question.explanation || 'Sin explicación disponible.'}
+          </Text>
         </View>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  options: {
-    gap: 10,
-  },
-  option: {
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderWidth: 1.5,
-  },
-  optionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  optionBullet: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-    flexShrink: 0,
-  },
-  optionBulletText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-  },
-  optionText: {
-    fontFamily: 'Inter',
-    fontSize: 15,
-    flex: 1,
-    lineHeight: 22,
-  },
-  questionRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-    marginBottom: 20,
-  },
-  question: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 20,
-    lineHeight: 28,
-    color: Colors.deepSlate,
-    flex: 1,
-  },
-  hintButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.pillBorder,
-    backgroundColor: Colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 2,
-  },
-  hintBox: {
-    backgroundColor: Colors.skyLight,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-  },
-  hintText: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: Colors.neutral,
-    lineHeight: 20,
-  },
-  caseBox: {
-    backgroundColor: Colors.skyLight,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 20,
-  },
-  caseHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
-  },
-  caseTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 14,
-    color: Colors.clinicalBlue,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  caseText: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    lineHeight: 21,
-    color: Colors.deepSlate,
-  },
-  fillSentence: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-    backgroundColor: Colors.surface,
-    padding: 16,
-    marginBottom: 20,
-  },
-  fillText: {
-    fontFamily: 'Inter',
-    fontSize: 16,
-    lineHeight: 26,
-    color: Colors.deepSlate,
-  },
-  fillBlank: {
-    fontFamily: 'Inter-SemiBold',
-    color: Colors.clinicalBlue,
-  },
-  fillBlankEmpty: {
-    color: Colors.neutral,
-  },
-  fillBlankCorrect: {
-    color: Colors.successTeal,
-  },
-  fillBlankWrong: {
-    color: '#C0392B',
-  },
-  fillTiles: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 4,
-  },
-  fillTile: {
-    borderRadius: 16,
-    borderWidth: 1.5,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  fillTileText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 15,
-  },
-  multiHint: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-    color: Colors.neutral,
-    marginTop: 12,
-    marginBottom: 4,
-  },
-  confirmButton: {
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.clinicalBlue,
-    marginTop: 16,
-  },
-  confirmText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 16,
-    color: '#FFFFFF',
-  },
-  matchGrid: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  matchColumn: {
-    flex: 1,
-    gap: 8,
-  },
-  matchCard: {
-    borderRadius: 12,
-    borderWidth: 1.5,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    minHeight: 52,
-    justifyContent: 'center',
-  },
-  matchCardText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-    lineHeight: 18,
-    color: Colors.deepSlate,
-  },
-  matchHintText: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-    color: Colors.neutral,
-    marginTop: 16,
-    lineHeight: 19,
-  },
-  orderList: {
-    gap: 8,
-    marginBottom: 16,
-  },
-  orderPlaced: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-  orderStep: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  orderStepText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-  },
-  orderPlacedText: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    lineHeight: 20,
-    flex: 1,
-  },
-  orderChip: {
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: Colors.pillBorder,
-    backgroundColor: Colors.surface,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-  },
-  orderChipText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.deepSlate,
-    lineHeight: 19,
-  },
-  feedback: {
-    marginTop: 20,
-    borderRadius: 14,
-    borderWidth: 1,
-    padding: 16,
-  },
-  feedbackHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
-  },
-  feedbackTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 14,
-    flex: 1,
-  },
-  feedbackProgress: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: Colors.neutral,
-  },
-  feedbackText: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    lineHeight: 21,
-    color: Colors.deepSlate,
-  },
-});

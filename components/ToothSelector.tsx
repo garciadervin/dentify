@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { DENTAL_MODELS, FDI_TEETH } from '@/assets/models';
 
 interface ToothSelectorProps {
@@ -18,30 +18,40 @@ export default function ToothSelector({ onSelectTooth, selectedTooth }: ToothSel
   const selectedInfo = selectedTooth ? DENTAL_MODELS[selectedTooth] : null;
 
   return (
-    <View style={styles.wrapper} testID="tooth-selector">
+    <View className="px-1 py-2" testID="tooth-selector">
       {/* Selected tooth name */}
       {selectedInfo ? (
-        <Text testID="selected-tooth-name" style={styles.selectedName}>
+        <Text testID="selected-tooth-name" className="mb-2 text-center font-inter-semibold text-sm text-clinical-blue">
           {selectedInfo.name}
         </Text>
       ) : null}
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View testID="tooth-selector-grid" style={styles.grid}>
+        <View testID="tooth-selector-grid" className="px-2">
           {/* Maxillary row label */}
-          <Text style={styles.archLabel}>Superiores</Text>
-          <View style={styles.row}>
+          <Text className="mb-1 ml-1 font-inter-semibold text-[11px] uppercase tracking-[0.5px] text-neutral">
+            Superiores
+          </Text>
+          <View className="flex-row gap-1">
             {maxillary.map((num) => (
               <TouchableOpacity
                 key={num}
                 testID={`tooth-${num}`}
-                style={[styles.tooth, selectedTooth === num && styles.toothSelected]}
+                className={`h-9 w-9 items-center justify-center rounded-[8px] border bg-surface ${
+                  selectedTooth === num
+                    ? 'border-clinical-blue bg-clinical-blue'
+                    : 'border-border-light'
+                }`}
                 onPress={() => onSelectTooth(num)}
                 accessibilityLabel={`Diente ${num} — ${DENTAL_MODELS[num]?.name ?? ''}`}
                 accessibilityRole="button"
                 accessibilityState={{ selected: selectedTooth === num }}
               >
-                <Text style={[styles.toothText, selectedTooth === num && styles.toothTextSelected]}>
+                <Text
+                  className={`font-inter-semibold text-xs ${
+                    selectedTooth === num ? 'text-white' : 'text-deep-slate'
+                  }`}
+                >
                   {num}
                 </Text>
               </TouchableOpacity>
@@ -49,19 +59,29 @@ export default function ToothSelector({ onSelectTooth, selectedTooth }: ToothSel
           </View>
 
           {/* Mandibular row label */}
-          <Text style={[styles.archLabel, styles.archLabelBottom]}>Inferiores</Text>
-          <View style={styles.row}>
+          <Text className="mb-1 ml-1 mt-2 font-inter-semibold text-[11px] uppercase tracking-[0.5px] text-neutral">
+            Inferiores
+          </Text>
+          <View className="flex-row gap-1">
             {mandibular.map((num) => (
               <TouchableOpacity
                 key={num}
                 testID={`tooth-${num}`}
-                style={[styles.tooth, selectedTooth === num && styles.toothSelected]}
+                className={`h-9 w-9 items-center justify-center rounded-[8px] border bg-surface ${
+                  selectedTooth === num
+                    ? 'border-clinical-blue bg-clinical-blue'
+                    : 'border-border-light'
+                }`}
                 onPress={() => onSelectTooth(num)}
                 accessibilityLabel={`Diente ${num} — ${DENTAL_MODELS[num]?.name ?? ''}`}
                 accessibilityRole="button"
                 accessibilityState={{ selected: selectedTooth === num }}
               >
-                <Text style={[styles.toothText, selectedTooth === num && styles.toothTextSelected]}>
+                <Text
+                  className={`font-inter-semibold text-xs ${
+                    selectedTooth === num ? 'text-white' : 'text-deep-slate'
+                  }`}
+                >
                   {num}
                 </Text>
               </TouchableOpacity>
@@ -72,58 +92,3 @@ export default function ToothSelector({ onSelectTooth, selectedTooth }: ToothSel
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-  },
-  selectedName: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: '#0077B6',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  grid: {
-    paddingHorizontal: 8,
-  },
-  archLabel: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 11,
-    color: '#70787D',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 4,
-    marginLeft: 4,
-  },
-  archLabelBottom: {
-    marginTop: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  tooth: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#F2F4F6',
-  },
-  toothSelected: {
-    backgroundColor: '#0077B6',
-    borderColor: '#0077B6',
-  },
-  toothText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: '#191C1E',
-  },
-  toothTextSelected: {
-    color: '#FFFFFF',
-  },
-});

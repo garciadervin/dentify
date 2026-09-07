@@ -6,11 +6,10 @@
  */
 
 import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
-import { View, TouchableOpacity, Text, ActivityIndicator, StyleSheet, Linking } from 'react-native';
+import { View, TouchableOpacity, Text, ActivityIndicator, Linking } from 'react-native';
 import { CameraView as ExpoCameraView, useCameraPermissions, CameraType, FlashMode } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 // ── Props ──────────────────────────────────────────────────────────────────
 
@@ -33,8 +32,6 @@ const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(function Camera
   { onCapture, isProcessing, framed = false },
   ref
 ) {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
@@ -72,81 +69,41 @@ const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(function Camera
   if (!permission) {
     // Camera permissions are still loading
     return (
-      <View style={[styles.container, { backgroundColor: colors.skyLight }]}>
-        <ActivityIndicator size="large" color={colors.clinicalBlue} />
+      <View className="flex-1 bg-sky-light">
+        <ActivityIndicator size="large" color={Colors.clinicalBlue} />
       </View>
     );
   }
 
   if (!permission.granted) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.skyLight }]}>
-        <Text
-          style={{
-            fontFamily: 'Inter',
-            fontSize: 16,
-            color: colors.deepSlate,
-            textAlign: 'center',
-            marginBottom: 16,
-            paddingHorizontal: 24,
-          }}
-        >
+      <View className="flex-1 bg-sky-light">
+        <Text className="mb-4 px-6 text-center font-sans text-base text-deep-slate">
           Necesitamos acceso a la cámara para realizar diagnósticos
         </Text>
         {permission.canAskAgain === false ? (
           <>
-            <Text
-              style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
-                color: colors.neutral,
-                textAlign: 'center',
-                marginBottom: 16,
-                paddingHorizontal: 24,
-              }}
-            >
+            <Text className="mb-4 px-6 text-center font-sans text-sm text-neutral">
               El permiso de cámara fue denegado permanentemente. Actívalo desde los
               ajustes del dispositivo para usar el diagnóstico.
             </Text>
             <TouchableOpacity
-              style={{
-                backgroundColor: colors.clinicalBlue,
-                paddingHorizontal: 24,
-                paddingVertical: 12,
-                borderRadius: 12,
-              }}
+              className="rounded-[12px] bg-clinical-blue px-6 py-3"
               onPress={() => Linking.openSettings()}
               accessibilityRole="button"
             >
-              <Text
-                style={{
-                  fontFamily: 'Inter-SemiBold',
-                  fontSize: 16,
-                  color: '#FFFFFF',
-                }}
-              >
+              <Text className="font-inter-semibold text-base text-white">
                 Abrir ajustes
               </Text>
             </TouchableOpacity>
           </>
         ) : (
           <TouchableOpacity
-            style={{
-              backgroundColor: colors.clinicalBlue,
-              paddingHorizontal: 24,
-              paddingVertical: 12,
-              borderRadius: 12,
-            }}
+            className="rounded-[12px] bg-clinical-blue px-6 py-3"
             onPress={requestPermission}
             accessibilityRole="button"
           >
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 16,
-                color: '#FFFFFF',
-              }}
-            >
+            <Text className="font-inter-semibold text-base text-white">
               Permitir acceso
             </Text>
           </TouchableOpacity>
@@ -156,37 +113,32 @@ const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(function Camera
   }
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       <ExpoCameraView
         ref={cameraRef}
-        style={styles.camera}
+        style={{ flex: 1 }}
         facing={facing}
         flash={flash}
         testID="camera-preview"
       >
         {/* Loading overlay */}
         {isProcessing && (
-          <View style={styles.loadingOverlay}>
+          <View className="absolute inset-0 items-center justify-center bg-black/60">
             <ActivityIndicator size="large" color="#FFFFFF" />
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 18,
-                color: '#FFFFFF',
-                marginTop: 12,
-              }}
-            >
+            <Text className="mt-3 font-inter-semibold text-[18px] text-white">
               Analizando...
             </Text>
           </View>
         )}
 
         {/* Top controls */}
-        <View style={styles.topControls}>
+        <View className="absolute left-5 right-5 top-[60px] flex-row justify-between">
           <TouchableOpacity
             testID="flash-toggle"
-            style={[styles.controlButton, { backgroundColor: 'rgba(0,0,0,0.4)' }]}
+            className="h-11 w-11 items-center justify-center rounded-full bg-black/40"
             onPress={toggleFlash}
+            accessibilityRole="button"
+            accessibilityLabel={flash === 'on' ? 'Apagar flash' : 'Encender flash'}
           >
             <Ionicons
               name={flash === 'on' ? 'flash' : 'flash-off'}
@@ -197,8 +149,10 @@ const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(function Camera
 
           <TouchableOpacity
             testID="flip-camera"
-            style={[styles.controlButton, { backgroundColor: 'rgba(0,0,0,0.4)' }]}
+            className="h-11 w-11 items-center justify-center rounded-full bg-black/40"
             onPress={toggleFacing}
+            accessibilityRole="button"
+            accessibilityLabel="Cambiar cámara frontal/trasera"
           >
             <Ionicons
               name="camera-reverse"
@@ -210,17 +164,18 @@ const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(function Camera
 
         {/* Bottom capture button (oculto en modo enmarcado) */}
         {!framed && (
-          <View style={styles.bottomControls}>
+          <View className="absolute bottom-[60px] left-0 right-0 items-center">
             <TouchableOpacity
               testID="capture-button"
-              style={[
-                styles.captureButton,
-                { backgroundColor: isProcessing ? 'rgba(255,255,255,0.4)' : '#FFFFFF' },
-              ]}
+              className={`h-[72px] w-[72px] items-center justify-center rounded-full border-4 border-white/80 ${
+                isProcessing ? 'bg-white/40' : 'bg-white'
+              }`}
               onPress={handleCapture}
               disabled={isProcessing}
+              accessibilityRole="button"
+              accessibilityLabel="Capturar foto"
             >
-              <View style={styles.captureInner} />
+              <View className="h-[60px] w-[60px] rounded-full bg-white" />
             </TouchableOpacity>
           </View>
         )}
@@ -230,57 +185,3 @@ const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(function Camera
 });
 
 export default CameraView;
-
-// ── Styles ─────────────────────────────────────────────────────────────────
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  camera: {
-    flex: 1,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  topControls: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    right: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  controlButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bottomControls: {
-    position: 'absolute',
-    bottom: 60,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  captureButton: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 4,
-    borderColor: 'rgba(255,255,255,0.8)',
-  },
-  captureInner: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FFFFFF',
-  },
-});

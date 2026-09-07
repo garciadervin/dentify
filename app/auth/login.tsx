@@ -48,69 +48,38 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.skyLight }} edges={['top', 'bottom']}>
+    <SafeAreaView className="flex-1 bg-sky-light" edges={['top', 'bottom']}>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'center',
-            paddingHorizontal: 24,
-          }}
+          contentContainerClassName="flex-grow justify-center px-6"
           keyboardShouldPersistTaps="handled"
         >
-          <View style={{ width: '100%' }}>
+          <View className="w-full">
           {/* Header */}
-          <View style={{ marginBottom: 40, alignItems: 'center' }}>
-            <Text
-              style={{
-                fontFamily: 'Manrope-Bold',
-                fontSize: 32,
-                color: colors.deepSlate,
-                marginBottom: 8,
-              }}
-            >
+          <View className="mb-10 items-center">
+            <Text className="mb-2 font-heading-bold text-[32px] text-deep-slate">
               Dentify
             </Text>
-            <Text
-              style={{
-                fontFamily: 'Inter',
-                fontSize: 16,
-                color: colors.neutral,
-              }}
-            >
+            <Text className="font-sans text-[16px] text-neutral">
               Inicia sesión para continuar
             </Text>
           </View>
 
           {/* Error message */}
           {error && (
-            <View
-              style={{
-                backgroundColor: '#FEE2E2',
-                borderRadius: 12,
-                padding: 12,
-                marginBottom: 16,
-              }}
-            >
-              <Text style={{ color: '#DC2626', fontFamily: 'Inter', fontSize: 14 }}>
+            <View className="mb-4 rounded-[12px] bg-[#FEE2E2] p-3">
+              <Text className="font-sans text-[14px] text-[#DC2626]">
                 {error}
               </Text>
             </View>
           )}
 
           {/* Email input */}
-          <View style={{ marginBottom: 18 }}>
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 13,
-                color: colors.deepSlate,
-                marginBottom: 6,
-              }}
-            >
+          <View className="mb-[18px]">
+            <Text className="mb-1.5 font-inter-semibold text-[13px] text-deep-slate">
               Correo electrónico
             </Text>
             <TextInput
@@ -124,30 +93,15 @@ export default function LoginScreen() {
               autoCorrect={false}
               onFocus={() => setEmailFocused(true)}
               onBlur={() => setEmailFocused(false)}
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: 14,
-                padding: 14,
-                fontSize: 15,
-                fontFamily: 'Inter',
-                color: colors.deepSlate,
-                borderWidth: 2,
-                borderColor: emailFocused ? colors.clinicalBlue : colors.borderLight,
-                borderBottomWidth: 4.5,
-              }}
+              className={`rounded-[14px] border-2 border-b-[4.5px] bg-surface p-3.5 font-sans text-[15px] text-deep-slate ${
+                emailFocused ? 'border-clinical-blue' : 'border-border-light'
+              }`}
             />
           </View>
 
           {/* Password input */}
-          <View style={{ marginBottom: 26 }}>
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                fontSize: 13,
-                color: colors.deepSlate,
-                marginBottom: 6,
-              }}
-            >
+          <View className="mb-[26px]">
+            <Text className="mb-1.5 font-inter-semibold text-[13px] text-deep-slate">
               Contraseña
             </Text>
             <TextInput
@@ -160,17 +114,9 @@ export default function LoginScreen() {
               autoCapitalize="none"
               onFocus={() => setPasswordFocused(true)}
               onBlur={() => setPasswordFocused(false)}
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: 14,
-                padding: 14,
-                fontSize: 15,
-                fontFamily: 'Inter',
-                color: colors.deepSlate,
-                borderWidth: 2,
-                borderColor: passwordFocused ? colors.clinicalBlue : colors.borderLight,
-                borderBottomWidth: 4.5,
-              }}
+              className={`rounded-[14px] border-2 border-b-[4.5px] bg-surface p-3.5 font-sans text-[15px] text-deep-slate ${
+                passwordFocused ? 'border-clinical-blue' : 'border-border-light'
+              }`}
             />
           </View>
 
@@ -180,47 +126,24 @@ export default function LoginScreen() {
             onPress={handleLogin}
             disabled={submitting}
             activeOpacity={0.8}
-            style={{
-              backgroundColor: submitting ? colors.neutral : colors.clinicalBlue,
-              borderColor: submitting ? colors.neutral : '#005C8A',
-              borderWidth: 1,
-              borderBottomWidth: submitting ? 1 : 5,
-              borderRadius: 16,
-              padding: 16,
-              alignItems: 'center',
-              marginBottom: 20,
-            }}
+            className={`mb-5 items-center rounded-[16px] border p-4 ${
+              submitting
+                ? 'border-neutral bg-neutral'
+                : 'border-b-[5px] border-clinical-dark bg-clinical-blue'
+            }`}
           >
-            <Text
-              style={{
-                fontFamily: 'Inter-Bold',
-                fontSize: 16,
-                color: '#FFFFFF',
-              }}
-            >
+            <Text className="font-inter-bold text-[16px] text-white">
               {submitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Text>
           </TouchableOpacity>
 
           {/* Register link */}
-          <View style={{ alignItems: 'center' }}>
-            <Text
-              style={{
-                fontFamily: 'Inter',
-                fontSize: 14,
-                color: colors.neutral,
-              }}
-            >
+          <View className="items-center">
+            <Text className="font-sans text-[14px] text-neutral">
               ¿No tienes cuenta?{' '}
               <Link href="/auth/register" asChild>
                 <TouchableOpacity>
-                  <Text
-                    style={{
-                      fontFamily: 'Inter-Bold',
-                      fontSize: 14,
-                      color: colors.clinicalBlue,
-                    }}
-                  >
+                  <Text className="font-inter-bold text-[14px] text-clinical-blue">
                     Crear cuenta
                   </Text>
                 </TouchableOpacity>

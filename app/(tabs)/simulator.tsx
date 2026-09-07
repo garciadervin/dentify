@@ -11,8 +11,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Alert,
   ActivityIndicator,
   useWindowDimensions,
 } from 'react-native';
@@ -29,6 +27,7 @@ import { Colors, createShadow } from '@/constants/theme';
 import { useSettings } from '@/src/hooks/useSettings';
 import { resolveModelUri } from '@/src/services/modelResolver';
 import { isModelCached, cacheModel } from '@/src/services/modelCache';
+import { useFeedback } from '@/components/feedback/FeedbackProvider';
 
 async function isCellularConnection(): Promise<boolean> {
   try {
@@ -43,6 +42,7 @@ export default function SimulatorScreen() {
   const colors = Colors;
   const { width } = useWindowDimensions();
   const { settings } = useSettings();
+  const { toast, confirm } = useFeedback();
 
   const [selectedTooth, setSelectedTooth] = useState<number>(11);
   const [autoRotate, setAutoRotate] = useState(settings.autoRotate);
@@ -63,11 +63,6 @@ export default function SimulatorScreen() {
     setAutoRotate(settings.autoRotate);
   }, [settings.autoRotate]);
 
-  // Verify model cache on mount.
-  useEffect(() => {
-    checkCacheStatus();
-  }, []);
-
   const checkCacheStatus = useCallback(async () => {
     const cached = new Set<string>();
     for (const model of MODEL_LIST) {
@@ -76,6 +71,11 @@ export default function SimulatorScreen() {
     }
     setCachedModels(cached);
   }, []);
+
+  // Verify model cache on mount.
+  useEffect(() => {
+    checkCacheStatus();
+  }, [checkCacheStatus]);
 
   // Resolve the model URI when the tooth changes.
   useEffect(() => {
@@ -143,29 +143,27 @@ export default function SimulatorScreen() {
         await cacheModel(modelFiles[i]);
       }
       await checkCacheStatus();
-      Alert.alert('Listo', 'Los 16 modelos están disponibles sin conexión.');
+      toast('Los 16 modelos están disponibles sin conexión.', 'success');
     } catch {
-      Alert.alert('Error', 'No se pudieron descargar todos los modelos.');
+      toast('No se pudieron descargar todos los modelos.', 'error');
     } finally {
       setIsDownloading(false);
       setDownloadProgress(null);
     }
-  }, [checkCacheStatus]);
+  }, [checkCacheStatus, toast]);
 
   const handleDownloadAll = useCallback(async () => {
     if ((await isCellularConnection()) && !settings.cellularDownloads) {
-      Alert.alert(
-        'Datos móviles',
-        'Estás usando datos móviles. ¿Descargar los 16 modelos de todos modos?',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Descargar', onPress: () => doDownloadAll() },
-        ]
-      );
-      return;
+      const ok = await confirm({
+        title: 'Datos móviles',
+        message: 'Estás usando datos móviles. ¿Descargar los 16 modelos de todos modos?',
+        confirmLabel: 'Descargar',
+        cancelLabel: 'Cancelar',
+      });
+      if (!ok) return;
     }
     doDownloadAll();
-  }, [doDownloadAll, settings.cellularDownloads]);
+  }, [doDownloadAll, settings.cellularDownloads, confirm]);
 
   const isCached = cachedModels.has(currentModel?.file ?? '');
   const info = selectedStructure
@@ -187,17 +185,16 @@ export default function SimulatorScreen() {
             testID="download-all"
             onPress={handleDownloadAll}
             disabled={isDownloading}
-            style={[
-              styles.downloadButton,
-              { backgroundColor: isDownloading ? colors.borderLight : colors.clinicalBlue },
-            ]}
+            className={`min-w-[72px] flex-row items-center justify-center gap-1 rounded-[20px] px-3 py-2 ${
+              isDownloading ? 'bg-border-light' : 'bg-clinical-blue'
+            }`}
           >
             {isDownloading ? (
               <ActivityIndicator size="small" color={colors.neutral} />
             ) : (
               <>
                 <MaterialCommunityIcons name="cloud-download-outline" size={14} color="#FFFFFF" />
-                <Text style={styles.downloadButtonText}>Offline</Text>
+                <Text className="font-inter-semibold text-xs text-white">Offline</Text>
               </>
             )}
           </TouchableOpacity>
@@ -205,22 +202,27 @@ export default function SimulatorScreen() {
       />
 
       {downloadProgress && (
-        <Text style={styles.downloadProgress}>{downloadProgress}</Text>
+        <Text className="-mt-1.5 px-6 font-sans text-[11px] text-clinical-blue">
+          {downloadProgress}
+        </Text>
       )}
 
-      <View style={styles.content}>
+      <View className="gap-4 px-6 pt-3">
         {/* Tooth caption */}
-        <Text style={styles.caption}>
+        <Text className="font-inter-semibold text-[11px] uppercase tracking-[1.2px] text-neutral">
           {(currentModel?.name ?? 'Selecciona un diente').toUpperCase()} ·{' '}
           {(currentModel?.arch === 'superior' ? 'ARCADA SUPERIOR' : 'ARCADA INFERIOR').toUpperCase()}
         </Text>
 
         {/* Viewer 3D */}
-        <View style={[styles.viewer, { height: viewerHeight }]}>
+        <View
+          className="relative overflow-hidden rounded-3xl bg-sky-light"
+          style={{ height: viewerHeight, ...createShadow(2, 12, '#000000', 0.06), elevation: 3 }}
+        >
           {uriLoading ? (
-            <View style={styles.loadingContainer}>
+            <View className="flex-1 items-center justify-center gap-3">
               <ActivityIndicator size="large" color={colors.clinicalBlue} />
-              <Text style={styles.loadingText}>Preparando modelo 3D...</Text>
+              <Text className="font-sans text-sm text-neutral">Preparando modelo 3D...</Text>
             </View>
           ) : modelUri ? (
             <ModelViewer
@@ -231,9 +233,9 @@ export default function SimulatorScreen() {
               selectedStructure={selectedStructure}
             />
           ) : (
-            <View style={styles.loadingContainer}>
+            <View className="flex-1 items-center justify-center gap-3">
               <MaterialCommunityIcons name="alert-circle-outline" size={48} color={colors.neutral} />
-              <Text style={styles.loadingText}>No se pudo cargar el modelo</Text>
+              <Text className="font-sans text-sm text-neutral">No se pudo cargar el modelo</Text>
             </View>
           )}
 
@@ -247,7 +249,7 @@ export default function SimulatorScreen() {
         </View>
 
         {/* Chips de estructura */}
-        <View style={styles.chipsRow}>
+        <View className="flex-row flex-wrap gap-2">
           {TOOTH_STRUCTURES.map((structure) => {
             const isActive =
               !!selectedStructure && selectedStructure.toLowerCase() === structure.name.toLowerCase();
@@ -256,20 +258,16 @@ export default function SimulatorScreen() {
                 key={structure.id}
                 testID={`structure-chip-${structure.id}`}
                 onPress={() => handleStructureSelect(isActive ? null : structure.name)}
-                style={[
-                  styles.chip,
-                  isActive
-                    ? { backgroundColor: colors.clinicalBlue, borderColor: colors.clinicalBlue }
-                    : { backgroundColor: colors.surface, borderColor: colors.borderLight },
-                ]}
+                className={`h-9 items-center justify-center rounded-[18px] border px-4 ${
+                  isActive ? 'border-clinical-blue bg-clinical-blue' : 'border-border-light bg-surface'
+                }`}
                 accessibilityRole="button"
                 accessibilityState={{ selected: isActive }}
               >
                 <Text
-                  style={[
-                    styles.chipText,
-                    { color: isActive ? '#FFFFFF' : colors.deepSlate },
-                  ]}
+                  className={`font-inter-semibold text-[13px] ${
+                    isActive ? 'text-white' : 'text-deep-slate'
+                  }`}
                 >
                   {structure.name}
                 </Text>
@@ -279,148 +277,36 @@ export default function SimulatorScreen() {
         </View>
 
         {/* InfoCard de estructura */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTag}>
+        <View
+          className="w-full gap-1.5 rounded-2xl bg-surface p-4"
+          style={{ ...createShadow(1, 8, '#000000', 0.04), elevation: 1 }}
+        >
+          <Text className="font-inter-semibold text-[11px] uppercase tracking-[1.2px] text-clinical-blue">
             {info ? 'ESTRUCTURA SELECCIONADA' : 'CÓMO EXPLORAR'}
           </Text>
-          <Text style={styles.infoTitle}>{info?.name ?? 'Selecciona una estructura'}</Text>
-          <Text style={styles.infoDesc}>
+          <Text className="font-heading-bold text-lg text-deep-slate">
+            {info?.name ?? 'Selecciona una estructura'}
+          </Text>
+          <Text className="font-sans text-sm leading-[21px] text-neutral">
             {info?.description ??
               'Toca el modelo 3D o elige un chip de estructura para ver su descripción anatómica.'}
           </Text>
         </View>
 
         {/* Hint de gestos */}
-        <View style={styles.controls}>
+        <View className="flex-row items-center justify-center gap-2">
           <MaterialCommunityIcons name="rotate-3d" size={15} color={colors.neutral} />
-          <Text style={styles.controlsText}>
+          <Text className="font-sans text-xs text-neutral">
             Arrastra para rotar · Pellizca para acercar · Toca para seleccionar
           </Text>
         </View>
 
         {/* Selector de modelo (16 dientes) */}
-        <Text style={styles.sectionLabel}>ELEGIR PIEZA DENTAL</Text>
+        <Text className="mt-1 font-inter-semibold text-[11px] uppercase tracking-[1.2px] text-neutral">
+          ELEGIR PIEZA DENTAL
+        </Text>
         <ToothSelector onSelectTooth={handleSelectTooth} selectedTooth={selectedTooth} />
       </View>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    gap: 16,
-  },
-  downloadProgress: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    color: Colors.clinicalBlue,
-    paddingHorizontal: 24,
-    marginTop: -6,
-  },
-  downloadButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    minWidth: 72,
-    justifyContent: 'center',
-  },
-  downloadButtonText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: '#FFFFFF',
-  },
-  caption: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 11,
-    letterSpacing: 1.2,
-    color: Colors.neutral,
-    textTransform: 'uppercase',
-  },
-  viewer: {
-    borderRadius: 32,
-    overflow: 'hidden',
-    backgroundColor: Colors.skyLight,
-    position: 'relative',
-    ...createShadow(2, 12, '#000000', 0.06),
-    elevation: 3,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 12,
-  },
-  loadingText: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: Colors.neutral,
-  },
-  chipsRow: {
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  chip: {
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  chipText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-  },
-  infoCard: {
-    width: '100%',
-    backgroundColor: Colors.surface,
-    borderRadius: 24,
-    padding: 16,
-    gap: 6,
-    ...createShadow(1, 8, '#000000', 0.04),
-    elevation: 1,
-  },
-  infoTag: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 11,
-    letterSpacing: 1.2,
-    color: Colors.clinicalBlue,
-    textTransform: 'uppercase',
-  },
-  infoTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 18,
-    color: Colors.deepSlate,
-  },
-  infoDesc: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    lineHeight: 21,
-    color: Colors.neutral,
-  },
-  controls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    justifyContent: 'center',
-  },
-  controlsText: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-  },
-  sectionLabel: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 11,
-    letterSpacing: 1.2,
-    color: Colors.neutral,
-    textTransform: 'uppercase',
-    marginTop: 4,
-  },
-});

@@ -15,13 +15,13 @@ import React, {
   useRef,
   useState,
   useCallback,
+  useLayoutEffect,
   forwardRef,
   useImperativeHandle,
 } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ActivityIndicator,
 } from 'react-native';
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber/native';
@@ -34,6 +34,13 @@ export interface ModelViewerHandle {
   zoomOut: () => void;
   reset: () => void;
 }
+
+// Framing constants: the camera is moved to fit each model after centering it
+// at the origin (no rescaling). ZOOM_* are the initial clamp range; per-model
+// clamps are applied once the model bounds are known.
+const CAMERA_DIST = 8;
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 60;
 
 interface ModelViewerProps {
   modelUri: string;
@@ -84,6 +91,7 @@ function ModelScene({
 }) {
   const { scene } = useGLTF(modelUri) as unknown as { scene: THREE.Scene };
   const groupRef = useRef<THREE.Group>(null);
+  const { camera, controls } = useThree();
 
   useFrame((_state, delta) => {
     if (autoRotate && groupRef.current) {
@@ -105,11 +113,55 @@ function ModelScene({
     [onStructureSelect]
   );
 
+  // Frame the loaded model once: recenter its geometry at the origin and move
+  // the camera so it fits the viewport (no rescaling — that can collapse teeth
+  // whose source bounds include a stray/outlier element). Save the framed state
+  // so the Reset button returns to it. Tagged so revisiting a cached model is a no-op.
+  useLayoutEffect(() => {
+    const sceneObj = scene as unknown as THREE.Object3D;
+    if (sceneObj?.userData?.dentifyFitted === modelUri) return;
+    if (!sceneObj?.position) return;
+    const box = new THREE.Box3().setFromObject(sceneObj);
+    if (box.isEmpty()) return;
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    const maxDim = Math.max(size.x ?? 0, size.y ?? 0, size.z ?? 0);
+    if (!Number.isFinite(maxDim) || maxDim <= 0) return;
+
+    sceneObj.position.set(-(center.x ?? 0), -(center.y ?? 0), -(center.z ?? 0));
+    sceneObj.updateMatrixWorld(true);
+
+    // Fit distance for a 45° vertical FOV (half-height = d * tan(22.5°)).
+    const dist = (maxDim / 2 / Math.tan(THREE.MathUtils.degToRad(22.5))) * 1.25;
+    const ctl = controls as unknown as {
+      target?: THREE.Vector3;
+      minDistance: number;
+      maxDistance: number;
+      update?: () => void;
+      saveState?: () => void;
+    } | null;
+
+    if (camera && typeof camera.position?.set === 'function') {
+      camera.position.set(0, 0, Math.max(dist, 0.5));
+      camera.lookAt(0, 0, 0);
+    }
+    if (ctl?.target) {
+      ctl.target.set(0, 0, 0);
+      ctl.minDistance = Math.max(dist * 0.4, 0.2);
+      ctl.maxDistance = dist * 3;
+      ctl.update?.();
+      ctl.saveState?.();
+    }
+
+    sceneObj.userData = { ...sceneObj.userData, dentifyFitted: modelUri };
+  }, [scene, modelUri, camera, controls]);
+
   return (
     <group ref={groupRef}>
       <primitive
         object={scene}
-        scale={1.2}
         onPointerDown={handlePointerDown}
       />
       <ambientLight intensity={0.6} />
@@ -144,23 +196,28 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
   }), []);
 
   return (
-    <View style={styles.container} testID="model-viewer">
+    <View className="relative flex-1 bg-sky-light" testID="model-viewer">
       <ErrorBoundary testID="model-error">
         <Canvas
           testID="model-canvas"
-          style={styles.canvas}
+          style={{ flex: 1 }}
           onCreated={() => setCanvasReady(true)}
-          camera={{ position: [0, 0, 5], fov: 45 }}
+          camera={{ position: [0, 0, CAMERA_DIST], fov: 45 }}
           gl={{ antialias: true }}
           onPointerMissed={() => onStructureSelect?.(null)}
         >
-          {/* Orbit controls for pan / rotate / zoom */}
+          {/* Orbit controls: rotate + clamped zoom; pan disabled so the model
+              always stays centered in the viewport. `makeDefault` exposes the
+              controls instance so CameraController (zoom/reset) can reach it. */}
           <OrbitControls
-            enablePan
-            enableZoom
+            makeDefault
             enableRotate
-            minDistance={2}
-            maxDistance={10}
+            enableZoom
+            enablePan={false}
+            target={[0, 0, 0]}
+            minDistance={ZOOM_MIN}
+            maxDistance={ZOOM_MAX}
+            zoomSpeed={1.1}
             dampingFactor={0.1}
             enableDamping
           />
@@ -179,7 +236,7 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
 
       {/* Loading indicator outside Canvas */}
       {isLoading && (
-        <View style={[styles.loadingOverlay, { pointerEvents: 'none' }]}>
+        <View className="absolute inset-0 items-center justify-center" style={{ pointerEvents: 'none' }}>
           <ActivityIndicator
             testID="model-loading"
             size="large"
@@ -190,23 +247,25 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
 
       {/* Model loaded marker for tests */}
       {!isLoading && (
-        <View testID="model-loaded" style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]} />
+        <View testID="model-loaded" className="absolute inset-0" style={{ pointerEvents: 'none' }} />
       )}
 
       {/* Anatomical label for selected structure */}
       {selectedStructure && (
-        <View style={[styles.labelContainer, { pointerEvents: 'none' }]}>
-          <View style={styles.labelBubble}>
-            <Text style={styles.labelText}>{selectedStructure}</Text>
+        <View className="absolute inset-x-4 bottom-5 items-center" style={{ pointerEvents: 'none' }}>
+          <View className="rounded-[12px] bg-clinical-blue/90 px-[18px] py-2.5">
+            <Text className="text-center font-inter-semibold text-[13px] text-white">{selectedStructure}</Text>
           </View>
-          <View style={styles.labelCaret} />
+          <View className="-mt-px h-0 w-0 border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent border-t-clinical-blue/90" />
         </View>
       )}
 
       {/* Gesture hint — show briefly */}
       {canvasReady && !isLoading && (
-        <View style={[styles.gestureHint, { pointerEvents: 'none' }]}>
-          <Text style={styles.gestureHintText}>Arrastra para rotar · Pellizca para zoom</Text>
+        <View className="absolute inset-x-0 top-3 items-center" style={{ pointerEvents: 'none' }}>
+          <Text style={{ fontFamily: 'Inter', fontSize: 11, color: 'rgba(112, 120, 125, 0.8)', backgroundColor: 'rgba(255,255,255,0.7)', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, overflow: 'hidden' }}>
+            Arrastra para rotar · Pellizca para zoom
+          </Text>
         </View>
       )}
     </View>
@@ -214,66 +273,3 @@ const ModelViewer = forwardRef<ModelViewerHandle, ModelViewerProps>(function Mod
 });
 
 export default ModelViewer;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-    backgroundColor: '#F7F9FB',
-  },
-  canvas: {
-    flex: 1,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  labelContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 16,
-    right: 16,
-    alignItems: 'center',
-  },
-  labelBubble: {
-    backgroundColor: 'rgba(0, 119, 182, 0.90)',
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  labelText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  labelCaret: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 7,
-    borderRightWidth: 7,
-    borderTopWidth: 7,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: 'rgba(0, 119, 182, 0.90)',
-    marginTop: -1,
-  },
-  gestureHint: {
-    position: 'absolute',
-    top: 12,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  gestureHintText: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    color: 'rgba(112, 120, 125, 0.8)',
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-});

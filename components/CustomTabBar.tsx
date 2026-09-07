@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { View, Pressable, StyleSheet, Platform } from 'react-native';
+import { View, Pressable, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
@@ -43,13 +43,13 @@ export default function CustomTabBar({
 
   return (
     <View
-      style={[
-        styles.wrapper,
-        { paddingBottom: Math.max(insets.bottom, 14) },
-        { paddingHorizontal: 24 },
-      ]}
+      className="w-full items-center bg-transparent px-6"
+      style={{ paddingBottom: Math.max(insets.bottom, 14) }}
     >
-      <View style={styles.pill}>
+      <View
+        className="w-full flex-row items-center justify-between gap-1.5 rounded-[32px] border border-border-light bg-[#FFFFFFE6] p-2"
+        style={[{ maxWidth: CONTENT_MAX_WIDTH - 48 }, createShadow(0, 6, Colors.clinicalBlue, 0.2), { elevation: 10 }]}
+      >
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const label = (options.title ?? route.name) as string;
@@ -77,7 +77,7 @@ export default function CustomTabBar({
               accessibilityRole="button"
               accessibilityState={isFocused ? { selected: true } : {}}
               accessibilityLabel={label}
-              style={[styles.tab, isFocused && styles.tabActive]}
+              className={`h-12 w-12 items-center justify-center rounded-[24px] ${isFocused ? 'bg-[#0077B61F]' : ''}`}
             >
               <MaterialCommunityIcons
                 name={name}
@@ -91,36 +91,3 @@ export default function CustomTabBar({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    width: '100%',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  pill: {
-    width: '100%',
-    maxWidth: CONTENT_MAX_WIDTH - 48,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 6,
-    padding: 8,
-    borderRadius: 32,
-    backgroundColor: '#FFFFFFE6',
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-    ...createShadow(0, 6, Colors.clinicalBlue, 0.2),
-    elevation: 10,
-  },
-  tab: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabActive: {
-    backgroundColor: '#0077B61F',
-  },
-});

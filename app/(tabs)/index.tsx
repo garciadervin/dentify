@@ -7,7 +7,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -79,74 +79,96 @@ export default function DashboardScreen() {
     <ScreenContainer scroll edges={['top']}>
       <AppHeader />
 
-      <View style={styles.content}>
+      <View className="gap-6 px-6 pt-5">
         {/* Saludo */}
-        <View style={styles.greeting}>
-          <Text style={styles.greetTitle}>Hola, {displayName}</Text>
-          <Text style={styles.greetSub}>Continúa tu ruta de aprendizaje</Text>
+        <View className="gap-1">
+          <Text className="font-heading-bold text-[28px] text-deep-slate">Hola, {displayName}</Text>
+          <Text className="font-sans text-[14px] text-neutral">Continúa tu ruta de aprendizaje</Text>
         </View>
 
         {/* Metrics */}
-        <View style={styles.metricsRow}>
-          <View testID="metric-streak" style={styles.metricCard}>
-            <View style={styles.metricTop}>
+        <View className="flex-row gap-3">
+          <View
+            testID="metric-streak"
+            className="flex-1 gap-2 rounded-[24px] bg-surface p-4"
+            style={[createShadow(1, 8, '#000000', 0.04), { elevation: 1 }]}
+          >
+            <View className="flex-row items-center gap-2">
               <MaterialCommunityIcons name="fire" size={16} color={colors.successTeal} />
-              <Text style={styles.metricLabel}>Racha</Text>
+              <Text className="font-inter-semibold text-[13px] uppercase tracking-[0.4px] text-neutral">
+                Racha
+              </Text>
             </View>
-            <Text testID="streak-value" style={styles.metricValue}>
+            <Text testID="streak-value" className="font-heading-bold text-[28px] text-deep-slate">
               {streak}
             </Text>
-            <Text style={styles.metricUnit}>días de estudio</Text>
+            <Text className="font-sans text-[12px] text-neutral">días de estudio</Text>
           </View>
 
-          <View testID="metric-xp" style={styles.metricCard}>
-            <View style={styles.metricTop}>
+          <View
+            testID="metric-xp"
+            className="flex-1 gap-2 rounded-[24px] bg-surface p-4"
+            style={[createShadow(1, 8, '#000000', 0.04), { elevation: 1 }]}
+          >
+            <View className="flex-row items-center gap-2">
               <MaterialCommunityIcons name="star-four-points" size={16} color={colors.clinicalBlue} />
-              <Text style={styles.metricLabel}>XP</Text>
+              <Text className="font-inter-semibold text-[13px] uppercase tracking-[0.4px] text-neutral">
+                XP
+              </Text>
             </View>
-            <Text testID="xp-value" style={styles.metricValue}>
+            <Text testID="xp-value" className="font-heading-bold text-[28px] text-deep-slate">
               {xp.toLocaleString()}
             </Text>
-            <Text style={styles.metricUnit}>puntos acumulados</Text>
+            <Text className="font-sans text-[12px] text-neutral">puntos acumulados</Text>
           </View>
         </View>
 
         {loading ? (
-          <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>Cargando tu progreso...</Text>
+          <View className="items-center gap-2 rounded-[24px] bg-surface p-6">
+            <Text className="text-center font-heading-bold text-[16px] text-deep-slate">
+              Cargando tu progreso...
+            </Text>
           </View>
         ) : error ? (
-          <View style={styles.emptyCard}>
+          <View className="items-center gap-2 rounded-[24px] bg-surface p-6">
             <MaterialCommunityIcons name="wifi-alert" size={32} color="#C0392B" />
-            <Text style={styles.emptyTitle}>No se pudo cargar tu progreso</Text>
-            <Text style={styles.emptySub}>
+            <Text className="text-center font-heading-bold text-[16px] text-deep-slate">
+              No se pudo cargar tu progreso
+            </Text>
+            <Text className="text-center font-sans text-[13px] leading-[19px] text-neutral">
               Revisa tu conexión e inténtalo de nuevo.
             </Text>
             <TouchableOpacity
               testID="retry-progress"
               onPress={reload}
-              style={[styles.continueButton, { backgroundColor: colors.clinicalBlue, borderColor: '#005C8A' }]}
+              className="flex-row items-center gap-3 rounded-[24px] border-b-4 border-b-clinical-dark bg-clinical-blue px-5 py-3.5"
+              style={[createShadow(4, 12, Colors.clinicalBlue, 0.25), { elevation: 6 }]}
             >
-              <Text style={styles.continueButtonTitle}>Reintentar</Text>
+              <Text className="font-inter-bold text-[15px] text-white">Reintentar</Text>
             </TouchableOpacity>
           </View>
         ) : specialties.length === 0 ? (
-          <View style={styles.emptyCard}>
+          <View className="items-center gap-2 rounded-[24px] bg-surface p-6">
             <MaterialCommunityIcons
               name="school-outline"
               size={32}
               color={colors.neutral}
             />
-            <Text style={styles.emptyTitle}>Aún no hay progreso</Text>
-            <Text style={styles.emptySub}>
+            <Text className="text-center font-heading-bold text-[16px] text-deep-slate">
+              Aún no hay progreso
+            </Text>
+            <Text className="text-center font-sans text-[13px] leading-[19px] text-neutral">
               Completa tu primer quiz para comenzar la ruta de aprendizaje.
             </Text>
             <TouchableOpacity
               testID="next-level"
               onPress={() => router.push('/quiz/Operatoria%20Dental-1')}
-              style={[styles.continueButton, { backgroundColor: colors.clinicalBlue, borderColor: '#005C8A' }]}
+              className="flex-row items-center gap-3 rounded-[24px] border-b-4 border-b-clinical-dark bg-clinical-blue px-5 py-3.5"
+              style={[createShadow(4, 12, Colors.clinicalBlue, 0.25), { elevation: 6 }]}
             >
-              <Text style={styles.continueButtonTitle}>Comenzar Operatoria Dental</Text>
+              <Text className="font-inter-bold text-[15px] text-white">
+                Comenzar Operatoria Dental
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -155,14 +177,15 @@ export default function DashboardScreen() {
             {continueRoute && (
               <TouchableOpacity
                 testID="next-level"
-                style={[styles.continueButton, { backgroundColor: colors.clinicalBlue, borderColor: '#005C8A' }]}
+                className="flex-row items-center gap-3 rounded-[24px] border-b-4 border-b-clinical-dark bg-clinical-blue px-5 py-3.5"
+                style={[createShadow(4, 12, Colors.clinicalBlue, 0.25), { elevation: 6 }]}
                 onPress={() => router.push(continueRoute as any)}
                 activeOpacity={0.85}
               >
                 <MaterialCommunityIcons name="play-circle" size={26} color="#FFFFFF" />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.continueButtonTitle}>Continuar aprendizaje</Text>
-                  <Text style={styles.continueButtonSub} numberOfLines={1}>
+                <View className="flex-1">
+                  <Text className="font-inter-bold text-[15px] text-white">Continuar aprendizaje</Text>
+                  <Text className="mt-0.5 font-inter-semibold text-[12px] text-white/80" numberOfLines={1}>
                     {activeSpecialty?.name ?? 'Especialidad'} · Nivel{' '}
                     {activeSpecialty?.currentLevel ?? 1}
                   </Text>
@@ -172,8 +195,10 @@ export default function DashboardScreen() {
             )}
 
             {/* Ruta de aprendizaje */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Tu ruta de aprendizaje</Text>
+            <View className="gap-3">
+              <Text className="font-heading-bold text-[18px] text-deep-slate">
+                Tu ruta de aprendizaje
+              </Text>
               <LearningPath levels={learningNodes} />
             </View>
           </>
@@ -181,9 +206,9 @@ export default function DashboardScreen() {
 
         {/* Insignias */}
         {badges.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Insignias</Text>
-            <View style={styles.badgeRow}>
+          <View className="gap-3">
+            <Text className="font-heading-bold text-[18px] text-deep-slate">Insignias</Text>
+            <View className="flex-row flex-wrap gap-2.5">
               {badges.map((badge) => (
                 <BadgeCard key={badge.id} badge={badge} />
               ))}
@@ -194,114 +219,3 @@ export default function DashboardScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    gap: 24,
-  },
-  greeting: {
-    gap: 4,
-  },
-  greetTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 28,
-    color: Colors.deepSlate,
-  },
-  greetSub: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: Colors.neutral,
-  },
-  metricsRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  metricCard: {
-    flex: 1,
-    backgroundColor: Colors.surface,
-    borderRadius: 24,
-    padding: 16,
-    gap: 8,
-    ...createShadow(1, 8, '#000000', 0.04),
-    elevation: 1,
-  },
-  metricTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  metricLabel: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-    color: Colors.neutral,
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-  },
-  metricValue: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 28,
-    color: Colors.deepSlate,
-  },
-  metricUnit: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-  },
-  continueButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    borderRadius: 24,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderBottomWidth: 4,
-    ...createShadow(4, 12, Colors.clinicalBlue, 0.25),
-    elevation: 6,
-  },
-  continueButtonTitle: {
-    fontFamily: 'Inter-Bold',
-    fontSize: 15,
-    color: '#FFFFFF',
-  },
-  continueButtonSub: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.8)',
-    marginTop: 2,
-  },
-  section: {
-    gap: 12,
-  },
-  sectionTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 18,
-    color: Colors.deepSlate,
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  emptyCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 24,
-    padding: 24,
-    alignItems: 'center',
-    gap: 8,
-  },
-  emptyTitle: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 16,
-    color: Colors.deepSlate,
-    textAlign: 'center',
-  },
-  emptySub: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-    color: Colors.neutral,
-    textAlign: 'center',
-    lineHeight: 19,
-  },
-});

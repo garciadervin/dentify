@@ -15,6 +15,7 @@ import Head from 'expo-router/head';
 import { useAuth } from '@/src/hooks/useAuth';
 import { Colors } from '@/constants/theme';
 import { configureNotifications } from '@/src/services/notifications';
+import FeedbackView from '@/components/feedback/FeedbackProvider';
 
 // Prevent splash screen from auto-hiding before fonts are loaded
 SplashScreen.preventAutoHideAsync();
@@ -48,7 +49,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     } else if (isTeacherRoute && userRole !== 'teacher') {
       router.replace('/(tabs)');
     }
-  }, [user, profile, profileLoaded, loading, segments]);
+  }, [user, profile, profileLoaded, loading, segments, router]);
 
   if (loading) {
     return (
@@ -98,17 +99,19 @@ export default function RootLayout() {
         <meta property="og:description" content="App educativa de odontología con IA: asistente clínico RAG, simulador 3D dental, diagnóstico por visión y ruta pedagógica gamificada." />
         <meta property="og:type" content="website" />
       </Head>
-      <AuthGuard>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(teacher)" options={{ headerShown: false }} />
-          <Stack.Screen name="auth" options={{ headerShown: false }} />
-          <Stack.Screen name="profile" options={{ headerShown: false }} />
-          <Stack.Screen name="settings" options={{ headerShown: false }} />
-          <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
-          <Stack.Screen name="quiz" options={{ headerShown: false }} />
-        </Stack>
-      </AuthGuard>
+      <FeedbackView>
+        <AuthGuard>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(teacher)" options={{ headerShown: false }} />
+            <Stack.Screen name="auth" options={{ headerShown: false }} />
+            <Stack.Screen name="profile" options={{ headerShown: false }} />
+            <Stack.Screen name="settings" options={{ headerShown: false }} />
+            <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
+            <Stack.Screen name="quiz" options={{ headerShown: false }} />
+          </Stack>
+        </AuthGuard>
+      </FeedbackView>
       <StatusBar style="light" />
     </ThemeProvider>
   );

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors, createShadow } from '@/constants/theme';
@@ -18,6 +18,14 @@ interface LearningPathProps {
   levels: LevelNode[];
   onNodePress?: (node: LevelNode) => void;
 }
+
+// Shadows (cross-platform via createShadow + elevation) can't be expressed in
+// Tailwind, so they stay as plain style objects.
+const cardShadow = { ...createShadow(1, 8, '#000000', 0.04), elevation: 1 };
+const nodeActiveShadow = {
+  ...createShadow(0, 3, Colors.clinicalBlue, 0.4),
+  elevation: 4,
+};
 
 /**
  * Learning path — vertical list.
@@ -40,9 +48,9 @@ export default function LearningPath({ levels, onNodePress }: LearningPathProps)
   );
 
   return (
-    <View testID="learning-path" style={styles.card}>
+    <View testID="learning-path" className="w-full rounded-3xl bg-surface px-5 py-2" style={cardShadow}>
       {/* Compatibilidad con tests previos */}
-      <View testID="path-connector-line" style={styles.hiddenConnector} />
+      <View testID="path-connector-line" className="absolute h-0 w-0 opacity-0" />
 
       {levels.map((node, index) => {
         const isCompleted = node.status === 'completed';
@@ -59,15 +67,21 @@ export default function LearningPath({ levels, onNodePress }: LearningPathProps)
             activeOpacity={isLocked ? 1 : 0.8}
             accessibilityLabel={`${node.label}, ${isCompleted ? 'completado' : isActive ? 'activo' : 'bloqueado'}`}
             accessibilityRole={isLocked ? 'text' : 'button'}
-            style={[styles.row, !isLast && styles.rowWithLine]}
+            className={`flex-row items-start gap-4 py-3.5 ${
+              !isLast ? 'border-b border-b-border-light' : ''
+            }`}
           >
             {/* Rail: node + vertical line */}
-            <View style={styles.rail}>
+            <View className="w-[30px] items-center gap-2">
               <View
-                style={[
-                  styles.node,
-                  isActive ? styles.nodeActive : isCompleted ? styles.nodeCompleted : styles.nodeLocked,
-                ]}
+                className={`items-center justify-center rounded-full ${
+                  isActive
+                    ? 'h-[30px] w-[30px] bg-clinical-blue'
+                    : isCompleted
+                      ? 'h-[26px] w-[26px] bg-success-teal'
+                      : 'h-[26px] w-[26px] bg-[#E4E8EB]'
+                }`}
+                style={isActive ? nodeActiveShadow : undefined}
               >
                 {isCompleted ? (
                   <MaterialCommunityIcons
@@ -94,50 +108,43 @@ export default function LearningPath({ levels, onNodePress }: LearningPathProps)
               </View>
               {!isLast && (
                 <View
-                  style={[
-                    styles.line,
-                    { backgroundColor: isCompleted ? '#DDE3E7' : '#F0F3F5' },
-                  ]}
+                  className={`h-[46px] w-0.5 ${
+                    isCompleted ? 'bg-[#DDE3E7]' : 'bg-[#F0F3F5]'
+                  }`}
                 />
               )}
             </View>
 
             {/* Specialty info */}
-            <View style={styles.info}>
+            <View className="flex-1 gap-[3px] pt-0.5">
               <Text
-                style={[
-                  styles.name,
-                  { color: isLocked ? Colors.muted : Colors.deepSlate },
-                ]}
+                className={`font-heading-bold text-[15px] ${
+                  isLocked ? 'text-muted' : 'text-deep-slate'
+                }`}
               >
                 {node.label}
               </Text>
 
               {isCompleted && (
-                <Text style={styles.sublabel}>Completada</Text>
+                <Text className="font-sans text-xs text-neutral">Completada</Text>
               )}
 
               {isActive && (
                 <>
-                  <Text style={styles.sublabel}>
+                  <Text className="font-sans text-xs text-neutral">
                     {`En progreso · ${node.level ?? 1} de ${node.totalLevels ?? 3} niveles`}
                   </Text>
-                  <View style={styles.progressTrack}>
+                  <View className="mt-0.5 h-[6px] w-full overflow-hidden rounded-[3px] bg-[#E9EEF2]">
                     <View
-                      style={[
-                        styles.progressFill,
-                        {
-                          width: `${node.progress ?? 0}%`,
-                          backgroundColor: Colors.clinicalBlue,
-                        },
-                      ]}
+                      className="h-full rounded-[3px] bg-clinical-blue"
+                      style={{ width: `${node.progress ?? 0}%` }}
                     />
                   </View>
                 </>
               )}
 
               {isLocked && (
-                <Text style={[styles.sublabel, { color: Colors.muted }]}>Bloqueada</Text>
+                <Text className="font-sans text-xs text-muted">Bloqueada</Text>
               )}
             </View>
 
@@ -146,7 +153,7 @@ export default function LearningPath({ levels, onNodePress }: LearningPathProps)
                 name="chevron-right"
                 size={18}
                 color={Colors.neutral}
-                style={styles.chevron}
+                style={{ alignSelf: 'center' }}
               />
             )}
           </TouchableOpacity>
@@ -155,90 +162,3 @@ export default function LearningPath({ levels, onNodePress }: LearningPathProps)
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    width: '100%',
-    backgroundColor: Colors.surface,
-    borderRadius: 32,
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    ...createShadow(1, 8, '#000000', 0.04),
-    elevation: 1,
-  },
-  hiddenConnector: {
-    width: 0,
-    height: 0,
-    opacity: 0,
-    position: 'absolute',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 14,
-    gap: 16,
-  },
-  rowWithLine: {
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderLight,
-  },
-  rail: {
-    width: 30,
-    alignItems: 'center',
-    gap: 8,
-  },
-  node: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  nodeCompleted: {
-    backgroundColor: Colors.successTeal,
-  },
-  nodeActive: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: Colors.clinicalBlue,
-    ...createShadow(0, 3, Colors.clinicalBlue, 0.4),
-    elevation: 4,
-  },
-  nodeLocked: {
-    backgroundColor: '#E4E8EB',
-  },
-  line: {
-    width: 2,
-    height: 46,
-  },
-  info: {
-    flex: 1,
-    gap: 3,
-    paddingTop: 2,
-  },
-  name: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 15,
-  },
-  sublabel: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    color: Colors.neutral,
-  },
-  progressTrack: {
-    width: '100%',
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#E9EEF2',
-    marginTop: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  chevron: {
-    alignSelf: 'center',
-  },
-});

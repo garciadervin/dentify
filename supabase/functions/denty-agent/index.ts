@@ -559,28 +559,30 @@ async function getMyProfile(userId: string, userClient: ReturnType<typeof create
 
 async function getMyProgress(userId: string, userClient: ReturnType<typeof createClient>): Promise<ToolResult> {
   const [{ data: progress }, { data: userBadges }, { data: defs }, { data: levels }] = await Promise.all([
-    userClient.from('pedagogical_progress').select('specialty, level, status').eq('profile_id', userId),
+    userClient.from('pedagogical_progress').select('specialty_id, level, status').eq('profile_id', userId),
     userClient.from('user_badges').select('badge_id').eq('profile_id', userId),
-    userClient.from('specialties').select('id, name, slug, levels_count'),
+    userClient.from('specialties').select('id, name, levels_count'),
     userClient.from('levels').select('specialty_id, level_number, xp_reward'),
   ]);
 
-  const specialties = (defs ?? []) as { id: string; name: string; slug: string; levels_count: number }[];
+  const specialties = (defs ?? []) as { id: string; name: string; levels_count: number }[];
   const levelsRows = (levels ?? []) as { specialty_id: string; level_number: number; xp_reward: number }[];
-  const progressRows = (progress ?? []) as { specialty: string; level: number; status: string }[];
+  const progressRows = (progress ?? []) as { specialty_id: string; level: number; status: string }[];
   const badgesCount = (userBadges ?? []).length;
 
   const xp = progressRows
     .filter((p) => p.status === 'completed')
     .reduce((sum, p) => {
-      const spec = specialties.find((s) => s.name === p.specialty || s.slug === p.specialty);
+      const spec = specialties.find((s) => s.id === p.specialty_id);
       if (!spec) return sum;
       const lvl = levelsRows.find((l) => l.specialty_id === spec.id && l.level_number === p.level);
       return sum + (lvl?.xp_reward ?? 0);
     }, 0);
 
   const perSpecialty = specialties.map((s) => {
-    const done = progressRows.filter((p) => p.status === 'completed' && (p.specialty === s.name || p.specialty === s.slug)).length;
+    const done = progressRows.filter(
+      (p) => p.status === 'completed' && p.specialty_id === s.id
+    ).length;
     return `${s.name}: ${done}/${s.levels_count} niveles`;
   });
 

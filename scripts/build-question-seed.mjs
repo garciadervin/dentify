@@ -111,7 +111,10 @@ function toRow(q) {
   }
 
   const points = q.points ?? defaultPoints(q);
-  return `('${q.specialty_slug}', ${q.level}, ${sqlStr(t)}, ${sqlStr(q.question)}, ${options}, ${correctIndex}, ${correctIndexes}, ${pairs}, ${orderItems}, ${caseId}, ${q.hint ? sqlStr(q.hint) : 'NULL'}, ${points}, ${q.level}, ${sqlTextArray(q.tags)})`;
+  // questions.specialty_slug was normalized away; resolve the slug to the
+  // specialty surrogate id inline so the generated SQL stays standalone.
+  const specId = `(select id from public.specialties where slug = ${sqlStr(q.specialty_slug)})`;
+  return `(${specId}, ${q.level}, ${sqlStr(t)}, ${sqlStr(q.question)}, ${options}, ${correctIndex}, ${correctIndexes}, ${pairs}, ${orderItems}, ${caseId}, ${q.hint ? sqlStr(q.hint) : 'NULL'}, ${points}, ${q.level}, ${sqlTextArray(q.tags)})`;
 }
 
 const files = readdirSync(BANK_DIR).filter((f) => f.endsWith('.json'));
@@ -151,7 +154,7 @@ const CHUNK = 20;
 const inserts = [];
 for (let i = 0; i < allRows.length; i += CHUNK) {
   const chunk = allRows.slice(i, i + CHUNK).join(',\n  ');
-  inserts.push(`insert into public.questions (specialty_slug, level, question_type, question, options, correct_index, correct_indexes, pairs, order_items, case_id, hint, points, difficulty, tags)
+  inserts.push(`insert into public.questions (specialty_id, level, question_type, question, options, correct_index, correct_indexes, pairs, order_items, case_id, hint, points, difficulty, tags)
   values
   ${chunk};`);
 }

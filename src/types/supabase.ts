@@ -116,7 +116,7 @@ export interface Database {
       questions: {
         Row: {
           id: string;
-          specialty_slug: string;
+          specialty_id: string;
           level: number;
           question: string;
           options: Json | null;
@@ -135,7 +135,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          specialty_slug: string;
+          specialty_id: string;
           level: number;
           question: string;
           options?: Json | null;
@@ -154,7 +154,7 @@ export interface Database {
         };
         Update: {
           id?: string;
-          specialty_slug?: string;
+          specialty_id?: string;
           level?: number;
           question?: string;
           options?: Json | null;
@@ -240,7 +240,7 @@ export interface Database {
         Row: {
           id: string;
           profile_id: string;
-          specialty: string;
+          specialty_id: string;
           level: number;
           status: 'locked' | 'active' | 'completed';
           completed_at: string | null;
@@ -248,7 +248,7 @@ export interface Database {
         Insert: {
           id?: string;
           profile_id: string;
-          specialty: string;
+          specialty_id: string;
           level: number;
           status?: 'locked' | 'active' | 'completed';
           completed_at?: string | null;
@@ -256,7 +256,7 @@ export interface Database {
         Update: {
           id?: string;
           profile_id?: string;
-          specialty?: string;
+          specialty_id?: string;
           level?: number;
           status?: 'locked' | 'active' | 'completed';
           completed_at?: string | null;

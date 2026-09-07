@@ -9,10 +9,8 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   FlatList,
   ActivityIndicator,
-  StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -50,7 +48,7 @@ export default function TeacherDashboard() {
     }
 
     fetchStudents();
-  }, [user, authLoading]);
+  }, [user, authLoading, router]);
 
   const fetchStudents = async () => {
     const supabase = getSupabase();
@@ -67,10 +65,13 @@ export default function TeacherDashboard() {
           full_name,
           role,
           pedagogical_progress (
-            specialty,
+            specialty_id,
             level,
             status,
-            completed_at
+            completed_at,
+            specialties (
+              name
+            )
           )
         `)
         .eq('role', 'student');
@@ -95,7 +96,7 @@ export default function TeacherDashboard() {
           email: null,
           role: profile.role,
           level: latestProgress?.level ?? null,
-          specialty: latestProgress?.specialty ?? null,
+          specialty: latestProgress?.specialties?.name ?? null,
           status: latestProgress?.status ?? null,
           last_activity: latestProgress?.completed_at ?? null,
         };
@@ -111,8 +112,8 @@ export default function TeacherDashboard() {
 
   if (authLoading || loading) {
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.skyLight }]}>
-        <View style={styles.loadingContainer}>
+      <SafeAreaView className="flex-1 bg-sky-light">
+        <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={colors.clinicalBlue} />
         </View>
       </SafeAreaView>
@@ -120,17 +121,17 @@ export default function TeacherDashboard() {
   }
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.skyLight }]}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.deepSlate }]}>Panel Docente</Text>
-        <Text style={[styles.subtitle, { color: colors.neutral }]}>
+    <SafeAreaView className="flex-1 bg-sky-light">
+      <View className="px-6 py-4">
+        <Text className="font-heading-bold text-2xl text-deep-slate">Panel Docente</Text>
+        <Text className="mt-1 font-sans text-sm text-neutral">
           {students.length} estudiantes
         </Text>
       </View>
 
       {students.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={[styles.emptyText, { color: colors.neutral }]}>
+        <View className="flex-1 items-center justify-center">
+          <Text className="font-sans text-sm text-neutral">
             No hay estudiantes registrados
           </Text>
         </View>
@@ -138,21 +139,24 @@ export default function TeacherDashboard() {
         <FlatList
           data={students}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32, gap: 12 }}
           renderItem={({ item }) => (
-            <View style={[styles.studentCard, { backgroundColor: colors.surface }]}>
-              <View style={styles.studentInfo}>
-                <Text style={[styles.studentName, { color: colors.deepSlate }]}>
+            <View
+              className="rounded-xl bg-surface p-4"
+              style={{ ...createShadow(2, 8, '#000000', 0.05), elevation: 2 }}
+            >
+              <View className="gap-1">
+                <Text className="font-heading-bold text-base text-deep-slate">
                   {item.full_name ?? 'Estudiante'}
                 </Text>
-                <Text style={[styles.studentDetail, { color: colors.neutral }]}>
+                <Text className="font-sans text-[13px] text-neutral">
                   {item.specialty ?? 'Sin especialidad'} · Nivel {item.level ?? '-'}
                 </Text>
-                <Text style={[styles.studentDetail, { color: colors.neutral }]}>
+                <Text className="font-sans text-[13px] text-neutral">
                   Estado: {item.status ?? 'Sin actividad'}
                 </Text>
                 {item.last_activity && (
-                  <Text style={[styles.studentDate, { color: colors.neutral }]}>
+                  <Text className="mt-1 font-sans text-[11px] text-neutral">
                     Última actividad: {new Date(item.last_activity).toLocaleDateString('es-ES')}
                   </Text>
                 )}
@@ -164,63 +168,3 @@ export default function TeacherDashboard() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  title: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 24,
-  },
-  subtitle: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    marginTop: 4,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-  },
-  listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-    gap: 12,
-  },
-  studentCard: {
-    borderRadius: 16,
-    padding: 16,
-    ...createShadow(2, 8, '#000000', 0.05),
-    elevation: 2,
-  },
-  studentInfo: {
-    gap: 4,
-  },
-  studentName: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 16,
-  },
-  studentDetail: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-  },
-  studentDate: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    marginTop: 4,
-  },
-});

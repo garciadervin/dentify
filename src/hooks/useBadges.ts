@@ -8,10 +8,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@/src/types/supabase';
-
-type SupabaseFrom = ReturnType<SupabaseClient<Database>['from']>;
 
 export interface Badge {
   id: string;
@@ -111,8 +107,8 @@ export function useBadges(): UseBadgesReturn {
 
     try {
       // Fetch the actual badge definitions to check requirement_type/value
-      const { data: defs, error: defsError } = await (supabase
-        .from('badges') as unknown as SupabaseFrom)
+      const { data: defs, error: defsError } = await supabase
+        .from('badges')
         .select('id, requirement_type, requirement_value')
         .eq('requirement_type', type)
         .lte('requirement_value', value);
@@ -124,12 +120,12 @@ export function useBadges(): UseBadgesReturn {
       if (!profileId) return;
 
       // For each qualifying badge, insert a user_badge row
-      for (const badgeDef of defs as Array<{ id: string; requirement_type: string; requirement_value: number }>) {
+      for (const badgeDef of defs) {
         const alreadyEarned = badges.find((b) => b.id === badgeDef.id)?.earned;
         if (alreadyEarned) continue;
 
-        const { error: insertError } = await (supabase
-          .from('user_badges') as unknown as SupabaseFrom)
+        const { error: insertError } = await supabase
+          .from('user_badges')
           .insert({ profile_id: profileId, badge_id: badgeDef.id });
 
         if (insertError) {

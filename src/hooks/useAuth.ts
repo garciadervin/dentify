@@ -52,15 +52,23 @@ export function useAuth(): UseAuthReturn {
       return;
     }
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('full_name, avatar_color, role, student_id, streak_count')
-        .eq('id', id)
-        .maybeSingle();
-      // A query error (offline / transient) is NOT "no profile": leave
-      // profileLoaded=false so the auth guard does not bounce the user to
-      // profile setup. Only a successful lookup with no row means no profile.
-      if (error) return;
+      let data: unknown = null;
+      // Right after sign-in the session can swap an instant later than the
+      // request, so the lookup can briefly run as anon and return an empty
+      // result — which must NOT be treated as "no profile" (that would bounce
+      // the user to profile setup). Retry once only on an empty success; a real
+      // query error still leaves profileLoaded=false (no bounce).
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const res = await supabase
+          .from('profiles')
+          .select('full_name, avatar_color, role, student_id, streak_count')
+          .eq('id', id)
+          .maybeSingle();
+        if (res.error) return;
+        data = res.data;
+        if (data) break;
+        if (attempt === 0) await new Promise((r) => setTimeout(r, 300));
+      }
       setProfile((data as unknown as Profile) ?? null);
       setProfileLoaded(true);
     } catch {
@@ -102,6 +110,11 @@ export function useAuth(): UseAuthReturn {
       setUser(newSession?.user ?? null);
       setLoading(false);
       if (newSession?.user) {
+        // Reset the "no profile" state from the signed-out mount: the guard
+        // must not bounce to profile-setup using a stale (empty) profile while
+        // the real lookup is still in flight.
+        setProfile(null);
+        setProfileLoaded(false);
         void refreshProfile(newSession.user.id);
       } else {
         setProfile(null);
@@ -136,7 +149,7 @@ export function useAuth(): UseAuthReturn {
     async (
       email: string,
       password: string,
-      role: 'student' | 'teacher' = 'student'
+      _role?: 'student' | 'teacher'
     ): Promise<{ error: string | null; needsConfirmation?: boolean }> => {
       const supabase = getSupabase();
       if (!supabase) {
@@ -146,9 +159,12 @@ export function useAuth(): UseAuthReturn {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        // Role lives in auth user_metadata so route guards can read it; the
-        // profiles table row is created separately on profile setup.
-        options: { data: { role } },
+        // Security: a self-signed account is ALWAYS 'student'. Teacher access
+        // grants visibility into every student's progress and PII, so it must
+        // be provisioned by an admin (promoteToTeacher), never self-selected.
+        // Role also lives in auth user_metadata so route guards can read it;
+        // the profiles row is created separately on profile setup.
+        options: { data: { role: 'student' } },
       });
 
       const needsConfirmation = Boolean(data?.user) && !data?.session;

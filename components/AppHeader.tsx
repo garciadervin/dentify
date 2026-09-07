@@ -9,8 +9,7 @@
  */
 
 import React, { type ReactNode } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
@@ -55,33 +54,36 @@ export default function AppHeader({
     }
   };
 
+  // Screens render AppHeader inside a ScreenContainer that already applies the
+  // top safe-area inset; wrapping the header in another SafeAreaView would
+  // double the status-bar padding on every screen.
   return (
-    <SafeAreaView edges={['top']} style={styles.safeArea}>
-      <View testID="app-header" style={styles.bar}>
+    <View testID="app-header" className="bg-[#FFFFFFE6]">
+      <View className="h-[60px] flex-row items-center gap-3 px-6">
         {variant === 'home' && (
           <>
-            <View style={styles.logoGroup}>
-              <View style={styles.logoDot} />
-              <Text style={styles.logo}>Dentify</Text>
-              {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+            <View className="flex-1 flex-row items-center gap-1.5">
+              <View className="h-2.5 w-2.5 rounded-full bg-clinical-blue" />
+              <Text className="font-heading-bold text-[22px] text-clinical-blue">Dentify</Text>
+              {subtitle && <Text className="ml-1 font-inter-semibold text-[11px] uppercase tracking-[0.6px] text-neutral">{subtitle}</Text>}
             </View>
             <TouchableOpacity
               testID="user-avatar"
-              style={styles.avatar}
-              onPress={() => router.push('/profile' as any)}
+              className="h-9 w-9 items-center justify-center rounded-full bg-clinical-blue"
+              onPress={() => router.push('/profile')}
               accessibilityLabel={`Perfil de ${fullName}`}
               accessibilityRole="button"
             >
-              <Text style={styles.avatarInitial}>{initial}</Text>
+              <Text className="font-heading-bold text-[15px] text-white">{initial}</Text>
             </TouchableOpacity>
           </>
         )}
 
         {variant === 'title' && (
           <>
-            <View style={styles.titleBlock}>
-              <Text style={styles.title}>{title}</Text>
-              {subtitle && <Text style={styles.titleSubtitle}>{subtitle}</Text>}
+            <View className="flex-1">
+              <Text className="font-heading-bold text-lg text-deep-slate">{title}</Text>
+              {subtitle && <Text className="mt-px font-inter-semibold text-[11px] uppercase tracking-[0.6px] text-neutral">{subtitle}</Text>}
             </View>
             {right}
           </>
@@ -92,7 +94,7 @@ export default function AppHeader({
             <TouchableOpacity
               testID="header-back"
               onPress={goBack}
-              style={styles.backButton}
+              className="-ml-2 h-8 w-8 items-center justify-center"
               accessibilityLabel="Volver"
               accessibilityRole="button"
             >
@@ -102,9 +104,9 @@ export default function AppHeader({
                 color={Colors.deepSlate}
               />
             </TouchableOpacity>
-            <View style={styles.titleBlock}>
-              <Text style={styles.title}>{title}</Text>
-              {subtitle && <Text style={styles.titleSubtitle}>{subtitle}</Text>}
+            <View className="flex-1">
+              <Text className="font-heading-bold text-lg text-deep-slate">{title}</Text>
+              {subtitle && <Text className="mt-px font-inter-semibold text-[11px] uppercase tracking-[0.6px] text-neutral">{subtitle}</Text>}
             </View>
             {right}
           </>
@@ -112,120 +114,32 @@ export default function AppHeader({
 
         {variant === 'bot' && (
           <>
-            <View style={styles.botAvatar}>
+            <View className="h-8 w-8 items-center justify-center rounded-full bg-clinical-blue">
               <MaterialCommunityIcons
                 name="creation"
                 size={15}
                 color="#FFFFFF"
               />
             </View>
-            <View style={styles.titleBlock}>
-              <Text style={styles.title}>{title ?? 'Denty-AI'}</Text>
-              <Text style={styles.botStatus}>
+            <View className="flex-1">
+              <Text className="font-heading-bold text-lg text-deep-slate">{title ?? 'Denty-AI'}</Text>
+              <Text className="mt-px font-sans text-[11px] text-success-teal">
                 {status ?? 'En línea · Basado en manuales UNERG'}
               </Text>
             </View>
             {right}
             <TouchableOpacity
               testID="user-avatar"
-              style={styles.avatar}
-              onPress={() => router.push('/profile' as any)}
+              className="h-9 w-9 items-center justify-center rounded-full bg-clinical-blue"
+              onPress={() => router.push('/profile')}
               accessibilityLabel={`Perfil de ${fullName}`}
               accessibilityRole="button"
             >
-              <Text style={styles.avatarInitial}>{initial}</Text>
+              <Text className="font-heading-bold text-[15px] text-white">{initial}</Text>
             </TouchableOpacity>
           </>
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    backgroundColor: '#FFFFFFE6',
-  },
-  bar: {
-    height: 60,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-  logoGroup: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  logoDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Colors.clinicalBlue,
-  },
-  logo: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 22,
-    color: Colors.clinicalBlue,
-  },
-  subtitle: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 11,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    color: Colors.neutral,
-    marginLeft: 4,
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.clinicalBlue,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarInitial: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 15,
-    color: '#FFFFFF',
-  },
-  backButton: {
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: -8,
-  },
-  titleBlock: {
-    flex: 1,
-  },
-  title: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 18,
-    color: Colors.deepSlate,
-  },
-  titleSubtitle: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 11,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    color: Colors.neutral,
-    marginTop: 1,
-  },
-  botAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Colors.clinicalBlue,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  botStatus: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    color: Colors.successTeal,
-    marginTop: 1,
-  },
-});

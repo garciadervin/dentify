@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, Pressable, Linking } from 'react-native';
+import { View, Text, ActivityIndicator, Pressable, Linking, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import Markdown from 'react-native-markdown-display';
@@ -33,6 +33,10 @@ const SOURCE_ICONS: Record<AgentSource['type'], keyof typeof MaterialCommunityIc
   web: 'web',
   progress: 'chart-line',
 };
+
+function hasMarkdown(text: string): boolean {
+  return /[#*`\[\]>]|^\s*[-*] |\d+\.\s/.test(text);
+}
 
 const markdownStyles = {
   body: {
@@ -109,10 +113,10 @@ export default function MessageBubble({
     return (
       <View
         testID="bubble-user"
-        style={[styles.row, { justifyContent: 'flex-end' }]}
+        className="mb-3 w-full flex-row items-end justify-end gap-2 px-6"
       >
-        <View style={styles.userCol}>
-          <View style={[styles.bubble, styles.bubbleUser]}>
+        <View className="items-end gap-1">
+          <View className="max-w-[78%] rounded-t-[20px] rounded-bl-[20px] rounded-br-[6px] bg-clinical-blue px-3.5 py-3">
             {isLoading ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
@@ -120,56 +124,63 @@ export default function MessageBubble({
                 {imageUri ? (
                   <Image
                     source={{ uri: imageUri }}
-                    style={styles.attachedImage}
+                    style={{ width: 180, height: 140, borderRadius: 10, marginBottom: 8 }}
                     contentFit="cover"
                     transition={150}
                   />
                 ) : null}
                 {attachmentLabel ? (
-                  <View style={styles.attachedFileRow}>
+                  <View className="mb-1.5 flex-row items-center gap-1.5">
                     <MaterialCommunityIcons name="file-document-outline" size={13} color="#FFFFFF" />
-                    <Text style={styles.attachedFileText} numberOfLines={1}>
+                    <Text className="shrink font-inter-semibold text-[12px] text-white" numberOfLines={1}>
                       {attachmentLabel}
                     </Text>
                   </View>
                 ) : null}
-                {text ? <Text style={styles.textUser}>{text}</Text> : null}
+                {text ? <Text className="font-sans text-[14px] leading-[21px] text-white">{text}</Text> : null}
               </>
             )}
           </View>
-          {timestamp && !isLoading && <Text style={styles.timestamp}>{timestamp}</Text>}
+          {timestamp && !isLoading && <Text className="px-1 font-sans text-[11px] text-neutral">{timestamp}</Text>}
         </View>
       </View>
     );
   }
 
   return (
-    <View testID="bubble-assistant" style={styles.row}>
-      <View style={styles.avatar}>
+    <View testID="bubble-assistant" className="mb-3 w-full flex-row items-end gap-2 px-6">
+      <View className="h-[26px] w-[26px] items-center justify-center rounded-[13px] bg-clinical-blue">
         <MaterialCommunityIcons name="creation" size={14} color="#FFFFFF" />
       </View>
-      <View style={styles.assistantCol}>
-        <View style={[styles.bubble, styles.bubbleAssistant]}>
+      <View className="flex-1 items-start gap-1">
+        <View className="max-w-[78%] rounded-t-[20px] rounded-bl-[6px] rounded-br-[20px] border border-pill-border bg-surface px-3.5 py-3">
           {isLoading ? (
-            <View style={styles.loadingRow} testID="bubble-loading">
+            <View className="flex-row items-center gap-1.5" testID="bubble-loading">
               <ActivityIndicator size="small" color={Colors.neutral} />
-              <Text style={styles.loadingText}>Pensando...</Text>
+              <Text className="font-sans text-[13px] text-neutral">Pensando...</Text>
             </View>
-          ) : (
+          ) : Platform.OS === 'web' ? (
+            <Text className="font-sans text-[14px] leading-[21px] text-deep-slate">{text}</Text>
+          ) : hasMarkdown(text) ? (
             <Markdown style={markdownStyles}>{text}</Markdown>
+          ) : (
+            <Text className="font-sans text-[14px] leading-[21px] text-deep-slate">{text}</Text>
           )}
         </View>
         {sources && sources.length > 0 ? (
-          <View style={styles.sourceRow}>
+          <View className="mt-0.5 flex-row flex-wrap items-center gap-1.5">
             {sources.slice(0, 3).map((s, i) => {
               const Chip = (
-                <View style={styles.source} key={`${s.type}-${i}`}>
+                <View
+                  className="h-[26px] flex-row items-center gap-1.5 rounded-[13px] bg-source-fill px-2.5"
+                  key={`${s.type}-${i}`}
+                >
                   <MaterialCommunityIcons
                     name={SOURCE_ICONS[s.type] ?? 'book-open-variant'}
                     size={12}
                     color={Colors.neutral}
                   />
-                  <Text style={styles.sourceText} numberOfLines={1}>
+                  <Text className="shrink font-sans text-[11px] text-neutral" numberOfLines={1}>
                     {s.title}
                   </Text>
                 </View>
@@ -190,126 +201,18 @@ export default function MessageBubble({
             })}
           </View>
         ) : source ? (
-          <View style={styles.source}>
+          <View className="h-[26px] flex-row items-center gap-1.5 rounded-[13px] bg-source-fill px-2.5">
             <MaterialCommunityIcons name="book-open-variant" size={12} color={Colors.neutral} />
-            <Text style={styles.sourceText} numberOfLines={1}>
+            <Text className="shrink font-sans text-[11px] text-neutral" numberOfLines={1}>
               {source}
             </Text>
           </View>
         ) : null}
-        {timestamp && !isLoading && <Text style={styles.timestamp}>{timestamp}</Text>}
+        {timestamp && !isLoading && <Text className="px-1 font-sans text-[11px] text-neutral">{timestamp}</Text>}
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 8,
-    paddingHorizontal: 24,
-    marginBottom: 12,
-    width: '100%',
-  },
-  avatar: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: Colors.clinicalBlue,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  assistantCol: {
-    flex: 1,
-    alignItems: 'flex-start',
-    gap: 4,
-  },
-  userCol: {
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  timestamp: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    color: Colors.neutral,
-    paddingHorizontal: 4,
-  },
-  bubble: {
-    maxWidth: '78%',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  bubbleAssistant: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.pillBorder,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderBottomLeftRadius: 6,
-    borderBottomRightRadius: 20,
-  },
-  bubbleUser: {
-    backgroundColor: Colors.clinicalBlue,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 6,
-  },
-  textUser: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    lineHeight: 21,
-    color: '#FFFFFF',
-  },
-  loadingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  loadingText: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-    color: Colors.neutral,
-  },
-  sourceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 6,
-    marginTop: 2,
-  },
-  attachedImage: {
-    width: 180,
-    height: 140,
-    borderRadius: 10,
-    marginBottom: 8,
-  },
-  attachedFileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 6,
-  },
-  attachedFileText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: '#FFFFFF',
-    flexShrink: 1,
-  },
-  source: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    height: 26,
-    backgroundColor: Colors.sourceFill,
-    borderRadius: 13,
-    paddingHorizontal: 10,
-  },
-  sourceText: {
-    fontFamily: 'Inter',
-    fontSize: 11,
-    color: Colors.neutral,
-    flexShrink: 1,
-  },
-});
+// `markdownStyles` above intentionally stays as inline RN style objects:
+// react-native-markdown-display requires a nested style dictionary per node type.

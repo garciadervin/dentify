@@ -48,19 +48,3 @@ export async function resolveModelUri(moduleRef: number): Promise<string> {
     return source.uri;
   }
 }
-
-/**
- * Returns the cached URI synchronously. Throws if resolveModelUri has not
- * been called yet for this module reference.
- */
-export function getCachedModelUri(moduleRef: number): string | null {
-  return uriCache.get(moduleRef) ?? null;
-}
-
-/**
- * Pre-warms the cache for a list of module references in parallel.
- * Call this on app startup to avoid loading delays in the simulator.
- */
-export async function preloadModels(moduleRefs: number[]): Promise<void> {
-  await Promise.allSettled(moduleRefs.map(resolveModelUri));
-}

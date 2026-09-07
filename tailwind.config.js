@@ -5,17 +5,32 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Design-system palette (mirrors constants/theme.ts Colors.light).
         'clinical-blue': '#0077B6',
+        'clinical-cyan': '#00B4D8',
+        'clinical-dark': '#005C8A', // pressed/border state of clinical-blue
         'sky-light': '#F7F9FB',
         'deep-slate': '#191C1E',
-        'surface': '#FFFFFF',
         'success-teal': '#006B5F',
+        'teal-deep': '#004037', // pressed/border state of success-teal
+        'success-tint': '#E8F5F3', // correct-answer surface
         'neutral': '#70787D',
+        'muted': '#9AA1A7',
+        'surface': '#FFFFFF',
         'border-light': '#F2F4F6',
+        'pill-border': '#E7EBEF',
+        'source-fill': '#F2F6FA',
+        'error': '#C0392B',
+        'error-bright': '#E74C3C',
+        'error-tint': '#FDE8E7', // incorrect-answer surface
+        'error-tint-border': '#F5C6C1',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        heading: ['Manrope', 'system-ui', 'sans-serif'],
+        sans: ['Inter'],
+        'inter-semibold': ['Inter-SemiBold'],
+        'inter-bold': ['Inter-Bold'],
+        heading: ['Manrope'],
+        'heading-bold': ['Manrope-Bold'],
       },
       borderRadius: {
         '3xl': '32px',

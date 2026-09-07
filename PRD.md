@@ -25,6 +25,18 @@
 
 ---
 
+## Cambios recientes (septiembre de 2026)
+
+Actualización de la última pasada de ingeniería sobre la v3.0:
+
+- **Estilo → NativeWind/Tailwind.** La UI (`app/`, `components/`) consume los design tokens como utilidades Tailwind (`className`), definidos en `tailwind.config.js` (paleta, fuentes y radios; solo modo claro). El `style` inline queda solo para sombras (`createShadow()`/`elevation`), tamaños/porcentajes dinámicos, overlays `rgba`, `Canvas` de R3F, miniaturas de `expo-image` y `contentContainerStyle`.
+- **BD normalizada.** `questions` y `pedagogical_progress` referencian ahora `specialties(id)` mediante `specialty_id` (BCNF; migración `20260831000009_specialty_surrogate_keys.sql`). El generador del banco de preguntas (`scripts/build-question-seed.mjs`) emite `specialty_id` por subselect. El banco cubre 7 tipos de pregunta (`mcq`, `true_false`, `fill_blank`, `multi_select`, `match`, `order`, `case`) en 5 especialidades.
+- **Seguridad y roles.** El registro autónomo crea siempre perfiles `role = 'student'` (la política INSERT de `profiles` lo impone); los docentes se provisionan por un admin vía `private.promote_to_teacher` (migración `20260831000008_security_hardening.sql`). El bucket `diagnosis-images` es privado (migración `20260831000006_diagnosis_bucket_private.sql`). Se añadieron políticas DELETE por propietario, trigger de `updated_at` en `profiles` y GRANTs explícitos a `authenticated`.
+- **Visor 3D.** Cada GLB se normaliza una vez (centrado en el origen, escalado a `FIT_SIZE`) y se encuadra con cámara a distancia fija. `OrbitControls` usa `makeDefault`, `enablePan={false}` y zoom acotado (`minDistance`/`maxDistance`); los botones de zoom operan con `dollyIn`/`dollyOut` sobre la instancia de controles (web y nativo exponen `forwardRef`).
+- **Borrado de conversación.** Eliminar una conversación borra también la fila remota en `ai_conversations`; en web se confirma con `window.confirm` y las filas de la lista ya no anidan Touchables.
+
+---
+
 ## 1. Introduction
 
 ### 1.1 Purpose

@@ -60,27 +60,9 @@ export default function DetectionOverlay({
     return (
       <View
         testID="no-detections"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        className="absolute inset-0 items-center justify-center"
       >
-        <Text
-          style={{
-            fontFamily: 'Inter-SemiBold',
-            fontSize: 16,
-            color: '#FFFFFF',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            paddingHorizontal: 20,
-            paddingVertical: 10,
-            borderRadius: 8,
-          }}
-        >
+        <Text className="rounded-lg bg-black/50 px-5 py-2.5 font-inter-semibold text-base text-white">
           No se detectaron condiciones
         </Text>
       </View>
@@ -110,16 +92,7 @@ export default function DetectionOverlay({
   }
 
   return (
-    <View
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        pointerEvents: 'none',
-      }}
-    >
+    <View className="pointer-events-none absolute inset-0">
       {detections.map((detection, index) => {
         const [nx, ny, nw, nh] = detection.bbox;
 
@@ -136,15 +109,13 @@ export default function DetectionOverlay({
           <View
             key={`detection-${detection.classId}-${index}`}
             testID={`detection-label-${detection.classId}`}
+            className="absolute rounded-[4px] border-2"
             style={{
-              position: 'absolute',
               left: x,
               top: y,
               width: w,
               height: h,
-              borderWidth: 2,
               borderColor: color,
-              borderRadius: 4,
             }}
           >
             {/* Label background */}
@@ -161,11 +132,7 @@ export default function DetectionOverlay({
               }}
             >
               <Text
-                style={{
-                  fontFamily: 'Inter-SemiBold',
-                  fontSize: 11,
-                  color: '#FFFFFF',
-                }}
+                className="font-inter-semibold text-[11px] text-white"
                 numberOfLines={1}
               >
                 {label}

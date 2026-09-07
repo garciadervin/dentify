@@ -4,7 +4,6 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
-    '^test-renderer$': 'react-test-renderer',
     '^@expo/vector-icons$': '<rootDir>/__mocks__/@expo/vector-icons.tsx',
     '^@expo/vector-icons/(.*)$': '<rootDir>/__mocks__/@expo/vector-icons.tsx',
     '^react-native-safe-area-context$': '<rootDir>/__mocks__/react-native-safe-area-context/index.tsx',

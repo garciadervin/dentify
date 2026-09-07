@@ -46,7 +46,7 @@ describe('useProgress', () => {
 
   it('builds specialty status and progress from completed rows', async () => {
     const supabase = makeSupabase([
-      { specialty: 'Operatoria Dental', level: 1, status: 'completed', completed_at: '2026-01-01' },
+      { specialty_id: 's1', level: 1, status: 'completed', completed_at: '2026-01-01' },
     ]);
     (require('@/src/lib/supabase').getSupabase as jest.Mock).mockReturnValue(supabase);
 
@@ -76,5 +76,39 @@ describe('useProgress', () => {
     const unlocked = supabase.upserts.find((r: any) => r.level === 2);
     expect(completed?.status).toBe('completed');
     expect(unlocked?.status).toBe('active');
+  });
+
+  it('repeating a completed level does not downgrade the next one', async () => {
+    const supabase = makeSupabase([
+      { specialty_id: 's1', level: 1, status: 'completed', completed_at: '2026-01-01' },
+      { specialty_id: 's1', level: 2, status: 'completed', completed_at: '2026-01-02' },
+    ]);
+    (require('@/src/lib/supabase').getSupabase as jest.Mock).mockReturnValue(supabase);
+
+    const { result } = renderHook(() => useProgress());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.completeLevel('Operatoria Dental', 1);
+    });
+
+    // level 2 is already 'completed' — it must NOT be reset to 'active'.
+    const unlocked = supabase.upserts.find((r: any) => r.level === 2);
+    expect(unlocked).toBeUndefined();
+  });
+
+  it('completing the last level activates the first level of the next specialty', async () => {
+    const supabase = makeSupabase([]);
+    (require('@/src/lib/supabase').getSupabase as jest.Mock).mockReturnValue(supabase);
+
+    const { result } = renderHook(() => useProgress());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.completeLevel('Operatoria Dental', 3);
+    });
+
+    const next = supabase.upserts.find((r: any) => r.specialty_id === 's2' && r.level === 1);
+    expect(next?.status).toBe('active');
   });
 });
