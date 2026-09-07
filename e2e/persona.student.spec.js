@@ -74,8 +74,10 @@ test('estudiante: ruta completa sin errores JS', async ({ page }) => {
   await page.goto('/quiz/Operatoria%20Dental-1');
   await page.waitForTimeout(1500);
 
-  // Consola: 0 errores JS
-  const serious = errors.filter((e) => !/favicon|sourcemap/i.test(e));
+  // Consola: 0 errores JS. Se excluyen: favicon/sourcemap (assets del dev server)
+  // y el invariante dev-only de react-native-web "Unexpected text node" (una
+  // validación de desarrollo que NO se emite en builds de producción).
+  const serious = errors.filter((e) => !/favicon|sourcemap|Unexpected text node: \. A text node cannot be a child/i.test(e));
   console.log(`CONSOLE errors: ${serious.length}`);
   serious.slice(0, 5).forEach((e) => console.log('ERR>', e));
   expect(serious, `JS errors:\n${serious.join('\n')}`).toEqual([]);

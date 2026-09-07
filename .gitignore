@@ -50,6 +50,8 @@ docs/rag-export.json
 # Playwright captures and console logs
 .playwright-cli/
 dentify-*.png
+e2e/artifacts/
+test-results/
 
 # CodeGraph local index
 .codegraph/

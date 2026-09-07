@@ -1,8 +1,8 @@
 /**
- * Persona E2E — ADMIN / RECTOR.
+ * Persona E2E — ADMIN / RECTOR (control de acceso negativo).
  * Hoy no existe UI de administración: el rol 'admin' vive en la BD (políticas de
- * manuales y private.promote_to_teacher). Esta spec verifica el control de acceso
- * negativo: un estudiante NO debe poder abrir el panel docente (se redirige a tabs).
+ * manuales y private.promote_to_teacher). Un estudiante NO debe poder abrir el
+ * panel docente (/teacher): el AuthGuard debe redirigirlo a (tabs).
  * TODO: cuando exista superficie admin/rector, añadir aquí sus flujos.
  */
 const { test, expect } = require('@playwright/test');
@@ -15,14 +15,14 @@ test('estudiante NO accede al panel docente', async ({ page }) => {
   test.skip(!EMAIL || !PASSWORD, 'PW_STUDENT_EMAIL / PW_STUDENT_PASS requeridas');
 
   await page.goto('/');
+  await expect(page).toHaveURL(/\/auth\/login/);
   await page.getByTestId('email-input').fill(EMAIL);
   await page.getByTestId('password-input').fill(PASSWORD);
   await page.getByTestId('login-button').click();
   await expect(page.getByTestId('metric-streak')).toBeVisible();
 
+  // El guard de /teacher redirige a un estudiante fuera del panel.
   await page.goto('/teacher');
-  await page.waitForTimeout(2500);
-  // No debe verse el panel docente; el guard redirige a (tabs).
+  await expect(page).not.toHaveURL(/\/teacher/, { timeout: 20_000 });
   await expect(page.getByText('Panel Docente')).toHaveCount(0);
-  await expect(page).not.toHaveURL(/\/teacher/);
 });

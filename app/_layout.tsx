@@ -35,7 +35,8 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
     const isAuthRoute = segments[0] === 'auth';
     const isProfileSetup = isAuthRoute && segments[1] === 'profile-setup';
-    const isTeacherRoute = segments[0] === '(teacher)';
+    const isTeacherRoute = segments[0] === 'teacher';
+    const isTabRoute = segments[0] === '(tabs)';
     const userRole = user?.user_metadata?.role;
 
     if (!user && !isAuthRoute) {
@@ -43,11 +44,15 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     } else if (user && isAuthRoute && !isProfileSetup) {
       // Allow /auth/profile-setup with a session (sign-up flow).
       router.replace('/(tabs)');
-    } else if (user && !isAuthRoute && !isTeacherRoute && profileLoaded && !profile) {
+    } else if (user && !isAuthRoute && !isTeacherRoute && !isTabRoute && profileLoaded && !profile) {
       // First login without a created profile → complete the profile.
       router.replace('/auth/profile-setup');
     } else if (isTeacherRoute && userRole !== 'teacher') {
+      // Only teachers may open the teacher dashboard.
       router.replace('/(tabs)');
+    } else if (isTabRoute && userRole === 'teacher') {
+      // Teachers land on their dashboard, not the empty student home.
+      router.replace('/teacher');
     }
   }, [user, profile, profileLoaded, loading, segments, router]);
 
@@ -103,7 +108,7 @@ export default function RootLayout() {
         <AuthGuard>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(teacher)" options={{ headerShown: false }} />
+            <Stack.Screen name="teacher" options={{ headerShown: false }} />
             <Stack.Screen name="auth" options={{ headerShown: false }} />
             <Stack.Screen name="profile" options={{ headerShown: false }} />
             <Stack.Screen name="settings" options={{ headerShown: false }} />
