@@ -411,7 +411,9 @@ export default function ChatScreen() {
                       size={14}
                       color={Colors.clinicalBlue}
                     />
-                    <Text className="font-inter-semibold text-[12px] text-deep-slate">{suggestion}</Text>
+                    <Text numberOfLines={1} ellipsizeMode="tail" className="font-inter-semibold text-[12px] text-deep-slate">
+                      {suggestion}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>

@@ -150,7 +150,10 @@ function ModelScene({
     sceneObj.updateMatrixWorld(true);
 
     // Fit distance for a 45° vertical FOV (half-height = d * tan(22.5°)).
-    const dist = (maxDim / 2 / Math.tan(THREE.MathUtils.degToRad(22.5))) * 1.25;
+    // The 1.5 factor keeps the tooth around 67% of the viewport height and
+    // leaves enough bottom margin to clear the floating control bar (which sits
+    // over the lower edge) while rotation stays centred on the model.
+    const dist = (maxDim / 2 / Math.tan(THREE.MathUtils.degToRad(22.5))) * 1.5;
     const ctl = controls as unknown as {
       target?: THREE.Vector3;
       minDistance: number;
